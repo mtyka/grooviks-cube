@@ -1,5 +1,6 @@
 <html>   
       <head>   
+            <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script> 
             <script type="text/javascript" src="vectormath.js"></script>
             <script type="text/javascript" src="render3d.js"></script>
             <script type="text/javascript">
@@ -67,7 +68,7 @@ function drawCube( ctx, viewProj, viewProjViewport, colors )
     }           
 }
 
-function draw( width, height, altitude, azimuth, distance ) 
+function render_view( width, height, altitude, azimuth, distance ) 
 { 
     canvas = document.getElementById("canvas");   
     ctx = canvas.getContext("2d");   
@@ -118,8 +119,24 @@ function draw( width, height, altitude, azimuth, distance )
 }
             </script>   
         </head>
-    <body onload="draw(300, 300, -2.2, 2.335, 15 )">   
+    <body>
        <canvas id="canvas" width="300" height="300"></canvas>   
+
+       <script>
+         function update_view() {
+           var altitude = $("#slide_alt").val() / 100.0;
+           var azimuth = $("#slide_azi").val() / 100.0;
+           render_view(300, 300, altitude, azimuth, 15 );
+         }
+         $(document).ready( function() {
+           update_view();
+         });
+       </script>
+
+       <div>
+          Altitude: <input id="slide_alt" type="range" min="-400" max="-1" value="-220" onchange="update_view();"><br/>
+          Azimuth: <input id="slide_azi" type="range" min="-400" max="400" value="233" onchange="update_view();"><br/>
+       </div>
     </body> 
 </html>  
 

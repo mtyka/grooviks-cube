@@ -1,4 +1,5 @@
-
+// This library requires vectormath.js.  
+// Make sure you include it too
             
 //-----------------------------------------------------------------------------             
 // Some basics of doing a 3d -> 2d transformation: There are 3 important matrices
