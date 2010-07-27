@@ -20,18 +20,24 @@ class Squares(models.Model):
 
 
 class KeyFrame(models.Model):
-    duration = models.IntegerField()
-    color_array = [ (0,0,0) ] * 54
+    duration = models.IntegerField(null = True, default=100)
+    color_array_string = models.TextField()
+
+    def color_array(self):
+        return json.loads(color_array_string)
 
     def set_swirly(self, time):
         random.seed(time)
+        color_array = [0] * 54
         for i in range(0,54):
-            self.color_array[i] = (random.random(), random.random(), random.random() )
+            color_array[i] = (random.random(), random.random(), random.random() )
+        self.color_array_string = json.dumps(color_array)
 
-    
     def render(self):
-        json_object = [self.duration, self.color_array]
-        return json.dumps(json_object)
+        return "[1,%s]" % self.color_array_string
+
+    def __str__(self):
+        return self.color_array_string[0:50]
 
 
 class AnimationPacket():

@@ -405,7 +405,7 @@ function render_view( width, height, altitude, azimuth, distance )
 
 
   function poll_state() {
-    // Make an XHR call to /sync/poll and put the response into the cubestate div
+    // Gets the cube state from the server, and stores it in global variable current_cube_colors.
 
     $.ajax({
        type: "GET",
@@ -423,9 +423,9 @@ function render_view( width, height, altitude, azimuth, distance )
 $(document).ready(function() {
     // called when the document is loaded.
     // start loading the state.
-    window.setInterval( poll_state, 50 );
+    window.setInterval( poll_state, 20 );
 
-    window.setInterval( update_view, 20 );
+    window.setInterval( update_view, 5 );
 
 });
 

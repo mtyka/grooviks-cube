@@ -18,16 +18,15 @@ def poll(request):
     """Returns the Squares object. In JSON form.
     """
 
-    kf = KeyFrame()
-    now = datetime.datetime.now()
-    kf.duration = 250
-    kf.set_swirly( now.second )
-    #square = get_object_or_404(Squares, pk=1)
-
+    kf = get_object_or_404(KeyFrame, pk=1)
     return HttpResponse(kf.render(), mimetype='text/plain' )
+
+
+
 
 def rotate(request):
     if request.method == 'POST':
+        #square = get_object_or_404(Squares, pk=1)
         square = get_object_or_404(Squares, pk=1)
         square.rotate()
         square.save()
