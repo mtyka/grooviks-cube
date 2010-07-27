@@ -17,7 +17,7 @@
 //-----------------------------------------------------------------------------             
 function buildProjectionMatrix( left, right, bottom, top, near, far )
 {
-    r = new matrix();
+    var r = new matrix();
     r.m[0][0] = ( 2 * near ) / ( right - left );
     r.m[1][1] = ( 2 * near ) / ( top - bottom );
     r.m[2][0] = ( right + left ) / ( right - left );    
@@ -43,20 +43,20 @@ function buildProjectionMatrix( left, right, bottom, top, near, far )
 //-----------------------------------------------------------------------------             
 function buildViewMatrix( eye, center, up )
 {
-    f = vectorSubtract( eye, center );
+    var f = vectorSubtract( eye, center );
 
     f = vectorNormalize( f );
-    s = vectorCross( up, f );
+    var s = vectorCross( up, f );
     s = vectorNormalize( s );
-    u = vectorCross( f, s );
+    var u = vectorCross( f, s );
     u = vectorNormalize( u );
 
-    t = new matrix();
+    var t = new matrix();
     t.m[0][3] = eye.v[0];
     t.m[1][3] = eye.v[1];
     t.m[2][3] = eye.v[2];
   
-    rot = new matrix();
+    var rot = new matrix();
     rot.m[0][0] = s.v[0]; 
     rot.m[0][1] = u.v[0];
     rot.m[0][2] = f.v[0];
@@ -69,14 +69,14 @@ function buildViewMatrix( eye, center, up )
     rot.m[2][1] = u.v[2];
     rot.m[2][2] = f.v[2];
 
-    v = multiplyMatrix( t, rot );        
-    vInv = matrixInvert( v );    
+    var v = multiplyMatrix( t, rot );        
+    var vInv = matrixInvert( v );    
     return vInv;
 }
 
 function buildViewportTransform( width, height )
 {
-    r = new matrix();
+    var r = new matrix();
     r.m[0][0] = 0.5 * width; 
     r.m[0][3] = 0.5 * height; 
     r.m[1][1] = -0.5 * height; 
@@ -95,12 +95,12 @@ function buildViewportTransform( width, height )
 function drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, color ) 
 {
     // Backface cull first
-    b1 = vectorMultiplyProjective( viewProj, p1 );
-    b2 = vectorMultiplyProjective( viewProj, p2 );
-    b3 = vectorMultiplyProjective( viewProj, p3 );
-    e1 = vectorSubtract( b2, b1 );
-    e2 = vectorSubtract( b3, b1 );
-    c = vectorCross( e1, e2 );
+    var b1 = vectorMultiplyProjective( viewProj, p1 );
+    var b2 = vectorMultiplyProjective( viewProj, p2 );
+    var b3 = vectorMultiplyProjective( viewProj, p3 );
+    var e1 = vectorSubtract( b2, b1 );
+    var e2 = vectorSubtract( b3, b1 );
+    var c = vectorCross( e1, e2 );
     if ( c.v[2] <= 0.0 )
     {
         return;
@@ -110,10 +110,10 @@ function drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, color )
     ctx.globalAlpha = 1.0; 
      
     // Transform all points into viewport space
-    vp1 = vectorMultiplyProjective( viewProjViewport, p1 );  
-    vp2 = vectorMultiplyProjective( viewProjViewport, p2 );  
-    vp3 = vectorMultiplyProjective( viewProjViewport, p3 );  
-    vp4 = vectorMultiplyProjective( viewProjViewport, p4 );
+    var vp1 = vectorMultiplyProjective( viewProjViewport, p1 );  
+    var vp2 = vectorMultiplyProjective( viewProjViewport, p2 );  
+    var vp3 = vectorMultiplyProjective( viewProjViewport, p3 );  
+    var vp4 = vectorMultiplyProjective( viewProjViewport, p4 );
         
     // Draw a filled quad  
     ctx.beginPath();   

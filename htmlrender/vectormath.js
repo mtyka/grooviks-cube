@@ -10,7 +10,7 @@ function vec4()
 
 function vectorSubtract( a, b )
 {
-    r = new vec4;
+    var r = new vec4;
     r.v[0] = a.v[0] - b.v[0];
     r.v[1] = a.v[1] - b.v[1];
     r.v[2] = a.v[2] - b.v[2];
@@ -28,7 +28,7 @@ function vectorSet( v, x, y, z, w )
 
 function vectorCopy( v )
 {
-    r = new vec4;
+    var r = new vec4;
     r.v[0] = v.v[0];
     r.v[1] = v.v[1];
     r.v[2] = v.v[2];
@@ -38,12 +38,12 @@ function vectorCopy( v )
 
 function vectorNormalize( v )
 {
-    mag = v.v[0] * v.v[0] + v.v[1] * v.v[1] + v.v[2] * v.v[2] + v.v[3] * v.v[3];
+    var mag = v.v[0] * v.v[0] + v.v[1] * v.v[1] + v.v[2] * v.v[2] + v.v[3] * v.v[3];
     if ( mag == 0.0 )
     {
         mag = 1.0
     }
-    r = new vec4;
+    var r = new vec4;
     mag = Math.sqrt( 1.0 / mag );
     r.v[0] = v.v[0] * mag;
     r.v[1] = v.v[1] * mag;
@@ -54,7 +54,7 @@ function vectorNormalize( v )
 
 function vectorCross( a, b )
 {
-    r = new vec4;
+    var r = new vec4;
     r.v[0] = a.v[1]*b.v[2] - a.v[2]*b.v[1];
     r.v[1] = a.v[2]*b.v[0] - a.v[0]*b.v[2];
     r.v[2] = a.v[0]*b.v[1] - a.v[1]*b.v[0];
@@ -78,7 +78,7 @@ function matrix()
 
 function multiplyMatrix( a, b ) 
 {
-    r = new matrix()
+    var r = new matrix()
     r.m[0][0] = a.m[0][0] * b.m[0][0] + a.m[0][1] * b.m[1][0] + a.m[0][2] * b.m[2][0] + a.m[0][3] * b.m[3][0];
     r.m[0][1] = a.m[0][0] * b.m[0][1] + a.m[0][1] * b.m[1][1] + a.m[0][2] * b.m[2][1] + a.m[0][3] * b.m[3][1];
     r.m[0][2] = a.m[0][0] * b.m[0][2] + a.m[0][1] * b.m[1][2] + a.m[0][2] * b.m[2][2] + a.m[0][3] * b.m[3][2];
@@ -103,7 +103,7 @@ function multiplyMatrix( a, b )
                   
 function vectorMultiply( m, v )
 {
-    res = new vec4( );
+    var res = new vec4( );
     res.v[0] = m.m[0][0] * v.v[0] + m.m[0][1] * v.v[1] + m.m[0][2] * v.v[2] + m.m[0][3] * v.v[3];
     res.v[1] = m.m[1][0] * v.v[0] + m.m[1][1] * v.v[1] + m.m[1][2] * v.v[2] + m.m[1][3] * v.v[3];
     res.v[2] = m.m[2][0] * v.v[0] + m.m[2][1] * v.v[1] + m.m[2][2] * v.v[2] + m.m[2][3] * v.v[3];
@@ -116,7 +116,7 @@ function vectorMultiplyProjective( m, v )
     // When doing a projective transformation, you end up with a w that is not 1
     // To turn it into a normal position vector, you must divide by w
     // which actually has the effect of doing the projection onto a plane where w = 1
-    r = new vec4( );
+    var r = new vec4( );
     r.v[0] = m.m[0][0] * v.v[0] + m.m[0][1] * v.v[1] + m.m[0][2] * v.v[2] + m.m[0][3] * v.v[3];
     r.v[1] = m.m[1][0] * v.v[0] + m.m[1][1] * v.v[1] + m.m[1][2] * v.v[2] + m.m[1][3] * v.v[3];
     r.v[2] = m.m[2][0] * v.v[0] + m.m[2][1] * v.v[1] + m.m[2][2] * v.v[2] + m.m[2][3] * v.v[3];
@@ -136,7 +136,7 @@ function vectorMultiplyProjective( m, v )
 function matrixInvert( src )
 {
     // NOTE: This only works for orthonormal matrices
-    r = new matrix()
+    var r = new matrix()
 
     // Transpose the upper 3x3.
     r.m[0][0] = src.m[0][0];  r.m[0][1] = src.m[1][0]; r.m[0][2] = src.m[2][0];
@@ -144,9 +144,9 @@ function matrixInvert( src )
     r.m[2][0] = src.m[0][2];  r.m[2][1] = src.m[1][2]; r.m[2][2] = src.m[2][2];
 
     // Transform the translation.
-    vTrans = new vec4();
+    var vTrans = new vec4();
     vectorSet( vTrans, -src.m[0][3], -src.m[1][3], -src.m[2][3], 1.0 );
-    vNewTrans = vectorMultiply( r, vTrans );
+    var vNewTrans = vectorMultiply( r, vTrans );
     r.m[0][3] = vNewTrans.v[0];
     r.m[1][3] = vNewTrans.v[1];
     r.m[2][3] = vNewTrans.v[2]; 
