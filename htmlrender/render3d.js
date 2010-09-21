@@ -90,7 +90,6 @@ function buildViewportTransform( width, height )
 // Arguments:
 // viewProj: a matrix which concatenates the view + projection matrices
 // viewProjViewport: a matrix which concatenates the view, projection, and viewport matrices
-// 
 //-----------------------------------------------------------------------------             
 function drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, color ) 
 {
@@ -213,5 +212,53 @@ function drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, orientation
     ctx.lineTo(vp7.v[0], vp7.v[1]);   
     ctx.closePath();   
     ctx.fill();
+}   
+
+
+//-----------------------------------------------------------------------------
+// This returns true if the specified point in screen space is inside the
+// quad specified in world space.
+// Arguments:
+// viewProj: a matrix which concatenates the view + projection matrices
+// viewProjViewport: a matrix which concatenates the view, projection, and viewport matrices
+//-----------------------------------------------------------------------------             
+function isPointInQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, point ) 
+{
+    // Backface cull first, ignore backfaced triangles
+    var b1 = vectorMultiplyProjective( viewProj, p1 );
+    var b2 = vectorMultiplyProjective( viewProj, p2 );
+    var b3 = vectorMultiplyProjective( viewProj, p3 );
+    var e1 = vectorSubtract( b2, b1 );
+    var e2 = vectorSubtract( b3, b1 );
+    var c = vectorCross( e1, e2 );
+    if ( c.v[2] <= 0.0 )
+    {
+        return;
+    }
+                 
+    // Transform all points into viewport space
+    var vp1 = vectorMultiplyProjective( viewProjViewport, p1 );  
+    var vp2 = vectorMultiplyProjective( viewProjViewport, p2 );  
+    var vp3 = vectorMultiplyProjective( viewProjViewport, p3 );  
+    var vp4 = vectorMultiplyProjective( viewProjViewport, p4 );
+    
+    // Now do a point in polygon test 
+    // See http://local.wasp.uwa.edu.au/~pbourke/geometry/insidepoly/  Solution 3 (2D)   
+    var i1 = (point.v[1] - vp1.v[1]) * (vp2.v[0] - vp1.v[0]) - (point.v[0] - vp1.v[0]) * (vp2.v[1] - vp1.v[1]);
+    var i2 = (point.v[1] - vp2.v[1]) * (vp3.v[0] - vp2.v[0]) - (point.v[0] - vp2.v[0]) * (vp3.v[1] - vp2.v[1]);
+    var i3 = (point.v[1] - vp3.v[1]) * (vp4.v[0] - vp3.v[0]) - (point.v[0] - vp3.v[0]) * (vp4.v[1] - vp3.v[1]);
+    var i4 = (point.v[1] - vp4.v[1]) * (vp1.v[0] - vp4.v[0]) - (point.v[0] - vp4.v[0]) * (vp1.v[1] - vp4.v[1]);
+    
+    if ( ( i1 == 0 ) || ( i2 == 0 ) || ( i3 == 0 ) || ( i4 == 0 ) )
+    {
+        return 1;
+    }
+    
+    if ( i1 > 0 )
+    {
+        return ( i2 > 0 ) && ( i3 > 0 ) && ( i4 > 0 );
+    }
+    
+    return ( i2 < 0 ) && ( i3 < 0 ) && ( i4 < 0 );
 }   
 
