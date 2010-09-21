@@ -18,6 +18,50 @@ function vectorSubtract( a, b )
     return r;          
 }
 
+function vectorAdd( a, b )
+{
+    var r = new vec4;
+    r.v[0] = a.v[0] + b.v[0];
+    r.v[1] = a.v[1] + b.v[1];
+    r.v[2] = a.v[2] + b.v[2];
+    r.v[3] = a.v[3] + b.v[3];  
+    return r;          
+}
+
+function vectorMultiplyScalar( a, t )
+{
+    var r = new vec4;
+    r.v[0] = a.v[0] * t;
+    r.v[1] = a.v[1] * t;
+    r.v[2] = a.v[2] * t;
+    r.v[3] = a.v[3] * t;  
+    return r;          
+}
+
+// When t = 0, returns a. When t == 1, returns b.
+function vectorLerp( a, b, t )
+{
+    var d = vectorSubtract( b, a );
+    var d1 = vectorMultiplyScalar( d, t );
+    return vectorAdd( a, d1 );
+}
+
+// returns a + b * t (t is scalar)
+function vectorMultiplyAdd( a, b, t )
+{
+    var d = vectorMultiplyScalar( b, t );
+    return vectorAdd( a, d );
+}
+
+// returns a + b * t1 + c * t2 (t1,t2 is scalar)
+function vectorMultiplyAdd2( a, b, t1, c, t2 )
+{
+    var d1 = vectorMultiplyScalar( b, t1 );
+    var d2 = vectorMultiplyScalar( c, t2 );
+    var s = vectorAdd( d1, d2 );
+    return vectorAdd( a, s );
+}
+
 function vectorSet( v, x, y, z, w )
 {
     v.v[0] = x;
@@ -58,7 +102,7 @@ function vectorCross( a, b )
     r.v[0] = a.v[1]*b.v[2] - a.v[2]*b.v[1];
     r.v[1] = a.v[2]*b.v[0] - a.v[0]*b.v[2];
     r.v[2] = a.v[0]*b.v[1] - a.v[1]*b.v[0];
-    r.v[3] = 0.0
+    r.v[3] = 0.0;
     return r;
 }
 

@@ -14,6 +14,7 @@ function drawCube( ctx, viewProj, viewProjViewport, colors )
     var d = [ 0.0, 0.0, 0.0 ];
     var g = [ 0.0, 0.0, 0.0 ];
 
+    var black = [ 0.0, 0.0, 0.0, 0.0 ];
     for ( var i = 0; i < 6; ++i )
     {
         var axis = i >> 1;
@@ -60,6 +61,7 @@ function drawCube( ctx, viewProj, viewProjViewport, colors )
                 var ndx = i*9 + j*3 + k        
                 drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, colors[ndx] );
                 
+                drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, 3, black );
                 p.v[ a1 ] -= d[ a1 ];
                 p.v[ a0 ] += d[ a0 ] + 2.0 * g[ a0 ];
             }                     

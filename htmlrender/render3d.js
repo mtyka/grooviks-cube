@@ -125,3 +125,93 @@ function drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, color )
     ctx.fill();
 }   
 
+
+//-----------------------------------------------------------------------------
+// This draws an arrow, projecting it from world space to screenspace, and then rendering it.
+// Arguments:
+// viewProj: a matrix which concatenates the view + projection matrices
+// viewProjViewport: a matrix which concatenates the view, projection, and viewport matrices
+// p1-p4: the 4 quad points to render in
+// orientation: a number 0-3 indicating the orientation
+//-----------------------------------------------------------------------------             
+function drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, orientation, color ) 
+{
+    // Backface cull first
+    var b1 = vectorMultiplyProjective( viewProj, p1 );
+    var b2 = vectorMultiplyProjective( viewProj, p2 );
+    var b3 = vectorMultiplyProjective( viewProj, p3 );
+    var e1 = vectorSubtract( b2, b1 );
+    var e2 = vectorSubtract( b3, b1 );
+    var c = vectorCross( e1, e2 );
+    if ( c.v[2] <= 0.0 )
+    {
+        return;
+    }
+            
+    ctx.fillStyle = "rgba(" + 255*color[2] + "," + 255*color[1] + "," + 255*color[0] + ",1)";
+    ctx.globalAlpha = 1.0; 
+    
+    // Build basis 
+    var origin;
+    var up;
+    var right;
+    if ( orientation == 0 )
+    {
+        origin = p1;
+        up = vectorSubtract( p4, p1 );
+        right = vectorSubtract( p2, p1 );
+    }
+    else if ( orientation == 1 )
+    {
+        origin = p2;
+        up = vectorSubtract( p1, p2 );
+        right = vectorSubtract( p3, p2 );
+    }
+    else if ( orientation == 2 )
+    {
+        origin = p3;
+        up = vectorSubtract( p2, p3 );
+        right = vectorSubtract( p4, p3 );
+    }
+    else if ( orientation == 3 )
+    {
+        origin = p4;
+        up = vectorSubtract( p3, p4 );
+        right = vectorSubtract( p1, p4 );
+    }
+  
+    // Build arrow points
+    var borderAmount = 0.1;
+    var baseAmount = 0.3;
+    var arrowVertAmount = 0.4;
+
+    var a1 = vectorMultiplyAdd2( origin, up, borderAmount, right, baseAmount );
+    var a2 = vectorMultiplyAdd2( origin, up, borderAmount, right, 1.0 - baseAmount );
+    var a3 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, 1.0 - baseAmount );
+    var a4 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, 1.0 - borderAmount );
+    var a5 = vectorMultiplyAdd2( origin, up, 1.0 - borderAmount, right, 0.5 );
+    var a6 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, borderAmount );
+    var a7 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, baseAmount );
+
+    // Transform all points into viewport space
+    var vp1 = vectorMultiplyProjective( viewProjViewport, a1 );  
+    var vp2 = vectorMultiplyProjective( viewProjViewport, a2 );  
+    var vp3 = vectorMultiplyProjective( viewProjViewport, a3 );  
+    var vp4 = vectorMultiplyProjective( viewProjViewport, a4 );
+    var vp5 = vectorMultiplyProjective( viewProjViewport, a5 );
+    var vp6 = vectorMultiplyProjective( viewProjViewport, a6 );
+    var vp7 = vectorMultiplyProjective( viewProjViewport, a7 );
+       
+    // Draw a filled quad  
+    ctx.beginPath();   
+    ctx.moveTo(vp1.v[0], vp1.v[1]);   
+    ctx.lineTo(vp2.v[0], vp2.v[1]);   
+    ctx.lineTo(vp3.v[0], vp3.v[1]);   
+    ctx.lineTo(vp4.v[0], vp4.v[1]);   
+    ctx.lineTo(vp5.v[0], vp5.v[1]);   
+    ctx.lineTo(vp6.v[0], vp6.v[1]);   
+    ctx.lineTo(vp7.v[0], vp7.v[1]);   
+    ctx.closePath();   
+    ctx.fill();
+}   
+
