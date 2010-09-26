@@ -1,0 +1,44 @@
+This directory has the code that will run on a single machine and drive all views 
+of the cube in the pacific science center.
+
+There will be multiple processes running on this machine.  
+One is a web server which serves HTTP requests for the web clients.  This will
+run the django code.  It synchronizes requests through an in-memory database.
+
+Another process is called "main_simulation_loop.py".  This process pushes display
+commands out to all the clients, including the web clients and the arduinos.
+
+
+** Software pre-requisites **
+
+Before running the system, you need the following software installed on your machine:
+
+Python 2.6
+Django 1.2
+Sqlite3 (3.6?)
+
+
+** Running the system **
+
+To start the web server process, run this command:
+
+    python manage.py runserver
+
+To start the main loop running, first set up some environment variables:
+(on Mac...)
+    export DJANGO_SETTINGS_MODULE=djangocube.settings
+    export PYTHONPATH=..:$PYTHONPATH
+
+(on Windows something like...)
+    set DJANGO_SETTINGS_MODULE=djangocube.settings
+    set PYTHONPATH=..:$PYTHONPATH
+
+And then run the loop itself:
+
+    python main_simulation_loop.py
+
+
+Then open any modern web browser (Chrome works best. Firefox or Safari fine) to:
+    http://localhost:8000/
+
+You should see a cube with random colors that change periodically.

@@ -4,13 +4,15 @@ Pacific Science Center.
 
 The directories are as follows:
 
-djangocube/ - Web server which servers pages with htmlrenderer
+djangocube/ - Web server which servers pages with htmlrenderer.
+   This should be the target of all integration and considered the best working copy
+   of everything moving forwards.
 
 pacsci/ - a port of the "server" code which ran in the belly of the playa cube
    (to be merged into djangocube/ by the Brians)
 
 htmlrender/ - standalone Canvas display in HTML + javascript 
-   (obsolete)
+   (obsolete. Already merged into djangocube.)
 
 push-experiment/ - a playground for trying HTTP push technologies
    (to be merged into djangocube by Leo)

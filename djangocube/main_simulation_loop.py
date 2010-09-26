@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """To get this to run, you need to set two environment variables:
 
 export DJANGO_SETTINGS_MODULE=djangocube.settings
