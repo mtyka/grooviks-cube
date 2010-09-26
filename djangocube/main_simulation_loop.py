@@ -14,5 +14,5 @@ while True:
     print kf
     kf.set_swirly( now.second )
     kf.save()
-    time.sleep(0.01)
+    time.sleep(3)
 

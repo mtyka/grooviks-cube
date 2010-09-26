@@ -414,6 +414,8 @@ function render_view( width, height, altitude, azimuth, distance )
        success: function(msg){
          new_colors = msg[1]
          current_cube_colors = new_colors;
+         window.setTimeout( poll_state, 50 );
+         update_view();
        }
      });
     
@@ -423,9 +425,9 @@ function render_view( width, height, altitude, azimuth, distance )
 $(document).ready(function() {
     // called when the document is loaded.
     // start loading the state.
-    window.setInterval( poll_state, 20 );
+    window.setTimeout( poll_state, 40 );
 
-    window.setInterval( update_view, 5 );
+    //window.setInterval( update_view, 20 );
 
 });
 
@@ -441,6 +443,7 @@ $(document).ready(function() {
            var altitude = $("#slide_alt").val() / 100.0;
            var azimuth = $("#slide_azi").val() / 100.0;
            render_view(300, 300, altitude, azimuth, 15 );
+           //window.setTimeout( update_view, 50 );
          }
          $(document).ready( function() {
            update_view();
