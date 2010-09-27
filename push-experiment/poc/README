@@ -1,0 +1,29 @@
+This is adapted from Hookbox's graphic EQ demo.
+
+
+How To Run
+----------
+
+ 0. Install hookbox and Quixote using some or all of the following steps
+   - easy_install hookbox
+   - easy_install quixote
+   - easy_install pyjsiocompile (hookbox depends on this).
+
+ 1. In terminal 1: `./webapp.py`
+ 2. In terminal 2: `hookbox -d -r bakonv8 -p 2974 --cbhost=127.0.0.1 --cbport=8080 --cbpath=`
+ 3. In terminal 3: `./random_colors.py`
+ 4. In Chrome: open http://localhost:8080
+
+
+Details
+-------
+
+Uses hookbox server running on localhost:2974
+data published on channel "chan1".
+
+A producer process (producer.py) generates random data and uses
+Hookbox's REST api to publish the data on the channel mentioned above.
+
+A Quixote based web application (webapp.py) serves the main page and also
+handles call backs from the Hookbox process.
+
