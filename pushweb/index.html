@@ -2,10 +2,21 @@
     <head>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
-        <script src="http://127.0.0.1:2974/static/hookbox.js"></script>
-        <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/ui-lightness/jquery-ui.css" type="text/css" />
+
+<script type="text/javascript"> 
+    // This code loads the hookbox.js from the current host but changing the port to 2974.
+    // server = 'http://127.0.0.1:2974'; // hard-code from localhost
+    server = location.protocol + '//' + location.hostname + ':2974';
+    alert(server);
+    // Dynamically inserts the code to load the script into the page.
+    document.write('<scr'+'ipt src="' + server + '/static/hookbox.js"></scr'+'ipt>');
+</script>
 
             <script type="text/javascript">
+
+// ####################################################################
+// ######################## Control Logic #############################
+// ####################################################################
 
 function on_message_pushed( datagram ) {
      //console.log("Got message published");
@@ -28,13 +39,17 @@ function on_message_pushed( datagram ) {
    update_view();
  });
 
+
+
+
 // ####################################################################
-// #################### Communications, Control #######################
+// #################### Communications Setup ##########################
 // ####################################################################
 
     // create a connection object and setup the basic event callbacks.
     // finally, subcribe to "chan1".
-    var conn = hookbox.connect('http://127.0.0.1:2974');
+    //var conn = hookbox.connect('http://127.0.0.1:2974');
+    var conn = hookbox.connect('http://10.0.1.212:2974');
     //conn.onOpen = function() { alert("connection established!"); };
     conn.onError = function(err) { alert("Failed to connect to hookbox server: " + err.msg); };
 
@@ -50,6 +65,9 @@ $(document).ready(function() {
    // Subscribe to the pubsub channel with the colors
    conn.subscribe("iframe");
 });
+
+
+
 
 
 // ####################################################################
