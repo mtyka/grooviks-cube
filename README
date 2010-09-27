@@ -4,16 +4,16 @@ Pacific Science Center.
 
 The directories are as follows:
 
+pushweb/ - Web UI using hookbox for http pub/sub.
+    Preferred and most awesome way of doing things.
+
 djangocube/ - Web server which servers pages with htmlrenderer.
-   This should be the target of all integration and considered the best working copy
-   of everything moving forwards.
+    Obsolete.  Use pushweb instead
+    Polling-based web solution using django and a relational database.
 
 pacsci/ - a port of the "server" code which ran in the belly of the playa cube
-   (to be merged into djangocube/ by the Brians)
+   (to be merged into pushweb/ by the Brians)
 
 htmlrender/ - standalone Canvas display in HTML + javascript 
    (obsolete. Already merged into djangocube.)
-
-push-experiment/ - a playground for trying HTTP push technologies
-   (to be merged into djangocube by Leo)
 

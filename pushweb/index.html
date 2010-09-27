@@ -7,32 +7,13 @@
 
             <script type="text/javascript">
 
-// ####################################################################
-// #################### Communications, Control #######################
-// ####################################################################
-
-    // create a connection object and setup the basic event callbacks.
-    // finally, subcribe to "chan1".
-    var conn = hookbox.connect('http://127.0.0.1:2974');
-    conn.onOpen = function() { alert("connection established!"); };
-    conn.onError = function(err) { alert("Failed to connect to hookbox server: " + err.msg); };
-
-    var subscription = null;
-    conn.onSubscribed = function(channelName, _subscription) {
-        subscription = _subscription;                
-        subscription.onPublish = function(frame) {
-             // frame.payload is a list...?
-             console.log("Got message published");
-             console.log( frame );
-             new_colors = frame.payload
-             current_cube_colors = new_colors;
-             update_view();  // calls into the renderer code
-        };  
-    };
-
-$(document).ready(function() {
-    conn.subscribe("chan1");
-});
+function on_message_pushed( datagram ) {
+     console.log("Got message published");
+     console.log( datagram );
+     new_colors = datagram;
+     current_cube_colors = new_colors;
+     update_view();  // calls into the renderer code
+}
 
 
  function update_view() {
@@ -43,8 +24,33 @@ $(document).ready(function() {
    //window.setTimeout( update_view, 50 );
  }
  $(document).ready( function() {
+   // Draw the cube in its default state when the page first loads
    update_view();
  });
+
+// ####################################################################
+// #################### Communications, Control #######################
+// ####################################################################
+
+    // create a connection object and setup the basic event callbacks.
+    // finally, subcribe to "chan1".
+    var conn = hookbox.connect('http://127.0.0.1:2974');
+    //conn.onOpen = function() { alert("connection established!"); };
+    conn.onError = function(err) { alert("Failed to connect to hookbox server: " + err.msg); };
+
+    var subscription = null;
+    conn.onSubscribed = function(channelName, _subscription) {
+        subscription = _subscription;                
+        subscription.onPublish = function(frame) {
+            on_message_pushed( frame.payload )
+        };  
+    };
+
+$(document).ready(function() {
+   // Subscribe to the pubsub channel with the colors
+   conn.subscribe("iframe");
+});
+
 
 // ####################################################################
 // ###################### Cube-rendering ##############################

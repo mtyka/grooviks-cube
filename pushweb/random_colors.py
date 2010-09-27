@@ -37,7 +37,7 @@ def push_message(datagram):
     url = "http://127.0.0.1:2974/rest/publish"
 
     values = { "secret" : "bakonv8",
-               "channel_name" : "chan1",
+               "channel_name" : "iframe",
                "payload" : []
              }
 
@@ -56,14 +56,13 @@ def main ():
 
     faceColors = [ [ 0.0, 1.0, 0.0 ], [1.0, 0.0, 0.0], [1.0, 0.0, 1.0], [0.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 1.0, 1.0] ]
 
-
     while True:
-        # generate seven random data points every 0.5 seconds
+        # generate random colors for every cube face every 1.5 seconds
         # and publish them via the HTTP/REST api.
         data = [ random.sample(faceColors, 1)[0] for x in range (0,54) ]
         push_message( data )
         print data
-        time.sleep(0.5)
+        time.sleep(1.5)
                 
 
 
