@@ -5,15 +5,17 @@ Pacific Science Center.
 The directories are as follows:
 
 pushweb/ - Web UI using hookbox for http pub/sub.
-    Preferred and most awesome way of doing things.
+    Preferred and most awesome way of doing things.  
+    Check README for how to run, or try runall.sh
+
+pacsci/ - a port of the "server" code which ran in the belly of the playa cube
+    groovikhookbox.py is the current best version.  This is the main "server" process
+    
+
+htmlrender/ - standalone Canvas display in HTML + javascript 
+   Obsolete. Already merged into djangocube.
 
 djangocube/ - Web server which servers pages with htmlrenderer.
     Obsolete.  Use pushweb instead
     Polling-based web solution using django and a relational database.
-
-pacsci/ - a port of the "server" code which ran in the belly of the playa cube
-   (to be merged into pushweb/ by the Brians)
-
-htmlrender/ - standalone Canvas display in HTML + javascript 
-   (obsolete. Already merged into djangocube.)
 
