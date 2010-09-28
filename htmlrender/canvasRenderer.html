@@ -1,0 +1,147 @@
+<html>   
+      <head>   
+            <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script> 
+            <script type="text/javascript" src="vectormath.js"></script>
+            <script type="text/javascript" src="render3d.js"></script>
+            <script type="text/javascript">
+function drawCube( ctx, viewProj, viewProjViewport, colors )
+{
+    // This code generates the 54 quads representing the 54 pixels of the cube    
+    var crossAxis = [ [1, 2], [0, 2], [0, 1] ];
+    var invertAxis = [ [false, false], [true, false], [true, false], [false, false], [false, false], [true, false] ];
+    var gapSize = 0.08;
+    var p = new vec4;
+    var d = [ 0.0, 0.0, 0.0 ];
+    var g = [ 0.0, 0.0, 0.0 ];
+
+    var black = [ 0.0, 0.0, 0.0, 0.0 ];
+    for ( var i = 0; i < 6; ++i )
+    {
+        var axis = i >> 1;
+        p.v[axis] = 3.0;
+        if ( i & 1 )
+        {
+            p.v[axis] *= -1.0;
+        }
+        d[axis] = 0.0;
+
+        var a0 = crossAxis[ axis ][ 0 ];
+        var a1 = crossAxis[ axis ][ 1 ];
+        var s0 = 1.0;
+        var s1 = 1.0;
+        if ( invertAxis[ i ][ 0 ] )
+        {
+            s0 *= -1.0;
+        }
+        if ( invertAxis[ i ][ 1 ] )
+        {
+            s1 *= -1.0
+        }
+        d[a0] = ( 2.0 - 2.0 * gapSize ) * s0;
+        d[a1] = ( 2.0 - 2.0 * gapSize ) * s1;
+        g[a0] = gapSize * s0;
+        g[a1] = gapSize * s1;
+        p.v[a1] = -3.0 * s1 + g[a1];
+        for ( var j = 0; j < 3; j++ )
+        {
+            p.v[a0] = -3.0 * s0 + g[a0]
+            for ( var k = 0; k < 3; k++ )
+            {           
+                var p1 = vectorCopy( p );
+
+                p.v[ a0 ] += d[ a0 ]
+                var p2 = vectorCopy( p );
+
+                p.v[ a1 ] += d[ a1 ];
+                var p3 = vectorCopy( p );
+                
+                p.v[ a0 ] -= d[ a0 ];
+                var p4 = vectorCopy( p );
+
+                var ndx = i*9 + j*3 + k        
+                drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, colors[ndx] );
+                
+                // draw the arrow slightly darker than the actual color
+                darkcolor = [ colors[ndx][0]*.8, colors[ndx][1]*.8, colors[ndx][2]*.8 ]
+                drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, 3, darkcolor );
+                p.v[ a1 ] -= d[ a1 ];
+                p.v[ a0 ] += d[ a0 ] + 2.0 * g[ a0 ];
+            }                     
+            p.v[ a1 ] += d[ a1 ] + 2.0 * g[ a1 ];
+        }
+    }           
+}
+
+function render_view( width, height, altitude, azimuth, distance ) 
+{ 
+    var canvas = document.getElementById("canvas");   
+    var ctx = canvas.getContext("2d");   
+
+    // Clear to black
+    ctx.save();   
+    ctx.fillStyle = "black";   
+    ctx.fillRect( 0, 0, width, height );   
+    ctx.restore();   
+    
+    // Define cube colors (these should be passed in)
+    var faceColors = [ [ 0.0, 1.0, 0.0 ], [1.0, 0.0, 0.0], [1.0, 0.0, 1.0], [0.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 1.0, 1.0] ];
+    var colors = new Array( 54 );
+    var index = 0;
+    for ( var i = 0; i < 6; ++i )
+    {
+        for ( var j = 0; j < 9; ++j )
+        {
+            colors[index] = faceColors[i];
+            index++;            
+        }
+    }
+    
+    // Build the projection matrix
+    // Note that the camera looks down -z in view space and the viewplane is at z = -1
+    var aspectRatio = height / width;    
+    var proj = buildProjectionMatrix( -0.3, 0.3, -0.3 * aspectRatio, 0.3 * aspectRatio, 1.0, 50.0 );
+
+    // Build the view matrix
+    var eye = new vec4;
+    var center = new vec4;
+    var up = new vec4;
+    center.v[0] = distance * Math.sin( azimuth ) * Math.sin( altitude )
+    center.v[1] = distance * Math.cos( altitude )
+    center.v[2] = distance * Math.cos( azimuth ) * Math.sin( altitude )     
+    up.v[1] = 1.0;
+    eye.v[3] = center.v[3] = up.v[3] = 0.0;   
+    var view = buildViewMatrix( center, eye, up );    
+
+    // Build the viewport transform
+    var viewport = buildViewportTransform( width, height );
+   
+    // viewProjViewport matrix will transform all points from world space to screen space
+    var viewProj = multiplyMatrix( proj, view );
+    var viewProjViewport = multiplyMatrix( viewport, viewProj );    
+    
+    drawCube( ctx, viewProj, viewProjViewport, colors );
+}
+            </script>   
+        </head>
+    <body>
+       <canvas id="canvas" width="300" height="300"></canvas>   
+
+       <script>
+         function update_view() {
+           var altitude = $("#slide_alt").val() / 100.0;
+           var azimuth = $("#slide_azi").val() / 100.0;
+           render_view(300, 300, altitude, azimuth, 15 );
+         }
+         $(document).ready( function() {
+           update_view();
+         });
+       </script>
+
+       <div>
+          Altitude: <input id="slide_alt" type="range" min="1" max="313" value="220" onchange="update_view();"><br/>
+          Azimuth: <input id="slide_azi" type="range" min="0" max="628" value="233" onchange="update_view();"><br/>
+       </div>
+    </body> 
+</html>  
+
+
