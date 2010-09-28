@@ -82,11 +82,13 @@ def main ():
     
     # simulate one frame so we have a valid state to render on first frame
     simulate(grooviksCube)
-    grooviksCube.QueueEffect( "victory0" )
 
     while True:
         # generate random colors for every cube face every 1.5 seconds
         # and publish them via the HTTP/REST api.
+        if grooviksCube.IsIdle():
+          grooviksCube.QueueEffect( "victory0" )
+
         data = simulate(grooviksCube)
         if data:
             frame = data[-1][1]
