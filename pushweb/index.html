@@ -494,23 +494,17 @@ function isPointInQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, point )
 }
 
 
-// Returns a number 0-53 if the x,y point (relative to canvas) is one of the faces.
-// Returns -1 if no match.
-
-//This code is nearly identical to render_view except for the inner loop
-//TODO: factor these together
-function whichFaceIsPointIn( x,y )
-{
+// returns a hashmap with .ctx, .viewProj and .viewProjViewport
+function build_view_context( ) {
     var canvas = document.getElementById("canvas");   
     var ctx = canvas.getContext("2d");   
-
-
-    //TODO: pull tehse out of the canvas object.
-    var height = 300;
-    var width = 300;
     var altitude = $("#slide_alt").val() / 100.0;
     var azimuth = $("#slide_azi").val() / 100.0;
+
+    var height = $('#canvas').attr('height');
+    var width = $('#canvas').attr('width');
     var distance = 15;
+
 
     // Build the projection matrix
     // Note that the camera looks down -z in view space and the viewplane is at z = -1
@@ -534,22 +528,31 @@ function whichFaceIsPointIn( x,y )
     // viewProjViewport matrix will transform all points from world space to screen space
     var viewProj = multiplyMatrix( proj, view );
     var viewProjViewport = multiplyMatrix( viewport, viewProj );    
-    
-    return whichFaceIsPointInHelper( x,y, ctx, viewProj, viewProjViewport );
+
+    return { 'ctx': ctx,
+             'viewProj': viewProj,
+             'viewProjViewport': viewProjViewport
+           };
 }
 
 
-//This code is nearly identical to drawCube except for the inner loop
-//TODO: factor out the code which generates the quad list, and share it between this and drawCube. 
-function whichFaceIsPointInHelper( x,y, ctx, viewProj, viewProjViewport ) {
+// Returns a number 0-53 if the x,y point (relative to canvas) is one of the faces.
+// Returns -1 if no match.
+
+//This code is nearly identical to render_view except for the inner loop
+//TODO: factor these together
+function whichFaceIsPointIn( x,y )
+{
     var point = new vec4;
     point.v[0] = x;
     point.v[1] = y;
 
-    var quadlist = buildQuadList( ctx, viewProj, viewProjViewport );
+    var view_context = build_view_context();
+
+    var quadlist = buildQuadList( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'] );
     for( ndx=0; ndx<54; ndx++) {
         var quad = quadlist[ndx];
-        if( isPointInQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], point ) ) {
+        if( isPointInQuad( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'], quad[0], quad[1], quad[2], quad[3], point ) ) {
             // found it.  break out of loop.
             return ndx;
         }
