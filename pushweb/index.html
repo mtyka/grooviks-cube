@@ -593,8 +593,10 @@ function drawCube( ctx, viewProj, viewProjViewport, colors )
                 var p4 = vectorCopy( p );
 
                 var ndx = i*9 + j*3 + k        
+                // draw the arrow slightly darker than the actual color
+                darkcolor = [ colors[ndx][0]*.6, colors[ndx][1]*.6, colors[ndx][2]*.6 ]
                 drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, colors[ndx] );
-                drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, 3, black );
+                drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, 3, darkcolor );
                 
                 p.v[ a1 ] -= d[ a1 ];
                 p.v[ a0 ] += d[ a0 ] + 2.0 * g[ a0 ];
