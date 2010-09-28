@@ -87,7 +87,9 @@ def main ():
         # generate random colors for every cube face every 1.5 seconds
         # and publish them via the HTTP/REST api.
         if grooviksCube.IsIdle():
-          grooviksCube.QueueEffect( "victory0" )
+          pass
+          #grooviksCube.QueueRotation([[random.randrange(0,9), random.choice([True,False])]])
+          #grooviksCube.QueueEffect( "victory0" )
 
         data = simulate(grooviksCube)
         if data:
