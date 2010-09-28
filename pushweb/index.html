@@ -33,12 +33,36 @@ function on_message_pushed( datagram ) {
    render_view(300, 300, altitude, azimuth, 15 );
    //window.setTimeout( update_view, 50 );
  }
+
  $(document).ready( function() {
-   // Draw the cube in its default state when the page first loads
-   update_view();
- });
+    // Draw the cube in its default state when the page first loads
+    update_view();
+
+    $("#canvas").click( function( eventObj ) {
+       //var x = eventObj.pageX;
+       //var y = eventObj.pageY;
+       //console.log("click at absolute ("+x+","+y+")");
+
+       var top_left_canvas_corner = $("#canvas").elementlocation();
+       var x = eventObj.pageX - top_left_canvas_corner.x;
+       var y = eventObj.pageY - top_left_canvas_corner.y;
+
+       console.log("click at relative ("+x+","+y+")");
+
+       cube_got_clicked_on(x,y);
+    });
+});
 
 
+function cube_got_clicked_on(x,y) {
+    facenum = whichFaceIsPointIn(x,y);
+    if( facenum < 0 ) {
+      // not on a cube face
+      console.log("Click not on cube face.");
+      return;
+    }
+    console.log("Click on face "+facenum);
+}
 
 
 // ####################################################################
@@ -67,6 +91,28 @@ $(document).ready(function() {
 
 
 
+
+// ####################################################################
+// ###################### jquery helpers ##############################
+// ####################################################################
+
+
+jQuery.fn.elementlocation = function() {
+  var curleft = 0;
+  var curtop = 0;
+ 
+  var obj = this;
+ 
+  do {
+    curleft += obj.attr('offsetLeft');
+    curtop += obj.attr('offsetTop');
+ 
+    obj = obj.offsetParent();
+  } while ( obj.attr('tagName') != 'BODY' );
+ 
+ 
+  return ( {x:curleft, y:curtop} );
+};
 
 
 // ####################################################################
@@ -445,6 +491,127 @@ function isPointInQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, point )
     }
 
     return ( i2 < 0 ) && ( i3 < 0 ) && ( i4 < 0 );
+}
+
+
+// Returns a number 0-53 if the x,y point (relative to canvas) is one of the faces.
+// Returns -1 if no match.
+
+//This code is nearly identical to render_view except for the inner loop
+//TODO: factor these together
+function whichFaceIsPointIn( x,y )
+{
+    var canvas = document.getElementById("canvas");   
+    var ctx = canvas.getContext("2d");   
+
+
+    //TODO: pull tehse out of the canvas object.
+    var height = 300;
+    var width = 300;
+    var altitude = $("#slide_alt").val() / 100.0;
+    var azimuth = $("#slide_azi").val() / 100.0;
+    var distance = 15;
+
+    // Build the projection matrix
+    // Note that the camera looks down -z in view space and the viewplane is at z = -1
+    var aspectRatio = height / width;    
+    var proj = buildProjectionMatrix( -0.3, 0.3, -0.3 * aspectRatio, 0.3 * aspectRatio, 1.0, 50.0 );
+
+    // Build the view matrix
+    var eye = new vec4;
+    var center = new vec4;
+    var up = new vec4;
+    center.v[0] = distance * Math.sin( azimuth ) * Math.sin( altitude )
+    center.v[1] = distance * Math.cos( altitude )
+    center.v[2] = distance * Math.cos( azimuth ) * Math.sin( altitude )     
+    up.v[1] = 1.0;
+    eye.v[3] = center.v[3] = up.v[3] = 0.0;   
+    var view = buildViewMatrix( center, eye, up );    
+
+    // Build the viewport transform
+    var viewport = buildViewportTransform( width, height );
+   
+    // viewProjViewport matrix will transform all points from world space to screen space
+    var viewProj = multiplyMatrix( proj, view );
+    var viewProjViewport = multiplyMatrix( viewport, viewProj );    
+    
+    return whichFaceIsPointInHelper( x,y, ctx, viewProj, viewProjViewport );
+}
+
+
+//This code is nearly identical to drawCube except for the inner loop
+//TODO: factor out the code which generates the quad list, and share it between this and drawCube. 
+function whichFaceIsPointInHelper( x,y, ctx, viewProj, viewProjViewport ) {
+    point = new vec4;
+    point.v[0] = x;
+    point.v[1] = y;
+
+
+    // This code generates the 54 quads representing the 54 pixels of the cube    
+    var crossAxis = [ [1, 2], [0, 2], [0, 1] ];
+    var invertAxis = [ [false, false], [true, false], [true, false], [false, false], [false, false], [true, false] ];
+    var gapSize = 0.08;
+    var p = new vec4;
+    var d = [ 0.0, 0.0, 0.0 ];
+    var g = [ 0.0, 0.0, 0.0 ];
+
+    var black = [ 0.0, 0.0, 0.0, 0.0 ];
+    for ( var i = 0; i < 6; ++i )
+    {
+        var axis = i >> 1;
+        p.v[axis] = 3.0;
+        if ( i & 1 )
+        {
+            p.v[axis] *= -1.0;
+        }
+        d[axis] = 0.0;
+
+        var a0 = crossAxis[ axis ][ 0 ];
+        var a1 = crossAxis[ axis ][ 1 ];
+        var s0 = 1.0;
+        var s1 = 1.0;
+        if ( invertAxis[ i ][ 0 ] )
+        {
+            s0 *= -1.0;
+        }
+        if ( invertAxis[ i ][ 1 ] )
+        {
+            s1 *= -1.0
+        }
+        d[a0] = ( 2.0 - 2.0 * gapSize ) * s0;
+        d[a1] = ( 2.0 - 2.0 * gapSize ) * s1;
+        g[a0] = gapSize * s0;
+        g[a1] = gapSize * s1;
+        p.v[a1] = -3.0 * s1 + g[a1];
+        for ( var j = 0; j < 3; j++ )
+        {
+            p.v[a0] = -3.0 * s0 + g[a0]
+            for ( var k = 0; k < 3; k++ )
+            {           
+                var p1 = vectorCopy( p );
+
+                p.v[ a0 ] += d[ a0 ]
+                var p2 = vectorCopy( p );
+
+                p.v[ a1 ] += d[ a1 ];
+                var p3 = vectorCopy( p );
+                
+                p.v[ a0 ] -= d[ a0 ];
+                var p4 = vectorCopy( p );
+
+                var ndx = i*9 + j*3 + k        
+                if( isPointInQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, point ) ) {
+                    // found it.  break out of loop.
+                    return i*9 + j*3 + k;
+                }
+                
+                p.v[ a1 ] -= d[ a1 ];
+                p.v[ a0 ] += d[ a0 ] + 2.0 * g[ a0 ];
+            }                     
+            p.v[ a1 ] += d[ a1 ] + 2.0 * g[ a1 ];
+        }
+    }           
+    return -1;
 }
 
 
