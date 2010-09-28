@@ -716,69 +716,14 @@ function drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, orientation
 
 function drawCube( ctx, viewProj, viewProjViewport, colors )
 {
-    // This code generates the 54 quads representing the 54 pixels of the cube    
-    var crossAxis = [ [1, 2], [0, 2], [0, 1] ];
-    var invertAxis = [ [false, false], [true, false], [true, false], [false, false], [false, false], [true, false] ];
-    var gapSize = 0.08;
-    var p = new vec4;
-    var d = [ 0.0, 0.0, 0.0 ];
-    var g = [ 0.0, 0.0, 0.0 ];
+    var quadlist = buildQuadList( ctx, viewProj, viewProjViewport );
+    for( ndx=0; ndx<54; ndx++) {
+        var quad = quadlist[ndx];
 
-    var black = [ 0.0, 0.0, 0.0, 0.0 ];
-    for ( var i = 0; i < 6; ++i )
-    {
-        var axis = i >> 1;
-        p.v[axis] = 3.0;
-        if ( i & 1 )
-        {
-            p.v[axis] *= -1.0;
-        }
-        d[axis] = 0.0;
-
-        var a0 = crossAxis[ axis ][ 0 ];
-        var a1 = crossAxis[ axis ][ 1 ];
-        var s0 = 1.0;
-        var s1 = 1.0;
-        if ( invertAxis[ i ][ 0 ] )
-        {
-            s0 *= -1.0;
-        }
-        if ( invertAxis[ i ][ 1 ] )
-        {
-            s1 *= -1.0
-        }
-        d[a0] = ( 2.0 - 2.0 * gapSize ) * s0;
-        d[a1] = ( 2.0 - 2.0 * gapSize ) * s1;
-        g[a0] = gapSize * s0;
-        g[a1] = gapSize * s1;
-        p.v[a1] = -3.0 * s1 + g[a1];
-        for ( var j = 0; j < 3; j++ )
-        {
-            p.v[a0] = -3.0 * s0 + g[a0]
-            for ( var k = 0; k < 3; k++ )
-            {           
-                var p1 = vectorCopy( p );
-
-                p.v[ a0 ] += d[ a0 ]
-                var p2 = vectorCopy( p );
-
-                p.v[ a1 ] += d[ a1 ];
-                var p3 = vectorCopy( p );
-                
-                p.v[ a0 ] -= d[ a0 ];
-                var p4 = vectorCopy( p );
-
-                var ndx = i*9 + j*3 + k        
-                // draw the arrow slightly darker than the actual color
-                darkcolor = [ colors[ndx][0]*.6, colors[ndx][1]*.6, colors[ndx][2]*.6 ]
-                drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, colors[ndx] );
-                drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, 3, darkcolor );
-                
-                p.v[ a1 ] -= d[ a1 ];
-                p.v[ a0 ] += d[ a0 ] + 2.0 * g[ a0 ];
-            }                     
-            p.v[ a1 ] += d[ a1 ] + 2.0 * g[ a1 ];
-        }
+        // draw the arrow slightly darker than the actual color
+        var darkcolor = [ colors[ndx][0]*.6, colors[ndx][1]*.6, colors[ndx][2]*.6 ]
+        drawQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], colors[ndx] );
+        drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], 3, darkcolor );
     }           
 }
 
