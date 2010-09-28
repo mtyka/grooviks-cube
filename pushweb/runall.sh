@@ -6,4 +6,4 @@ sleep 1
 cd ../pacsci
 ./groovikhookbox.py
 #./random_colors.py &
-#open http://localhost:8080
+open http://localhost:8080

@@ -41,27 +41,30 @@ function on_message_pushed( datagram ) {
     $("#canvas").click( function( eventObj ) {
        //var x = eventObj.pageX;
        //var y = eventObj.pageY;
-       //console.log("click at absolute ("+x+","+y+")");
+       //console.log("local click at absolute ("+x+","+y+")");
 
        var top_left_canvas_corner = $("#canvas").elementlocation();
        var x = eventObj.pageX - top_left_canvas_corner.x;
        var y = eventObj.pageY - top_left_canvas_corner.y;
 
-       console.log("click at relative ("+x+","+y+")");
+       //console.log("local click at relative ("+x+","+y+")");
 
        cube_got_clicked_on(x,y);
     });
 });
 
+var faceclick_subscription;
 
 function cube_got_clicked_on(x,y) {
     facenum = whichFaceIsPointIn(x,y);
     if( facenum < 0 ) {
       // not on a cube face
-      console.log("Click not on cube face.");
+      console.log("Local click not on cube face.");
       return;
     }
-    console.log("Click on face "+facenum);
+    console.log("Publishing local click on face "+facenum);
+    //faceclick_subscription.publish( facenum );  // docs say this should work but it doesn't
+    hookbox_conn.publish( 'faceclick', facenum );
 }
 
 
@@ -69,24 +72,33 @@ function cube_got_clicked_on(x,y) {
 // #################### Communications Setup ##########################
 // ####################################################################
 
-    // create a connection object and setup the basic event callbacks.
-    // finally, subcribe to "chan1".
-    //var conn = hookbox.connect('http://127.0.0.1:2974');
-    var conn = hookbox.connect(server);
-    //conn.onOpen = function() { alert("connection established!"); };
-    conn.onError = function(err) { alert("Failed to connect to hookbox server: " + err.msg); };
+// create a connection object and setup the basic event callbacks.
+// finally, subcribe to "chan1".
+//var hookbox_conn = hookbox.connect('http://127.0.0.1:2974');
+var hookbox_conn = hookbox.connect(server);
+//hookbox_conn.onOpen = function() { alert("connection established!"); };
+hookbox_conn.onError = function(err) { alert("Failed to connect to hookbox server: " + err.msg); };
 
-    var subscription = null;
-    conn.onSubscribed = function(channelName, _subscription) {
+var subscription = null;
+hookbox_conn.onSubscribed = function(channelName, _subscription) {
+    if( channelName == 'iframe' ) {
         subscription = _subscription;                
         subscription.onPublish = function(frame) {
             on_message_pushed( frame.payload )
         };  
-    };
+    }
+    if( channelName == 'faceclick' ) {
+        faceclick_subscription = _subscription;                
+        faceclick_subscription.onPublish = function(frame) {
+            console.log('Heard about click on face ' + frame.payload);
+        };  
+    }
+};
 
 $(document).ready(function() {
    // Subscribe to the pubsub channel with the colors
-   conn.subscribe("iframe");
+   hookbox_conn.subscribe("iframe");
+   hookbox_conn.subscribe("faceclick");
 });
 
 
