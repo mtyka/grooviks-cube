@@ -538,9 +538,6 @@ function build_view_context( ) {
 
 // Returns a number 0-53 if the x,y point (relative to canvas) is one of the faces.
 // Returns -1 if no match.
-
-//This code is nearly identical to render_view except for the inner loop
-//TODO: factor these together
 function whichFaceIsPointIn( x,y )
 {
     var point = new vec4;
