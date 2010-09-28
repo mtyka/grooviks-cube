@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """ producer.py
 Produces random data samples for the EQ sliders.
 Uses the Hookbox REST api for publishing the data 

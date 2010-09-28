@@ -48,7 +48,7 @@ function on_message_pushed( datagram ) {
     // create a connection object and setup the basic event callbacks.
     // finally, subcribe to "chan1".
     //var conn = hookbox.connect('http://127.0.0.1:2974');
-    var conn = hookbox.connect('http://10.0.1.212:2974');
+    var conn = hookbox.connect(server);
     //conn.onOpen = function() { alert("connection established!"); };
     conn.onError = function(err) { alert("Failed to connect to hookbox server: " + err.msg); };
 
