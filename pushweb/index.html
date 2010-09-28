@@ -560,6 +560,7 @@ function whichFaceIsPointIn( x,y )
     return -1;
 }
 
+
 function buildQuadList( ctx, viewProj, viewProjViewport ) {
     // This code generates the 54 quads representing the 54 pixels of the cube    
     var crossAxis = [ [1, 2], [0, 2], [0, 1] ];
@@ -755,31 +756,8 @@ function render_view( width, height, altitude, azimuth, distance )
     ctx.fillRect( 0, 0, width, height );   
     ctx.restore();   
     
-    
-    // Build the projection matrix
-    // Note that the camera looks down -z in view space and the viewplane is at z = -1
-    var aspectRatio = height / width;    
-    var proj = buildProjectionMatrix( -0.3, 0.3, -0.3 * aspectRatio, 0.3 * aspectRatio, 1.0, 50.0 );
-
-    // Build the view matrix
-    var eye = new vec4;
-    var center = new vec4;
-    var up = new vec4;
-    center.v[0] = distance * Math.sin( azimuth ) * Math.sin( altitude )
-    center.v[1] = distance * Math.cos( altitude )
-    center.v[2] = distance * Math.cos( azimuth ) * Math.sin( altitude )     
-    up.v[1] = 1.0;
-    eye.v[3] = center.v[3] = up.v[3] = 0.0;   
-    var view = buildViewMatrix( center, eye, up );    
-
-    // Build the viewport transform
-    var viewport = buildViewportTransform( width, height );
-   
-    // viewProjViewport matrix will transform all points from world space to screen space
-    var viewProj = multiplyMatrix( proj, view );
-    var viewProjViewport = multiplyMatrix( viewport, viewProj );    
-    
-    drawCube( ctx, viewProj, viewProjViewport, current_cube_colors );
+    var view_context = build_view_context();
+    drawCube( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'], current_cube_colors );
 }
 
 
