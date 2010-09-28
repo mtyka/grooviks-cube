@@ -146,7 +146,7 @@ class GrooviksCube:
 			self.__AppendState( [ CubeState.DELAY, duration ] )
 			
 	# This will queue multiple rotations. The rotations parameter is of the form
-	# [ [ <rotation type> <clockwise> ], [ <rotation type> <clockwise> ], ... ]
+	# [ [ <rotation type>, <clockwise> ], [ <rotation type>, <clockwise> ], ... ]
 	# rotation type is an integer from 0 to 8. 
 	# 0-2 represent rotations around the X axis of the 1st, 2nd, and 3rd rows, respectively.
 	# 3-5 represent rotations around the Y axis of the 1st, 2nd, and 3rd rows, respectively.
