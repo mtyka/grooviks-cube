@@ -542,11 +542,22 @@ function whichFaceIsPointIn( x,y )
 //This code is nearly identical to drawCube except for the inner loop
 //TODO: factor out the code which generates the quad list, and share it between this and drawCube. 
 function whichFaceIsPointInHelper( x,y, ctx, viewProj, viewProjViewport ) {
-    point = new vec4;
+    var point = new vec4;
     point.v[0] = x;
     point.v[1] = y;
 
+    var quadlist = buildQuadList( ctx, viewProj, viewProjViewport );
+    for( ndx=0; ndx<54; ndx++) {
+        var quad = quadlist[ndx];
+        if( isPointInQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], point ) ) {
+            // found it.  break out of loop.
+            return ndx;
+        }
+    }
+    return -1;
+}
 
+function buildQuadList( ctx, viewProj, viewProjViewport ) {
     // This code generates the 54 quads representing the 54 pixels of the cube    
     var crossAxis = [ [1, 2], [0, 2], [0, 1] ];
     var invertAxis = [ [false, false], [true, false], [true, false], [false, false], [false, false], [true, false] ];
@@ -556,6 +567,7 @@ function whichFaceIsPointInHelper( x,y, ctx, viewProj, viewProjViewport ) {
     var g = [ 0.0, 0.0, 0.0 ];
 
     var black = [ 0.0, 0.0, 0.0, 0.0 ];
+    var quadlist = [];
     for ( var i = 0; i < 6; ++i )
     {
         var axis = i >> 1;
@@ -600,10 +612,7 @@ function whichFaceIsPointInHelper( x,y, ctx, viewProj, viewProjViewport ) {
                 var p4 = vectorCopy( p );
 
                 var ndx = i*9 + j*3 + k        
-                if( isPointInQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, point ) ) {
-                    // found it.  break out of loop.
-                    return i*9 + j*3 + k;
-                }
+                quadlist[ ndx ] = [p1,p2,p3,p4];
                 
                 p.v[ a1 ] -= d[ a1 ];
                 p.v[ a0 ] += d[ a0 ] + 2.0 * g[ a0 ];
@@ -611,7 +620,7 @@ function whichFaceIsPointInHelper( x,y, ctx, viewProj, viewProjViewport ) {
             p.v[ a1 ] += d[ a1 ] + 2.0 * g[ a1 ];
         }
     }           
-    return -1;
+    return quadlist;
 }
 
 
