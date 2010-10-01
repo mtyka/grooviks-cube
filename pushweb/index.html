@@ -58,6 +58,8 @@ function parse_hex_rgb(hexstring) {
    var azimuth = $("#slide_azi").val() / 100.0;
    render_view(300, 300, altitude, azimuth, 15 );
    //window.setTimeout( update_view, 50 );
+
+   frames_rendered ++;
  }
 
  $(document).ready( function() {
@@ -92,6 +94,29 @@ function cube_got_clicked_on(x,y) {
     //faceclick_subscription.publish( facenum );  // docs say this should work but it doesn't
     hookbox_conn.publish( 'faceclick', facenum );
 }
+
+
+// ####################################################################
+// #################### Framerate calculation #########################
+// ####################################################################
+
+var frames_rendered=0;
+var frame_cnt_reset_at = (new Date()).getTime(); // epoch time in ms
+
+function display_framerate() {
+    var now = (new Date()).getTime();
+    var howlong_ms = now - frame_cnt_reset_at;
+    var fps = frames_rendered * 1000 / howlong_ms;
+    $('#framerate').html( Math.floor(fps*10) / 10 );
+
+    // reset
+    frames_rendered = 0;
+    frame_cnt_reset_at = now;
+}
+
+$(document).ready(function() {
+    setInterval( display_framerate, 2500 );
+});
 
 
 // ####################################################################
@@ -833,6 +858,9 @@ function render_view( width, height, altitude, azimuth, distance )
        <div>
           Altitude: <input id="slide_alt" type="range" min="1" max="313" value="220" onchange="update_view();"><br/>
           Azimuth: <input id="slide_azi" type="range" min="0" max="628" value="233" onchange="update_view();"><br/>
+       </div>
+       <div>
+       Framerate: <span id="framerate">...</span> fps
        </div>
     </body> 
 </html>  
