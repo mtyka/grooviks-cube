@@ -2,7 +2,7 @@
 """ producer.py
 Produces random data samples for the EQ sliders.
 Uses the Hookbox REST api for publishing the data 
-on channel "chan1".
+on channel "iframe".
 
 --- License: MIT ---
 
@@ -43,7 +43,29 @@ from glog import GLog;
 from groovikconfig import *
 
 
+
+def compress_datagram(datagram):
+    """Returns a JSON object to be sent through hookbox.
+    """
+
+    hex_datagram = ''
+
+    for facet in datagram:
+        for rgb in facet:
+            hexval = "%02x" % (rgb * 255)
+            hex_datagram += hexval
+
+    output = '"%s"' % hex_datagram
+    #print "sending %s" % output
+    return output
+
+
+
+
+
 def push_message(datagram):
+    """Pushes a datagram out onto the hookbox channel
+    """
 
     # assume the hookbox server is on localhost:2974    
     url = "http://127.0.0.1:2974/rest/publish"
@@ -53,7 +75,7 @@ def push_message(datagram):
                "payload" : []
              }
 
-    values["payload"] = json.dumps(datagram)
+    values["payload"] = compress_datagram(datagram)
     formdata = urllib.urlencode(values)
     req = urllib2.Request(url, formdata)
     resp = urllib2.urlopen(req)
