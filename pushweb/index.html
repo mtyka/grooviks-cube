@@ -20,11 +20,37 @@
 function on_message_pushed( datagram ) {
      //console.log("Got message published");
      //console.log( datagram );
-     new_colors = datagram;
-     current_cube_colors = new_colors;
+     current_cube_colors = decompress_datagram( datagram );
      update_view();  // calls into the renderer code
 }
 
+
+// Converts a long hex string into an array of 54 RGB-float-triples
+function decompress_datagram(datagram) {
+    //console.log("decompressing...");
+    //console.log(datagram);
+    var output = [];
+
+    while( datagram.length > 0 ) {
+        var rgb = datagram.substring(0,6);
+        datagram = datagram.substring(6);
+        output[output.length] = parse_hex_rgb(rgb);
+    }
+    //console.log("decompressed to...");
+    //console.log(output);
+    return output;
+}
+
+function parse_hex_rgb(hexstring) {
+    var rgb_floats = [];
+    var int;
+    for(i=0; i<3; i++) {
+      var rgbhex = hexstring.substring(i*2, 2 + i*2);
+      var rgbint = parseInt(rgbhex,16);
+      rgb_floats[i] = rgbint / 255.0;
+    }
+    return rgb_floats;
+}
 
  function update_view() {
    // looks at the view sliders and renders-the cube with that and the current color-state
