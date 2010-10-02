@@ -117,7 +117,8 @@ def main ():
         if data:
             frame = data[-1][1]
             push_message( frame )
-            time.sleep(.033333333)
+            #time.sleep(1.0/30)  # 30fps goal
+            time.sleep(1.0/12)  # slower for ipad/iphone
 
 if __name__ == "__main__":
     main()
