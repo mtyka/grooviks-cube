@@ -62,10 +62,19 @@ def compress_datagram(datagram):
 
 
 
+last_datagram_sent = None
 
 def push_message(datagram):
     """Pushes a datagram out onto the hookbox channel
     """
+
+    global last_datagram_sent
+
+    if datagram == last_datagram_sent:
+        # optimize
+        return
+    else:
+        last_datagram_sent = datagram
 
     # assume the hookbox server is on localhost:2974    
     url = "http://127.0.0.1:2974/rest/publish"
