@@ -28,14 +28,13 @@ var INCLUDE_ARROWS = true;
 var HOW_OFTEN_DISPLAY_FRAMERATE = 400;  // ms between updates
 var RENDER_WITH_CANVAS = true;
 
-var RENDER_WITH_SVG = true;
-/* SVG was an attempt to get it to go faster on iphone devices.  It didn't really help.
-It seems somewhat slower than canvas.
-Next step to pursue this path would be to keep a pool of polygon objects rather than
-destroy everything on the SVG and recreate new polygon objects every frame.
-FWIW, canvas seems to be limited on iphones by blitting speed to the screen.
+/* SVG is an alternate way to render. It's not fully hooked up (no arrows, or input)
+but does offer smooth blending between frames using jquery.animate.
+It also renders vector-based when zooming on ipad/iphone although doesn't
+seem to offer real performance benefits on that platform.
 */
-var SVG_ANIMATION_SPEED = 80;  // how many ms to blend color transitions over
+var RENDER_WITH_SVG = false;
+var SVG_ANIMATION_SPEED = 65;  // how many ms to blend color transitions over
 
 
 // ####################################################################

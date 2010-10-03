@@ -28,6 +28,11 @@ on channel "iframe".
 
 """
 
+TARGET_FRAMERATE = 20
+# 30 looks good on real PCs.  iphones and ipads max out at about 5-10.
+# TODO: publish multiple channels at different framerates
+
+
 import time, urllib, urllib2, json, random
 
 import sys
@@ -114,6 +119,8 @@ def main ():
     # simulate one frame so we have a valid state to render on first frame
     simulate(grooviksCube)
 
+    global TARGET_FRAMERATE
+
     while True:
         # generate random colors for every cube face every 1.5 seconds
         # and publish them via the HTTP/REST api.
@@ -126,8 +133,7 @@ def main ():
         if data:
             frame = data[-1][1]
             push_message( frame )
-            #time.sleep(1.0/30)  # 30fps goal
-            time.sleep(1.0/10)  # slower for ipad/iphone
+            time.sleep(1.0/ TARGET_FRAMERATE )
 
 if __name__ == "__main__":
     main()
