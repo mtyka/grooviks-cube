@@ -1,0 +1,995 @@
+<html>   
+    <head>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
+        <script src="http://leodirac.com/jquery.svg/jquery.svg.js"></script>
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svganim.js"></script> 
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svgdom.js"></script> 
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svgfilter.js"></script> 
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svggraph.js"></script> 
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svgplot.js"></script> 
+
+
+<script type="text/javascript"> 
+    // This code loads the hookbox.js from the current host but changing the port to 2974.
+    // server = 'http://127.0.0.1:2974'; // hard-code from localhost
+    server = location.protocol + '//' + location.hostname + ':2974';
+    // Dynamically inserts the code to load the script into the page.
+    document.write('<scr'+'ipt src="' + server + '/static/hookbox.js"></scr'+'ipt>');
+</script>
+
+            <script type="text/javascript">
+
+// ####################################################################
+// ######################## Configuration #############################
+// ####################################################################
+
+var INCLUDE_ARROWS = true;
+var HOW_OFTEN_DISPLAY_FRAMERATE = 400;  // ms between updates
+var RENDER_WITH_CANVAS = true;
+
+var RENDER_WITH_SVG = true;
+/* SVG was an attempt to get it to go faster on iphone devices.  It didn't really help.
+It seems somewhat slower than canvas.
+Next step to pursue this path would be to keep a pool of polygon objects rather than
+destroy everything on the SVG and recreate new polygon objects every frame.
+FWIW, canvas seems to be limited on iphones by blitting speed to the screen.
+*/
+var SVG_ANIMATION_SPEED = 80;  // how many ms to blend color transitions over
+
+
+// ####################################################################
+// ######################## Control Logic #############################
+// ####################################################################
+
+
+function on_message_pushed( datagram ) {
+     //console.log("Got message published");
+     //console.log( datagram );
+     current_cube_colors = decompress_datagram( datagram );
+     update_view();  // calls into the renderer code
+}
+
+
+// Converts a long hex string into an array of 54 RGB-float-triples
+function decompress_datagram(datagram) {
+    //console.log("decompressing...");
+    //console.log(datagram);
+    var output = [];
+
+    while( datagram.length > 0 ) {
+        var rgb = datagram.substring(0,6);
+        datagram = datagram.substring(6);
+        output[output.length] = parse_hex_rgb(rgb);
+    }
+    //console.log("decompressed to...");
+    //console.log(output);
+    return output;
+}
+
+function parse_hex_rgb(hexstring) {
+    var rgb_floats = [];
+    var int;
+    for(i=0; i<3; i++) {
+      var rgbhex = hexstring.substring(i*2, 2 + i*2);
+      var rgbint = parseInt(rgbhex,16);
+      rgb_floats[i] = rgbint / 255.0;
+    }
+    return rgb_floats;
+}
+
+function update_view() {
+   // looks at the view sliders and renders-the cube with that and the current color-state
+   var altitude = $("#slide_alt").val() / 100.0;
+   var azimuth = $("#slide_azi").val() / 100.0;
+   render_view(300, 300, altitude, azimuth, 15 );
+   //window.setTimeout( update_view, 50 );
+
+   frames_rendered ++;
+}
+
+function rotate_view() {
+    clear_svg();
+    update_view();
+}
+
+ $(document).ready( function() {
+    // Draw the cube in its default state when the page first loads
+    update_view();
+
+    $("#canvas").click( function( eventObj ) {
+       //var x = eventObj.pageX;
+       //var y = eventObj.pageY;
+       //console.log("local click at absolute ("+x+","+y+")");
+
+       var top_left_canvas_corner = $("#canvas").elementlocation();
+       var x = eventObj.pageX - top_left_canvas_corner.x;
+       var y = eventObj.pageY - top_left_canvas_corner.y;
+
+       //console.log("local click at relative ("+x+","+y+")");
+
+       cube_got_clicked_on(x,y);
+    });
+});
+
+var faceclick_subscription;
+
+function cube_got_clicked_on(x,y) {
+    facenum = whichFaceIsPointIn(x,y);
+    if( facenum < 0 ) {
+      // not on a cube face
+      console.log("Local click not on cube face.");
+      return;
+    }
+    console.log("Publishing local click on face "+facenum);
+    //faceclick_subscription.publish( facenum );  // docs say this should work but it doesn't
+    hookbox_conn.publish( 'faceclick', facenum );
+}
+
+
+// ####################################################################
+// #################### Framerate calculation #########################
+// ####################################################################
+
+var frames_rendered=0;
+var frame_cnt_reset_at = (new Date()).getTime(); // epoch time in ms
+
+function display_framerate() {
+    var now = (new Date()).getTime();
+    var howlong_ms = now - frame_cnt_reset_at;
+    var fps = frames_rendered * 1000 / howlong_ms;
+    $('#framerate').html( Math.floor(fps*10) / 10 );
+
+    // reset
+    frames_rendered = 0;
+    frame_cnt_reset_at = now;
+}
+
+$(document).ready(function() {
+    setInterval( display_framerate, HOW_OFTEN_DISPLAY_FRAMERATE );
+});
+
+
+// ####################################################################
+// #################### Communications Setup ##########################
+// ####################################################################
+
+// create a connection object and setup the basic event callbacks.
+// finally, subcribe to "chan1".
+//var hookbox_conn = hookbox.connect('http://127.0.0.1:2974');
+var hookbox_conn = hookbox.connect(server);
+//hookbox_conn.onOpen = function() { alert("connection established!"); };
+hookbox_conn.onError = function(err) { alert("Failed to connect to hookbox server: " + err.msg); };
+
+var subscription = null;
+hookbox_conn.onSubscribed = function(channelName, _subscription) {
+    if( channelName == 'iframe' ) {
+        subscription = _subscription;                
+        subscription.onPublish = function(frame) {
+            on_message_pushed( frame.payload )
+        };  
+    }
+    if( channelName == 'faceclick' ) {
+        faceclick_subscription = _subscription;                
+        faceclick_subscription.onPublish = function(frame) {
+            console.log('Heard about click on face ' + frame.payload);
+        };  
+    }
+};
+
+$(document).ready(function() {
+   // Subscribe to the pubsub channel with the colors
+   hookbox_conn.subscribe("iframe");
+   hookbox_conn.subscribe("faceclick");
+});
+
+
+
+
+// ####################################################################
+// ###################### jquery helpers ##############################
+// ####################################################################
+
+
+jQuery.fn.elementlocation = function() {
+  var curleft = 0;
+  var curtop = 0;
+ 
+  var obj = this;
+ 
+  do {
+    curleft += obj.attr('offsetLeft');
+    curtop += obj.attr('offsetTop');
+ 
+    obj = obj.offsetParent();
+  } while ( obj.attr('tagName') != 'BODY' );
+ 
+ 
+  return ( {x:curleft, y:curtop} );
+};
+
+
+// ####################################################################
+// ###################### Cube-rendering ##############################
+// ####################################################################
+
+//-----------------------------------------------------------------------------             
+// Standard 4D vector math utility methods
+// When using 4D vectors, positions are represented by [ x, y, z, 1 ]
+// and directions are represented by [ x, y, z, 0 ]
+//-----------------------------------------------------------------------------             
+function vec4() 
+{
+    this.v = [ 0, 0, 0, 1 ]
+}
+
+function vectorSubtract( a, b )
+{
+    var r = new vec4;
+    r.v[0] = a.v[0] - b.v[0];
+    r.v[1] = a.v[1] - b.v[1];
+    r.v[2] = a.v[2] - b.v[2];
+    r.v[3] = a.v[3] - b.v[3];  
+    return r;          
+}
+
+function vectorAdd( a, b )
+{
+    var r = new vec4;
+    r.v[0] = a.v[0] + b.v[0];
+    r.v[1] = a.v[1] + b.v[1];
+    r.v[2] = a.v[2] + b.v[2];
+    r.v[3] = a.v[3] + b.v[3];
+    return r;
+}
+
+function vectorMultiplyScalar( a, t )
+{
+    var r = new vec4;
+    r.v[0] = a.v[0] * t;
+    r.v[1] = a.v[1] * t;
+    r.v[2] = a.v[2] * t;
+    r.v[3] = a.v[3] * t;
+    return r;
+}
+
+// When t = 0, returns a. When t == 1, returns b.
+function vectorLerp( a, b, t )
+{
+    var d = vectorSubtract( b, a );
+    var d1 = vectorMultiplyScalar( d, t );
+    return vectorAdd( a, d1 );
+}
+
+// returns a + b * t (t is scalar)
+function vectorMultiplyAdd( a, b, t )
+{
+    var d = vectorMultiplyScalar( b, t );
+    return vectorAdd( a, d );
+}
+
+// returns a + b * t1 + c * t2 (t1,t2 is scalar)
+function vectorMultiplyAdd2( a, b, t1, c, t2 )
+{
+    var d1 = vectorMultiplyScalar( b, t1 );
+    var d2 = vectorMultiplyScalar( c, t2 );
+    var s = vectorAdd( d1, d2 );
+    return vectorAdd( a, s );
+}
+
+function vectorSet( v, x, y, z, w )
+{
+    v.v[0] = x;
+    v.v[1] = y;
+    v.v[2] = z;
+    v.v[3] = w;
+}
+
+function vectorCopy( v )
+{
+    var r = new vec4;
+    r.v[0] = v.v[0];
+    r.v[1] = v.v[1];
+    r.v[2] = v.v[2];
+    r.v[3] = v.v[3];
+    return r;
+}
+
+function vectorNormalize( v )
+{
+    var mag = v.v[0] * v.v[0] + v.v[1] * v.v[1] + v.v[2] * v.v[2] + v.v[3] * v.v[3];
+    if ( mag == 0.0 )
+    {
+        mag = 1.0
+    }
+    var r = new vec4;
+    mag = Math.sqrt( 1.0 / mag );
+    r.v[0] = v.v[0] * mag;
+    r.v[1] = v.v[1] * mag;
+    r.v[2] = v.v[2] * mag;
+    r.v[3] = v.v[3] * mag;
+    return r;
+}
+
+function vectorCross( a, b )
+{
+    var r = new vec4;
+    r.v[0] = a.v[1]*b.v[2] - a.v[2]*b.v[1];
+    r.v[1] = a.v[2]*b.v[0] - a.v[0]*b.v[2];
+    r.v[2] = a.v[0]*b.v[1] - a.v[1]*b.v[0];
+    r.v[3] = 0.0
+    return r;
+}
+
+
+//-----------------------------------------------------------------------------             
+// Note that we're doing column-major matrices. 
+// Vectors are pre-multiplied by matrices to transform them, i.e. vtransform = mat * v;
+// This is *not* the method OpenGL uses (they post-multiply vectors by matrices)
+// If you're not familiar w/ matrices, the upper 3x3 represents a rotation
+// and the 3rd column represents the translational component for a 
+// orthonormal matrix.
+//-----------------------------------------------------------------------------             
+function matrix() 
+{
+    this.m = [ [ 1, 0, 0, 0 ], [ 0, 1, 0, 0 ], [ 0, 0, 1, 0 ], [ 0, 0, 0, 1 ] ];
+}
+
+function multiplyMatrix( a, b ) 
+{
+    var r = new matrix()
+    r.m[0][0] = a.m[0][0] * b.m[0][0] + a.m[0][1] * b.m[1][0] + a.m[0][2] * b.m[2][0] + a.m[0][3] * b.m[3][0];
+    r.m[0][1] = a.m[0][0] * b.m[0][1] + a.m[0][1] * b.m[1][1] + a.m[0][2] * b.m[2][1] + a.m[0][3] * b.m[3][1];
+    r.m[0][2] = a.m[0][0] * b.m[0][2] + a.m[0][1] * b.m[1][2] + a.m[0][2] * b.m[2][2] + a.m[0][3] * b.m[3][2];
+    r.m[0][3] = a.m[0][0] * b.m[0][3] + a.m[0][1] * b.m[1][3] + a.m[0][2] * b.m[2][3] + a.m[0][3] * b.m[3][3];
+
+    r.m[1][0] = a.m[1][0] * b.m[0][0] + a.m[1][1] * b.m[1][0] + a.m[1][2] * b.m[2][0] + a.m[1][3] * b.m[3][0];
+    r.m[1][1] = a.m[1][0] * b.m[0][1] + a.m[1][1] * b.m[1][1] + a.m[1][2] * b.m[2][1] + a.m[1][3] * b.m[3][1];
+    r.m[1][2] = a.m[1][0] * b.m[0][2] + a.m[1][1] * b.m[1][2] + a.m[1][2] * b.m[2][2] + a.m[1][3] * b.m[3][2];
+    r.m[1][3] = a.m[1][0] * b.m[0][3] + a.m[1][1] * b.m[1][3] + a.m[1][2] * b.m[2][3] + a.m[1][3] * b.m[3][3];
+
+    r.m[2][0] = a.m[2][0] * b.m[0][0] + a.m[2][1] * b.m[1][0] + a.m[2][2] * b.m[2][0] + a.m[2][3] * b.m[3][0];
+    r.m[2][1] = a.m[2][0] * b.m[0][1] + a.m[2][1] * b.m[1][1] + a.m[2][2] * b.m[2][1] + a.m[2][3] * b.m[3][1];
+    r.m[2][2] = a.m[2][0] * b.m[0][2] + a.m[2][1] * b.m[1][2] + a.m[2][2] * b.m[2][2] + a.m[2][3] * b.m[3][2];
+    r.m[2][3] = a.m[2][0] * b.m[0][3] + a.m[2][1] * b.m[1][3] + a.m[2][2] * b.m[2][3] + a.m[2][3] * b.m[3][3];
+
+    r.m[3][0] = a.m[3][0] * b.m[0][0] + a.m[3][1] * b.m[1][0] + a.m[3][2] * b.m[2][0] + a.m[3][3] * b.m[3][0];
+    r.m[3][1] = a.m[3][0] * b.m[0][1] + a.m[3][1] * b.m[1][1] + a.m[3][2] * b.m[2][1] + a.m[3][3] * b.m[3][1];
+    r.m[3][2] = a.m[3][0] * b.m[0][2] + a.m[3][1] * b.m[1][2] + a.m[3][2] * b.m[2][2] + a.m[3][3] * b.m[3][2];
+    r.m[3][3] = a.m[3][0] * b.m[0][3] + a.m[3][1] * b.m[1][3] + a.m[3][2] * b.m[2][3] + a.m[3][3] * b.m[3][3];
+    return r;
+}
+                  
+function vectorMultiply( m, v )
+{
+    var res = new vec4( );
+    res.v[0] = m.m[0][0] * v.v[0] + m.m[0][1] * v.v[1] + m.m[0][2] * v.v[2] + m.m[0][3] * v.v[3];
+    res.v[1] = m.m[1][0] * v.v[0] + m.m[1][1] * v.v[1] + m.m[1][2] * v.v[2] + m.m[1][3] * v.v[3];
+    res.v[2] = m.m[2][0] * v.v[0] + m.m[2][1] * v.v[1] + m.m[2][2] * v.v[2] + m.m[2][3] * v.v[3];
+    res.v[3] = m.m[3][0] * v.v[0] + m.m[3][1] * v.v[1] + m.m[3][2] * v.v[2] + m.m[3][3] * v.v[3];
+    return res;
+}
+
+function vectorMultiplyProjective( m, v )
+{
+    // When doing a projective transformation, you end up with a w that is not 1
+    // To turn it into a normal position vector, you must divide by w
+    // which actually has the effect of doing the projection onto a plane where w = 1
+    var r = new vec4( );
+    r.v[0] = m.m[0][0] * v.v[0] + m.m[0][1] * v.v[1] + m.m[0][2] * v.v[2] + m.m[0][3] * v.v[3];
+    r.v[1] = m.m[1][0] * v.v[0] + m.m[1][1] * v.v[1] + m.m[1][2] * v.v[2] + m.m[1][3] * v.v[3];
+    r.v[2] = m.m[2][0] * v.v[0] + m.m[2][1] * v.v[1] + m.m[2][2] * v.v[2] + m.m[2][3] * v.v[3];
+    r.v[3] = m.m[3][0] * v.v[0] + m.m[3][1] * v.v[1] + m.m[3][2] * v.v[2] + m.m[3][3] * v.v[3];     
+    if ( r.v[3] != 0.0 ) 
+    {
+        oow = 1.0 / r.v[3];
+        r.v[0] = r.v[0] * oow
+        r.v[1] = r.v[1] * oow
+        r.v[2] = r.v[2] * oow
+    }
+    r.v[3] = 1.0
+    return r;
+}
+
+
+function matrixInvert( src )
+{
+    // NOTE: This only works for orthonormal matrices
+    var r = new matrix()
+
+    // Transpose the upper 3x3.
+    r.m[0][0] = src.m[0][0];  r.m[0][1] = src.m[1][0]; r.m[0][2] = src.m[2][0];
+    r.m[1][0] = src.m[0][1];  r.m[1][1] = src.m[1][1]; r.m[1][2] = src.m[2][1];
+    r.m[2][0] = src.m[0][2];  r.m[2][1] = src.m[1][2]; r.m[2][2] = src.m[2][2];
+
+    // Transform the translation.
+    var vTrans = new vec4();
+    vectorSet( vTrans, -src.m[0][3], -src.m[1][3], -src.m[2][3], 1.0 );
+    var vNewTrans = vectorMultiply( r, vTrans );
+    r.m[0][3] = vNewTrans.v[0];
+    r.m[1][3] = vNewTrans.v[1];
+    r.m[2][3] = vNewTrans.v[2]; 
+    return r;
+}
+
+
+// This library requires vectormath.js.  
+// Make sure you include it too
+            
+//-----------------------------------------------------------------------------             
+// Some basics of doing a 3d -> 2d transformation: There are 3 important matrices
+// 1) The 'camera' or 'view' matrix: This represents the *inverse* of position
+// and orientation of the camera in world space, and is used to transform
+// world-space points into the coordinate frame of the camera.
+// The camera "looks" down its -z axis, its x axis is pointing right in the image plane
+// and its y axis is pointing up in the image plane. All geometry will be projected
+// onto the z = -1 plane.
+// 2) The 'projection' matrix: This transforms geometry in camera space to
+// lie on the z =-1 plane. In projection space, everything that lies
+// between -1 and 1 in x, y and z will show up on screen.
+// 3) The 'viewport' matrix: This transforms geometry in projection space to
+// pixel space on screen by translating and scaling x and y. Z is left unchanged.
+//-----------------------------------------------------------------------------             
+function buildProjectionMatrix( left, right, bottom, top, near, far )
+{
+    var r = new matrix();
+    r.m[0][0] = ( 2 * near ) / ( right - left );
+    r.m[1][1] = ( 2 * near ) / ( top - bottom );
+    r.m[2][0] = ( right + left ) / ( right - left );    
+    r.m[2][1] = ( top + bottom ) / ( top - bottom );     
+    
+    r.m[2][3] = -1;
+    r.m[3][2] = 2 * far * near / ( far - near );
+    return r;
+}
+
+//-----------------------------------------------------------------------------             
+// The way to think about how to build a view matrix: Start with trying to
+// make a transform that transforms from camera space to world space.
+// Such a transform should have the property that post-multiplying the
+// matrix by the column vector [ 0 0 0 1 ] should result in the camera origin
+// in world space. Post-multiplying the matrix by [ 0 0 1 0 ] should result
+// in the 'z' axis of the camera in world space, etc. The first property means that
+// the 3rd column (the translational component of the matrix) needs to be
+// the camera location in 3D space (equals 'eye'). The second means that each
+// column of the matrix represents the x, y, and z axes of the camera.
+// Inverting this matrix results in the view matrix that transforms world-space
+// points into camera-space points.
+//-----------------------------------------------------------------------------             
+function buildViewMatrix( eye, center, up )
+{
+    var f = vectorSubtract( eye, center );
+
+    f = vectorNormalize( f );
+    var s = vectorCross( up, f );
+    s = vectorNormalize( s );
+    var u = vectorCross( f, s );
+    u = vectorNormalize( u );
+
+    var t = new matrix();
+    t.m[0][3] = eye.v[0];
+    t.m[1][3] = eye.v[1];
+    t.m[2][3] = eye.v[2];
+  
+    var rot = new matrix();
+    rot.m[0][0] = s.v[0]; 
+    rot.m[0][1] = u.v[0];
+    rot.m[0][2] = f.v[0];
+    
+    rot.m[1][0] = s.v[1]; 
+    rot.m[1][1] = u.v[1];
+    rot.m[1][2] = f.v[1];
+   
+    rot.m[2][0] = s.v[2]; 
+    rot.m[2][1] = u.v[2];
+    rot.m[2][2] = f.v[2];
+
+    var v = multiplyMatrix( t, rot );        
+    var vInv = matrixInvert( v );    
+    return vInv;
+}
+
+function buildViewportTransform( width, height )
+{
+    var r = new matrix();
+    r.m[0][0] = 0.5 * width; 
+    r.m[0][3] = 0.5 * height; 
+    r.m[1][1] = -0.5 * height; 
+    r.m[1][3] = 0.5 * height;
+    return r; 
+}
+                    
+
+function hex_digit_from_int(num) {
+    return num.toString(16);
+}
+
+function hex_from_float(num) {
+  var i = Math.floor( num * 255 );
+  var result = hex_digit_from_int( Math.floor(i/16) );
+  result += hex_digit_from_int( i % 16 );
+  return result;
+}
+
+function hex_colorstring_from_array( colorvec ) 
+{
+    return "#" 
+            + hex_from_float(colorvec[2])
+            + hex_from_float(colorvec[1])
+            + hex_from_float(colorvec[0]);
+}
+
+
+var svg_polygons = [];
+
+//-----------------------------------------------------------------------------
+// This draws a quad, projecting it from world space to screenspace, and then rendering it.
+// Arguments:
+// viewProj: a matrix which concatenates the view + projection matrices
+// viewProjViewport: a matrix which concatenates the view, projection, and viewport matrices
+// 
+//-----------------------------------------------------------------------------             
+function drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, color, ndx ) 
+{
+    //TODO: a bunch of this vector math can be optimized out if we're
+    // just rendering SVG and not canvas.
+    // In fact, it should be asbracted out and cached only on view rotation.
+
+    // Backface cull first
+    var b1 = vectorMultiplyProjective( viewProj, p1 );
+    var b2 = vectorMultiplyProjective( viewProj, p2 );
+    var b3 = vectorMultiplyProjective( viewProj, p3 );
+    var e1 = vectorSubtract( b2, b1 );
+    var e2 = vectorSubtract( b3, b1 );
+    var c = vectorCross( e1, e2 );
+    if ( c.v[2] <= 0.0 )
+    {
+        if( RENDER_WITH_SVG ) {
+            // Make sure it is hidden. This is actually not needed b/c clear_svg() takes care of it.
+            if( svg_polygons[ndx] ) {
+                console.log("Hiding face " + ndx);
+                $( svg_polygons[ndx] ).animate( {svgFillOpacity:0}, 0);
+                svg_polygons[ndx] = 0;
+            }
+        }
+        return;
+    }
+
+    //color = "rgba(" + Math.round(255.0*color[2]) + "," + Math.round(255.0*color[1]) + "," + Math.round(255.0*color[0]) + ",1)";
+    // SVG rendering on ipad does not understand rgba colors!
+    color = hex_colorstring_from_array(color);
+
+
+    // Transform all points into viewport space
+    var vp1 = vectorMultiplyProjective( viewProjViewport, p1 );  
+    var vp2 = vectorMultiplyProjective( viewProjViewport, p2 );  
+    var vp3 = vectorMultiplyProjective( viewProjViewport, p3 );  
+    var vp4 = vectorMultiplyProjective( viewProjViewport, p4 );
+
+    if( RENDER_WITH_CANVAS ) {
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 1.0; 
+         
+        // Draw a filled quad  
+        ctx.beginPath();   
+        ctx.moveTo(vp1.v[0], vp1.v[1]);   
+        ctx.lineTo(vp2.v[0], vp2.v[1]);   
+        ctx.lineTo(vp3.v[0], vp3.v[1]);   
+        ctx.lineTo(vp4.v[0], vp4.v[1]);   
+        ctx.closePath();   
+        ctx.fill();
+    }
+
+    if( RENDER_WITH_SVG ) {
+        if( svg ) {
+            // Does this facet exist already?
+            if( svg_polygons[ndx] ) {
+                // Yes.  Just update the color.
+                $( svg_polygons[ndx] ).animate( {svgFill: color}, SVG_ANIMATION_SPEED );
+                //console.log("Animating svg face "+ndx);
+            } else {
+                //console.log("Drawing svg face "+ndx + " with color " + color);
+                // The polygon doesnt exist yet.  Create it.
+                //svg_polygons[ndx] = svg.polygon([
+                pg = svg.polygon([
+                    [vp1.v[0], vp1.v[1]],
+                    [vp2.v[0], vp2.v[1]],
+                    [vp3.v[0], vp3.v[1]],
+                    [vp4.v[0], vp4.v[1]]
+                    ],  
+                        {fill: color, strokeWidth: 0});
+                svg_polygons[ndx] = pg;
+            }
+        }
+    }
+}   
+
+//-----------------------------------------------------------------------------
+// This returns true if the specified point in screen space is inside the
+// quad specified in world space.
+// Arguments:
+// viewProj: a matrix which concatenates the view + projection matrices
+// viewProjViewport: a matrix which concatenates the view, projection, and viewport matrices
+//-----------------------------------------------------------------------------
+function isPointInQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, point )
+{
+    // Backface cull first, ignore backfaced triangles
+    var b1 = vectorMultiplyProjective( viewProj, p1 );
+    var b2 = vectorMultiplyProjective( viewProj, p2 );
+    var b3 = vectorMultiplyProjective( viewProj, p3 );
+    var e1 = vectorSubtract( b2, b1 );
+    var e2 = vectorSubtract( b3, b1 );
+    var c = vectorCross( e1, e2 );
+    if ( c.v[2] <= 0.0 )
+    {
+        return;
+    }
+
+    // Transform all points into viewport space
+    var vp1 = vectorMultiplyProjective( viewProjViewport, p1 );
+    var vp2 = vectorMultiplyProjective( viewProjViewport, p2 );
+    var vp3 = vectorMultiplyProjective( viewProjViewport, p3 );
+    var vp4 = vectorMultiplyProjective( viewProjViewport, p4 );
+
+    // Now do a point in polygon test
+    // See http://local.wasp.uwa.edu.au/~pbourke/geometry/insidepoly/  Solution 3 (2D)
+    var i1 = (point.v[1] - vp1.v[1]) * (vp2.v[0] - vp1.v[0]) - (point.v[0] - vp1.v[0]) * (vp2.v[1] - vp1.v[1]);
+    var i2 = (point.v[1] - vp2.v[1]) * (vp3.v[0] - vp2.v[0]) - (point.v[0] - vp2.v[0]) * (vp3.v[1] - vp2.v[1]);
+    var i3 = (point.v[1] - vp3.v[1]) * (vp4.v[0] - vp3.v[0]) - (point.v[0] - vp3.v[0]) * (vp4.v[1] - vp3.v[1]);
+    var i4 = (point.v[1] - vp4.v[1]) * (vp1.v[0] - vp4.v[0]) - (point.v[0] - vp4.v[0]) * (vp1.v[1] - vp4.v[1]);
+
+    if ( ( i1 == 0 ) || ( i2 == 0 ) || ( i3 == 0 ) || ( i4 == 0 ) )
+    {
+        return 1;
+    }
+
+    if ( i1 > 0 )
+    {
+        return ( i2 > 0 ) && ( i3 > 0 ) && ( i4 > 0 );
+    }
+
+    return ( i2 < 0 ) && ( i3 < 0 ) && ( i4 < 0 );
+}
+
+
+// returns a hashmap with .ctx, .viewProj and .viewProjViewport
+function build_view_context( ) {
+    var canvas = document.getElementById("canvas");   
+    var ctx = canvas.getContext("2d");   
+    var altitude = $("#slide_alt").val() / 100.0;
+    var azimuth = $("#slide_azi").val() / 100.0;
+
+    var height = $('#canvas').attr('height');
+    var width = $('#canvas').attr('width');
+    var distance = 15;
+
+
+    // Build the projection matrix
+    // Note that the camera looks down -z in view space and the viewplane is at z = -1
+    var aspectRatio = height / width;    
+    var proj = buildProjectionMatrix( -0.3, 0.3, -0.3 * aspectRatio, 0.3 * aspectRatio, 1.0, 50.0 );
+
+    // Build the view matrix
+    var eye = new vec4;
+    var center = new vec4;
+    var up = new vec4;
+    center.v[0] = distance * Math.sin( azimuth ) * Math.sin( altitude )
+    center.v[1] = distance * Math.cos( altitude )
+    center.v[2] = distance * Math.cos( azimuth ) * Math.sin( altitude )     
+    up.v[1] = 1.0;
+    eye.v[3] = center.v[3] = up.v[3] = 0.0;   
+    var view = buildViewMatrix( center, eye, up );    
+
+    // Build the viewport transform
+    var viewport = buildViewportTransform( width, height );
+   
+    // viewProjViewport matrix will transform all points from world space to screen space
+    var viewProj = multiplyMatrix( proj, view );
+    var viewProjViewport = multiplyMatrix( viewport, viewProj );    
+
+    return { 'ctx': ctx,
+             'viewProj': viewProj,
+             'viewProjViewport': viewProjViewport
+           };
+}
+
+
+// Returns a number 0-53 if the x,y point (relative to canvas) is one of the faces.
+// Returns -1 if no match.
+function whichFaceIsPointIn( x,y )
+{
+    var point = new vec4;
+    point.v[0] = x;
+    point.v[1] = y;
+
+    var view_context = build_view_context();
+
+    var quadlist = buildQuadList( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'] );
+    for( ndx=0; ndx<54; ndx++) {
+        var quad = quadlist[ndx];
+        if( isPointInQuad( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'], quad[0], quad[1], quad[2], quad[3], point ) ) {
+            // found it.  break out of loop.
+            return ndx;
+        }
+    }
+    return -1;
+}
+
+
+function buildQuadList( ctx, viewProj, viewProjViewport ) {
+    // This code generates the 54 quads representing the 54 pixels of the cube    
+    var crossAxis = [ [1, 2], [0, 2], [0, 1] ];
+    var invertAxis = [ [false, false], [true, false], [true, false], [false, false], [false, false], [true, false] ];
+    var gapSize = 0.08;
+    var p = new vec4;
+    var d = [ 0.0, 0.0, 0.0 ];
+    var g = [ 0.0, 0.0, 0.0 ];
+
+    var black = [ 0.0, 0.0, 0.0, 0.0 ];
+    var quadlist = [];
+    for ( var i = 0; i < 6; ++i )
+    {
+        var axis = i >> 1;
+        p.v[axis] = 3.0;
+        if ( i & 1 )
+        {
+            p.v[axis] *= -1.0;
+        }
+        d[axis] = 0.0;
+
+        var a0 = crossAxis[ axis ][ 0 ];
+        var a1 = crossAxis[ axis ][ 1 ];
+        var s0 = 1.0;
+        var s1 = 1.0;
+        if ( invertAxis[ i ][ 0 ] )
+        {
+            s0 *= -1.0;
+        }
+        if ( invertAxis[ i ][ 1 ] )
+        {
+            s1 *= -1.0
+        }
+        d[a0] = ( 2.0 - 2.0 * gapSize ) * s0;
+        d[a1] = ( 2.0 - 2.0 * gapSize ) * s1;
+        g[a0] = gapSize * s0;
+        g[a1] = gapSize * s1;
+        p.v[a1] = -3.0 * s1 + g[a1];
+        for ( var j = 0; j < 3; j++ )
+        {
+            p.v[a0] = -3.0 * s0 + g[a0]
+            for ( var k = 0; k < 3; k++ )
+            {           
+                var p1 = vectorCopy( p );
+
+                p.v[ a0 ] += d[ a0 ]
+                var p2 = vectorCopy( p );
+
+                p.v[ a1 ] += d[ a1 ];
+                var p3 = vectorCopy( p );
+                
+                p.v[ a0 ] -= d[ a0 ];
+                var p4 = vectorCopy( p );
+
+                var ndx = i*9 + j*3 + k        
+                quadlist[ ndx ] = [p1,p2,p3,p4];
+                
+                p.v[ a1 ] -= d[ a1 ];
+                p.v[ a0 ] += d[ a0 ] + 2.0 * g[ a0 ];
+            }                     
+            p.v[ a1 ] += d[ a1 ] + 2.0 * g[ a1 ];
+        }
+    }           
+    return quadlist;
+}
+
+
+//-----------------------------------------------------------------------------
+// This draws an arrow, projecting it from world space to screenspace, and then rendering it.
+// Arguments:
+// viewProj: a matrix which concatenates the view + projection matrices
+// viewProjViewport: a matrix which concatenates the view, projection, and viewport matrices
+// p1-p4: the 4 quad points to render in
+// orientation: a number 0-3 indicating the orientation
+//-----------------------------------------------------------------------------
+function drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, orientation, color )
+{
+    if( ! INCLUDE_ARROWS ) {
+        return;
+    }
+
+    // Backface cull first
+    var b1 = vectorMultiplyProjective( viewProj, p1 );
+    var b2 = vectorMultiplyProjective( viewProj, p2 );
+    var b3 = vectorMultiplyProjective( viewProj, p3 );
+    var e1 = vectorSubtract( b2, b1 );
+    var e2 = vectorSubtract( b3, b1 );
+    var c = vectorCross( e1, e2 );
+    if ( c.v[2] <= 0.0 )
+    {
+        return;
+    }
+
+    ctx.fillStyle = "rgba(" + Math.round(255.0*color[2]) + "," + Math.round(255.0*color[1]) + "," + Math.round(255.0*color[0]) + ",1)";
+    ctx.globalAlpha = 1.0;
+
+    // Build basis
+    var origin;
+    var up;
+    var right;
+    if ( orientation == 0 )
+    {
+        origin = p1;
+        up = vectorSubtract( p4, p1 );
+        right = vectorSubtract( p2, p1 );
+    }
+    else if ( orientation == 1 )
+    {
+        origin = p2;
+        up = vectorSubtract( p1, p2 );
+        right = vectorSubtract( p3, p2 );
+    }
+    else if ( orientation == 2 )
+    {
+        origin = p3;
+        up = vectorSubtract( p2, p3 );
+        right = vectorSubtract( p4, p3 );
+    }
+    else if ( orientation == 3 )
+    {
+        origin = p4;
+        up = vectorSubtract( p3, p4 );
+        right = vectorSubtract( p1, p4 );
+    }
+
+    // Build arrow points
+    var borderAmount = 0.1;
+    var baseAmount = 0.3;
+    var arrowVertAmount = 0.4;
+
+    var a1 = vectorMultiplyAdd2( origin, up, borderAmount, right, baseAmount );
+    var a2 = vectorMultiplyAdd2( origin, up, borderAmount, right, 1.0 - baseAmount );
+    var a3 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, 1.0 - baseAmount );
+    var a4 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, 1.0 - borderAmount );
+    var a5 = vectorMultiplyAdd2( origin, up, 1.0 - borderAmount, right, 0.5 );
+    var a6 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, borderAmount );
+    var a7 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, baseAmount );
+
+    // Transform all points into viewport space
+    var vp1 = vectorMultiplyProjective( viewProjViewport, a1 );
+    var vp2 = vectorMultiplyProjective( viewProjViewport, a2 );
+    var vp3 = vectorMultiplyProjective( viewProjViewport, a3 );
+    var vp4 = vectorMultiplyProjective( viewProjViewport, a4 );
+    var vp5 = vectorMultiplyProjective( viewProjViewport, a5 );
+    var vp6 = vectorMultiplyProjective( viewProjViewport, a6 );
+    var vp7 = vectorMultiplyProjective( viewProjViewport, a7 );
+
+    // Draw a filled quad
+    ctx.beginPath();
+    ctx.moveTo(vp1.v[0], vp1.v[1]);
+    ctx.lineTo(vp2.v[0], vp2.v[1]);
+    ctx.lineTo(vp3.v[0], vp3.v[1]);
+    ctx.lineTo(vp4.v[0], vp4.v[1]);
+    ctx.lineTo(vp5.v[0], vp5.v[1]);
+    ctx.lineTo(vp6.v[0], vp6.v[1]);
+    ctx.lineTo(vp7.v[0], vp7.v[1]);
+    ctx.closePath();
+    ctx.fill();
+}
+
+// x = 1,-1 y = 2,-2 z = 3,-3 !rotate = 0
+arrowRotation = [
+-2,0,2,-2,0,2,-2,0,2,  //1,-1,3,1,-1,3,1,-1,3,
+2,0,-2,2,0,-2,2,0,-2,  //1,-1,3,1,-1,3,1,-1,3,
+
+-3,-3,-3,0,0,0,3,3,3,  //2,2,2,-1,-1,-1,0,0,0,
+-3,-3,-3,0,0,0,3,3,3,  //2,2,2,-1,-1,-1,0,0,0,
+
+-1,0,1,-1,0,1,-1,0,1,   //1,-1,3,1,-1,3,1,-1,3,
+1,0,-1,1,0,-1,1,0,-1,   //1,-1,3,1,-1,3,1,-1,3,
+];
+// x[],y[],z[] then
+// +x,-x,+y,-y,+z,-z
+rotToOrient = [[ -1, -1, 1, 3, 3, 1 ],
+               [ 3, 1, -1, -1, 0, 0 ], 
+               [ 2, 2, 0, 0, -1, -1 ] ];
+
+
+function clear_svg() {
+    if( RENDER_WITH_SVG ) {
+        if( svg ) {
+            svg.clear();
+        }
+    }
+    svg_polygons = [];
+}
+
+function drawCube( ctx, viewProj, viewProjViewport, colors )
+{
+
+    var quadlist = buildQuadList( ctx, viewProj, viewProjViewport );
+    for( ndx=0; ndx<54; ndx++) {
+        var quad = quadlist[ndx];
+
+        // draw the arrow slightly darker than the actual color
+        var darkcolor = [ colors[ndx][0]*.6, colors[ndx][1]*.6, colors[ndx][2]*.6 ]
+        drawQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], colors[ndx], ndx );
+        if (arrowRotation[ndx] !=0) {
+            sign = arrowRotation[ndx] < 0;
+            arrowDirection = rotToOrient[Math.abs(arrowRotation[ndx]) - 1][Math.floor(ndx / 9)]
+            if (sign) {
+              arrowDirection = (2 + arrowDirection) % 4
+            }
+            //console.log(arrowRotation[ndx], Math.floor(ndx/9), sign, arrowDirection)
+            if (arrowDirection >= 0) {
+              drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor );
+            }
+        }
+    }           
+}
+
+    // Define cube colors (these should be passed in)
+    var faceColors = [ [ 0.0, 1.0, 0.0 ], [1.0, 0.0, 0.0], [1.0, 0.0, 1.0], [0.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 1.0, 1.0] ];
+    var current_cube_colors = new Array( 54 );
+    var index = 0;
+    for ( var i = 0; i < 6; ++i )
+    {
+        for ( var j = 0; j < 9; ++j )
+        {
+            current_cube_colors[index] = faceColors[i];
+            index++;            
+        }
+    }
+
+
+function render_view( width, height, altitude, azimuth, distance ) 
+{ 
+    var canvas = document.getElementById("canvas");   
+    var ctx = canvas.getContext("2d");   
+
+    // Clear to black
+    ctx.save();   
+    ctx.fillStyle = "black";   
+    ctx.fillRect( 0, 0, width, height );   
+    ctx.restore();   
+    
+    var view_context = build_view_context();
+    drawCube( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'], current_cube_colors );
+}
+
+
+            </script>   
+        </head>
+    <body>
+       <div id="svgholder"></div>
+
+<script>
+    var svg;
+    if( RENDER_WITH_SVG ) {
+        $(document).ready( function() {
+            $('#svgholder').append('<h4>svg</h4><div id="svgdiv" style="width:300px; height:300px; background: black;"> </div>');
+            $('#svgdiv').svg({onLoad: store_svg_obj});
+        });
+    }
+    
+    function store_svg_obj(new_svg) { 
+        svg = new_svg;
+    }
+
+
+</script>
+
+
+       <h4>canvas</h4>
+       <canvas id="canvas" width="300" height="300"></canvas>   
+
+       <div>
+          Altitude: <input id="slide_alt" type="range" min="1" max="313" value="220" onchange="rotate_view();"><br/>
+          Azimuth: <input id="slide_azi" type="range" min="0" max="628" value="233" onchange="rotate_view();"><br/>
+       </div>
+       <div>
+       Framerate: <span id="framerate">...</span> fps
+       </div>
+    </body> 
+</html>  
+
+
