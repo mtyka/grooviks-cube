@@ -3,6 +3,12 @@
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
         <script src="http://leodirac.com/jquery.svg/jquery.svg.js"></script>
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svganim.js"></script> 
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svgdom.js"></script> 
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svgfilter.js"></script> 
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svggraph.js"></script> 
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svgplot.js"></script> 
+
 
 <script type="text/javascript"> 
     // This code loads the hookbox.js from the current host but changing the port to 2974.
@@ -22,13 +28,13 @@ var INCLUDE_ARROWS = true;
 var HOW_OFTEN_DISPLAY_FRAMERATE = 400;  // ms between updates
 var RENDER_WITH_CANVAS = true;
 
-var RENDER_WITH_SVG = false;
-/* SVG was an attempt to get it to go faster on iphone devices.  It didn't really help.
-It seems somewhat slower than canvas.
-Next step to pursue this path would be to keep a pool of polygon objects rather than
-destroy everything on the SVG and recreate new polygon objects every frame.
-FWIW, canvas seems to be limited on iphones by blitting speed to the screen.
+/* SVG is an alternate way to render. It's not fully hooked up (no arrows, or input)
+but does offer smooth blending between frames using jquery.animate.
+It also renders vector-based when zooming on ipad/iphone although doesn't
+seem to offer real performance benefits on that platform.
 */
+var RENDER_WITH_SVG = false;
+var SVG_ANIMATION_SPEED = 65;  // how many ms to blend color transitions over
 
 
 // ####################################################################
@@ -71,7 +77,7 @@ function parse_hex_rgb(hexstring) {
     return rgb_floats;
 }
 
- function update_view() {
+function update_view() {
    // looks at the view sliders and renders-the cube with that and the current color-state
    var altitude = $("#slide_alt").val() / 100.0;
    var azimuth = $("#slide_azi").val() / 100.0;
@@ -79,7 +85,12 @@ function parse_hex_rgb(hexstring) {
    //window.setTimeout( update_view, 50 );
 
    frames_rendered ++;
- }
+}
+
+function rotate_view() {
+    clear_svg();
+    update_view();
+}
 
  $(document).ready( function() {
     // Draw the cube in its default state when the page first loads
@@ -507,6 +518,9 @@ function hex_colorstring_from_array( colorvec )
             + hex_from_float(colorvec[0]);
 }
 
+
+var svg_polygons = [];
+
 //-----------------------------------------------------------------------------
 // This draws a quad, projecting it from world space to screenspace, and then rendering it.
 // Arguments:
@@ -514,8 +528,12 @@ function hex_colorstring_from_array( colorvec )
 // viewProjViewport: a matrix which concatenates the view, projection, and viewport matrices
 // 
 //-----------------------------------------------------------------------------             
-function drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, color ) 
+function drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, color, ndx ) 
 {
+    //TODO: a bunch of this vector math can be optimized out if we're
+    // just rendering SVG and not canvas.
+    // In fact, it should be asbracted out and cached only on view rotation.
+
     // Backface cull first
     var b1 = vectorMultiplyProjective( viewProj, p1 );
     var b2 = vectorMultiplyProjective( viewProj, p2 );
@@ -525,6 +543,14 @@ function drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, color )
     var c = vectorCross( e1, e2 );
     if ( c.v[2] <= 0.0 )
     {
+        if( RENDER_WITH_SVG ) {
+            // Make sure it is hidden. This is actually not needed b/c clear_svg() takes care of it.
+            if( svg_polygons[ndx] ) {
+                console.log("Hiding face " + ndx);
+                $( svg_polygons[ndx] ).animate( {svgFillOpacity:0}, 0);
+                svg_polygons[ndx] = 0;
+            }
+        }
         return;
     }
 
@@ -555,13 +581,24 @@ function drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, color )
 
     if( RENDER_WITH_SVG ) {
         if( svg ) {
-            svg.polygon([
-                [vp1.v[0], vp1.v[1]],
-                [vp2.v[0], vp2.v[1]],
-                [vp3.v[0], vp3.v[1]],
-                [vp4.v[0], vp4.v[1]]
-                ],  
-                    {fill: color, strokeWidth: 0});
+            // Does this facet exist already?
+            if( svg_polygons[ndx] ) {
+                // Yes.  Just update the color.
+                $( svg_polygons[ndx] ).animate( {svgFill: color}, SVG_ANIMATION_SPEED );
+                //console.log("Animating svg face "+ndx);
+            } else {
+                //console.log("Drawing svg face "+ndx + " with color " + color);
+                // The polygon doesnt exist yet.  Create it.
+                //svg_polygons[ndx] = svg.polygon([
+                pg = svg.polygon([
+                    [vp1.v[0], vp1.v[1]],
+                    [vp2.v[0], vp2.v[1]],
+                    [vp3.v[0], vp3.v[1]],
+                    [vp4.v[0], vp4.v[1]]
+                    ],  
+                        {fill: color, strokeWidth: 0});
+                svg_polygons[ndx] = pg;
+            }
         }
     }
 }   
@@ -855,21 +892,26 @@ rotToOrient = [[ -1, -1, 1, 3, 3, 1 ],
                [ 3, 1, -1, -1, 0, 0 ], 
                [ 2, 2, 0, 0, -1, -1 ] ];
 
-function drawCube( ctx, viewProj, viewProjViewport, colors )
-{
 
+function clear_svg() {
     if( RENDER_WITH_SVG ) {
         if( svg ) {
             svg.clear();
         }
     }
+    svg_polygons = [];
+}
+
+function drawCube( ctx, viewProj, viewProjViewport, colors )
+{
+
     var quadlist = buildQuadList( ctx, viewProj, viewProjViewport );
     for( ndx=0; ndx<54; ndx++) {
         var quad = quadlist[ndx];
 
         // draw the arrow slightly darker than the actual color
         var darkcolor = [ colors[ndx][0]*.6, colors[ndx][1]*.6, colors[ndx][2]*.6 ]
-        drawQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], colors[ndx] );
+        drawQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], colors[ndx], ndx );
         if (arrowRotation[ndx] !=0) {
             sign = arrowRotation[ndx] < 0;
             arrowDirection = rotToOrient[Math.abs(arrowRotation[ndx]) - 1][Math.floor(ndx / 9)]
@@ -940,8 +982,8 @@ function render_view( width, height, altitude, azimuth, distance )
        <canvas id="canvas" width="300" height="300"></canvas>   
 
        <div>
-          Altitude: <input id="slide_alt" type="range" min="1" max="313" value="220" onchange="update_view();"><br/>
-          Azimuth: <input id="slide_azi" type="range" min="0" max="628" value="233" onchange="update_view();"><br/>
+          Altitude: <input id="slide_alt" type="range" min="1" max="313" value="220" onchange="rotate_view();"><br/>
+          Azimuth: <input id="slide_azi" type="range" min="0" max="628" value="233" onchange="rotate_view();"><br/>
        </div>
        <div>
        Framerate: <span id="framerate">...</span> fps
