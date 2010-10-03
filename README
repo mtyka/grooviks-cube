@@ -5,7 +5,7 @@ Pacific Science Center.
 The directories are as follows:
 
 pushweb/ - Web UI using hookbox for http pub/sub.
-    Preferred and most awesome way of doing things.  
+    Preferred and most bestest way of doing things.  
     Check README for how to run, or try runall.sh
 
 pacsci/ - a port of the "server" code which ran in the belly of the playa cube
