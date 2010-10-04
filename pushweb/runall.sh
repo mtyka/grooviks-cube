@@ -8,3 +8,7 @@ cd ../pacsci
 ./groovikhookbox.py &
 #./random_colors.py &
 open http://localhost:8080
+
+sleep 2
+echo "You'll need to go to ../pacsci and run groovikhookbox.py"
+echo "It never successfully starts by itself. Go figure."
