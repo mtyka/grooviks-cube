@@ -28,26 +28,30 @@ on channel "iframe".
 
 """
 
+import copy
+import fileinput
+import json
+import math
+import random
+import sys
+import threading
+import time
+import urllib, urllib2
+
+import groovik
+import hbclient
+from glog import GLog
+from groovikutils import *
+from groovikconfig import *
+from GScript import GScript
+from GScript import GScriptLibrary
+
 TARGET_FRAMERATE = 20
 # 30 looks good on real PCs.  iphones and ipads max out at about 5-10.
 # TODO: publish multiple channels at different framerates
 
-
-import time, urllib, urllib2, json, random
-
-import sys
-import math
-import time
-import fileinput
-import groovik
-import copy
-from groovikutils import *
-from GScript import GScriptLibrary;
-from GScript import GScript
-from glog import GLog;
-from groovikconfig import *
-
-
+# Ensure the cube is only accessed form one thread at a time
+cube_lock = threading.Lock()
 
 def compress_datagram(datagram):
     """Returns a JSON object to be sent through hookbox.
@@ -63,9 +67,6 @@ def compress_datagram(datagram):
     output = '"%s"' % hex_datagram
     #print "sending %s" % output
     return output
-
-
-
 
 last_datagram_sent = None
 
@@ -99,41 +100,52 @@ def push_message(datagram):
     #page = resp.read()
     #print page
 
-def simulate( grooviksCube ):
-    simTime = time.time()
-    keyframes, resync = grooviksCube.Update( simTime )
-    if keyframes:
-        return keyframes
+class Cube():
+    def __init__(self):
+        # connect to the hookbox client and receive commands
+        groovikConfig.SetConfigFileName( 'config_pc.txt' )
+        groovikConfig.LoadConfig()
 
-def main ():
-    groovikConfig.SetConfigFileName( 'config_pc.txt' )
-    groovikConfig.LoadConfig()
+        moveLogger = GLog("moves.log");
+        moveLogger.logLine("[ \"reset\" ]");
+        
+        self.grooviksCube = groovik.GrooviksCube( moveLogger )
+        curTime = time.time()
+        self.grooviksCube.SetStartTime( curTime )
+        
+        # simulate one frame so we have a valid state to render on first frame
+        self.simulate()
 
-    moveLogger = GLog("moves.log");
-    moveLogger.logLine("[ \"reset\" ]");
-    
-    grooviksCube = groovik.GrooviksCube( moveLogger )
-    curTime = time.time()
-    grooviksCube.SetStartTime( curTime )
-    
-    # simulate one frame so we have a valid state to render on first frame
-    simulate(grooviksCube)
+        client = hbclient.HookClient(self.process_rotation)
+        client_thread = threading.Thread(target = client.run)
+        client_thread.setDaemon(True)
+        client_thread.start()
 
-    global TARGET_FRAMERATE
+    def process_rotation(self, rtjp_frame):
+        if rtjp_frame[1] == "PUBLISH" and rtjp_frame[2]['channel_name'] == 'faceclick':
+            rot_command = rtjp_frame[2]['payload'][1:]
+            print rot_command
+            with cube_lock:
+                self.grooviksCube.QueueRotation([rot_command])
+                #self.grooviksCube.QueueEffect( "victory0" )
+      
+    def run(self):
+        while True:
+            # generate random colors for every cube face every 1.5 seconds
+            # and publish them via the HTTP/REST api.
+            data = self.simulate()
+            if data:
+                frame = data[-1][1]
+                push_message( frame )
+                time.sleep(1.0/ TARGET_FRAMERATE )
 
-    while True:
-        # generate random colors for every cube face every 1.5 seconds
-        # and publish them via the HTTP/REST api.
-        if grooviksCube.IsIdle():
-          #pass
-          #grooviksCube.QueueRotation([[random.randrange(0,9), random.choice([True,False])]])
-          grooviksCube.QueueEffect( "victory0" )
-
-        data = simulate(grooviksCube)
-        if data:
-            frame = data[-1][1]
-            push_message( frame )
-            time.sleep(1.0/ TARGET_FRAMERATE )
+    def simulate(self):
+        simTime = time.time()
+        with cube_lock:
+          keyframes, resync = self.grooviksCube.Update( simTime )
+        if keyframes:
+            return keyframes
 
 if __name__ == "__main__":
-    main()
+    cube = Cube()
+    cube.run()
