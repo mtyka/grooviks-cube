@@ -10,7 +10,7 @@ class HookClient:
     self.frame_id = 0
     self.cookie_id = str(random.randrange(0,200000000))
     self.callback = callback
-    self.ws = websocket.WebSocket('ws://127.0.0.1:2974/ws',
+    self.ws = websocket.WebSocket('http://127.0.0.1:2974/ws',
       onopen=self.on_open,
       onmessage=self.on_message,
       onclose=lambda: sys.stdout.write('Closed Socket\n'))
