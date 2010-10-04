@@ -111,7 +111,13 @@ function cube_got_clicked_on(x,y) {
     }
     console.log("Publishing local click on face "+facenum);
     //faceclick_subscription.publish( facenum );  // docs say this should work but it doesn't
-    hookbox_conn.publish( 'faceclick', facenum );
+    if (arrowRotation[facenum] != 0) {
+      rotation_direction = arrowRotation[facenum][0] > 0;
+      // See QueueRotation in groovik.py
+      // TODO(bretford): mapping is weird, fix
+      rotation_index = arrowRotation[facenum][1] + (Math.abs(arrowRotation[facenum][0]))%3*3;
+      hookbox_conn.publish( 'faceclick', [facenum, rotation_index, rotation_direction] );
+    }
 }
 
 
@@ -839,21 +845,23 @@ function drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, orientation
 }
 
 // x = 1,-1 y = 2,-2 z = 3,-3 !rotate = 0
+// Second ordinal is the row #
 arrowRotation = [
--2,0,2,-2,0,2,-2,0,2,  //1,-1,3,1,-1,3,1,-1,3,
-2,0,-2,2,0,-2,2,0,-2,  //1,-1,3,1,-1,3,1,-1,3,
+[2,2],[0,0],[-2,2],[2,1],[0,0],[-2,1],[2,0],[0,0],[-2,0],  
+[-2,2],[0,0],[2,2],[-2,1],[0,0],[2,1],[-2,0],[0,0],[2,0], 
 
--3,-3,-3,0,0,0,3,3,3,  //2,2,2,-1,-1,-1,0,0,0,
--3,-3,-3,0,0,0,3,3,3,  //2,2,2,-1,-1,-1,0,0,0,
+[-3,2],[-3,1],[-3,0],[0,0],[0,0],[0,0],[3,2],[3,1],[3,0],
+[-3,2],[-3,1],[-3,0],[0,0],[0,0],[0,0],[3,2],[3,1],[3,0],
 
--1,0,1,-1,0,1,-1,0,1,   //1,-1,3,1,-1,3,1,-1,3,
-1,0,-1,1,0,-1,1,0,-1,   //1,-1,3,1,-1,3,1,-1,3,
+[-1,2],[0,0],[1,2],[-1,1],[0,0],[1,1],[-1,0],[0,0],[1,0],
+[1,2],[0,0],[-1,2],[1,1],[0,0],[-1,1],[1,0],[0,0],[-1,0],
 ];
+
 // x[],y[],z[] then
 // +x,-x,+y,-y,+z,-z
 rotToOrient = [[ -1, -1, 1, 3, 3, 1 ],
-               [ 3, 1, -1, -1, 0, 0 ], 
-               [ 2, 2, 0, 0, -1, -1 ] ];
+               [ 1, 3, -1, -1, 0, 0 ], 
+               [ 2, 2, 0, 0, -1, -1 ]];
 
 function drawCube( ctx, viewProj, viewProjViewport, colors )
 {
@@ -870,9 +878,9 @@ function drawCube( ctx, viewProj, viewProjViewport, colors )
         // draw the arrow slightly darker than the actual color
         var darkcolor = [ colors[ndx][0]*.6, colors[ndx][1]*.6, colors[ndx][2]*.6 ]
         drawQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], colors[ndx] );
-        if (arrowRotation[ndx] !=0) {
-            sign = arrowRotation[ndx] < 0;
-            arrowDirection = rotToOrient[Math.abs(arrowRotation[ndx]) - 1][Math.floor(ndx / 9)]
+        if (arrowRotation[ndx][0] !=0) {
+            sign = arrowRotation[ndx][0] < 0;
+            arrowDirection = rotToOrient[Math.abs(arrowRotation[ndx][0]) - 1][Math.floor(ndx / 9)]
             if (sign) {
               arrowDirection = (2 + arrowDirection) % 4
             }
