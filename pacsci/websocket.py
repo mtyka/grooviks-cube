@@ -46,10 +46,10 @@ class WebSocket(object):
         if p.fragment:
             raise ValueError('URL must not contain a fragment component')
     
-        if p.scheme == 'ws':
+        if p.scheme == 'ws' or p.scheme == 'http':
             secure = False
             port = p.port or 80
-        elif p.scheme == 'wss':
+        elif p.scheme == 'wss' or p.scheme == 'https':
             raise NotImplementedError('Secure WebSocket not yet supported')
             # secure = True
             # port = p.port or 443
