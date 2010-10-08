@@ -105,34 +105,40 @@ function cube_got_clicked_on(x,y) {
 // #################### Communications Setup ##########################
 // ####################################################################
 
-// create a connection object and setup the basic event callbacks.
-// finally, subcribe to "chan1".
-//var hookbox_conn = hookbox.connect('http://127.0.0.1:2974');
-var hookbox_conn = hookbox.connect(server);
-//hookbox_conn.onOpen = function() { alert("connection established!"); };
-hookbox_conn.onError = function(err) { alert("Failed to connect to hookbox server: " + err.msg); };
-
+var hookbox_conn = null;
 var subscription = null;
-hookbox_conn.onSubscribed = function(channelName, _subscription) {
-    if( channelName == 'iframe' ) {
-        subscription = _subscription;                
-        subscription.onPublish = function(frame) {
-            on_message_pushed( frame.payload )
-        };  
-    }
-    if( channelName == 'faceclick' ) {
-        faceclick_subscription = _subscription;                
-        faceclick_subscription.onPublish = function(frame) {
-            clog('Heard about click on face ' + frame.payload);
-        };  
-    }
-};
 
-$(document).ready(function() {
+
+function establish_hookbox_connections() {
+    if( !is_hookbox_loaded ) {
+        alert("Failed to connect to hookbox server.");
+    }
+
+    // create a connection object and setup the basic event callbacks.
+    hookbox_conn = hookbox.connect(server);
+    //hookbox_conn.onOpen = function() { alert("connection established!"); };
+    hookbox_conn.onError = function(err) { alert("Failed to connect to hookbox server: " + err.msg); };
+
+    subscription = null;
+    hookbox_conn.onSubscribed = function(channelName, _subscription) {
+        if( channelName == 'iframe' ) {
+            subscription = _subscription;                
+            subscription.onPublish = function(frame) {
+                on_message_pushed( frame.payload )
+            };  
+        }
+        if( channelName == 'faceclick' ) {
+            faceclick_subscription = _subscription;                
+            faceclick_subscription.onPublish = function(frame) {
+                clog('Heard about click on face ' + frame.payload);
+            };  
+        }
+    };
+
    // Subscribe to the pubsub channel with the colors
    hookbox_conn.subscribe("iframe");
    hookbox_conn.subscribe("faceclick");
-});
+}
 
 
 
