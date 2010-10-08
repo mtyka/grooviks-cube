@@ -50,7 +50,9 @@ function update_view() {
    // looks at the view sliders and renders-the cube with that and the current color-state
    var altitude = $("#slide_alt").val() / 100.0;
    var azimuth = $("#slide_azi").val() / 100.0;
-   render_view(300, 300, altitude, azimuth, 15 );
+   var height = $('#canvas').attr('height');
+   var width = $('#canvas').attr('width');
+   render_view(height, width, altitude, azimuth, 15 );
    //window.setTimeout( update_view, 50 );
 
    frames_rendered ++;
