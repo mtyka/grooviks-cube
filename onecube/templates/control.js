@@ -15,6 +15,9 @@ function clog(msg) {
 var previous_datagram = null;
 
 function on_message_pushed( datagram ) {
+     $('#cube_status').html('Connected. Begin play.');
+     $('#cube_status').animate({'opacity': 0}, 4000 );
+
      //clog("Got message published");
      //clog( datagram );
      current_cube_colors = decompress_datagram( datagram );
