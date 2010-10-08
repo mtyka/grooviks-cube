@@ -12,6 +12,19 @@
 
 
 <script type="text/javascript"> 
+function isIE()
+{
+  return /msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent);
+}
+
+if( isIE() ) {
+    alert("Sorry, this site does not work in Internet Explorer.");
+}
+
+</script>
+
+<script type="text/javascript"> 
+    // load the hookbox library, or display an error
     var is_hookbox_loaded = false;
 
     // This code loads the hookbox.js from the current host but changing the port to 2974.
