@@ -11,7 +11,3 @@ pushweb/ - Web UI using hookbox for http pub/sub.
 pacsci/ - a port of the "server" code which ran in the belly of the playa cube
     groovikhookbox.py is the current best version.  This is the main "server" process
     
-djangocube/ - Web server which servers pages with htmlrenderer.
-    Obsolete.  Use pushweb instead
-    Polling-based web solution using django and a relational database.
-
