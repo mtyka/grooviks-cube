@@ -164,6 +164,19 @@ jQuery.fn.elementlocation = function() {
        </div>
 
    <script>
+     // pick a view randomly
+     $(document).ready( function() {
+        set_viewing_location( Math.floor( Math.random() * 3 ) );
+     });
+     function set_viewing_location(which_spot) {
+        // which spot will be 0, 1 or 2
+        clog("setting viewing location to #" + which_spot);
+        var azi = 77 + 156 * which_spot;
+        $('#slide_azi').val(azi);
+        rotate_view();
+     }
+
+
      // Display debug stuff if URL snippet is #debug
      $(document).ready( function() {
         if( location.hash == "#debug" ) {
