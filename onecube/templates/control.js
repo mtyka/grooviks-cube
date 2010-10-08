@@ -11,10 +11,17 @@ function clog(msg) {
     }
 }
 
+
+var previous_datagram = null;
+
 function on_message_pushed( datagram ) {
      //clog("Got message published");
      //clog( datagram );
      current_cube_colors = decompress_datagram( datagram );
+     if( previous_datagram != datagram ) {
+        reset_arrow_timer();
+        previous_datagram = datagram;
+     }
      update_view();  // calls into the renderer code
 }
 
@@ -45,6 +52,35 @@ function parse_hex_rgb(hexstring) {
     }
     return rgb_floats;
 }
+
+
+
+//
+// Logic to turn arrows off when moving
+//
+
+var INCLUDE_ARROWS = false;
+
+var enable_arrows_timeout = null;
+
+
+function reset_arrow_timer() {
+    INCLUDE_ARROWS = false;
+    clearTimeout( enable_arrows_timeout );
+    enable_arrows_timeout = setTimeout( show_arrows, HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS );
+}
+
+function show_arrows() {
+    INCLUDE_ARROWS = true;
+    update_view();
+}
+
+
+
+//
+// rendering stuff
+//
+
 
 function update_view() {
    // looks at the view sliders and renders-the cube with that and the current color-state
