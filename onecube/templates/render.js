@@ -431,15 +431,15 @@ function drawCube( ctx, viewProj, viewProjViewport, colors )
     }           
 }
 
-    // Define cube colors (these should be passed in)
-    var faceColors = [ [ 0.0, 1.0, 0.0 ], [1.0, 0.0, 0.0], [1.0, 0.0, 1.0], [0.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 1.0, 1.0] ];
+
+    // Initialize the cube with gray until it connects to the server.
     var current_cube_colors = new Array( 54 );
     var index = 0;
     for ( var i = 0; i < 6; ++i )
     {
         for ( var j = 0; j < 9; ++j )
         {
-            current_cube_colors[index] = faceColors[i];
+            current_cube_colors[index] = [0.2, 0.2, 0.2];
             index++;            
         }
     }
