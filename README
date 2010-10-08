@@ -11,3 +11,7 @@ pushweb/ - Web UI using hookbox for http pub/sub.
 pacsci/ - a port of the "server" code which ran in the belly of the playa cube
     groovikhookbox.py is the current best version.  This is the main "server" process
     
+
+onecube/ - a django project to handle multiple web clients connecting to a single cube.
+    This will replace a bunch of the code in pushweb/
+
