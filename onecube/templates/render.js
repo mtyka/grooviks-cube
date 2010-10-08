@@ -49,7 +49,7 @@ function drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, color, ndx )
         if( RENDER_WITH_SVG ) {
             // Make sure it is hidden. This is actually not needed b/c clear_svg() takes care of it.
             if( svg_polygons[ndx] ) {
-                console.log("Hiding face " + ndx);
+                clog("Hiding face " + ndx);
                 $( svg_polygons[ndx] ).animate( {svgFillOpacity:0}, 0);
                 svg_polygons[ndx] = 0;
             }
@@ -88,9 +88,9 @@ function drawQuad( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, color, ndx )
             if( svg_polygons[ndx] ) {
                 // Yes.  Just update the color.
                 $( svg_polygons[ndx] ).animate( {svgFill: color}, SVG_ANIMATION_SPEED );
-                //console.log("Animating svg face "+ndx);
+                //clog("Animating svg face "+ndx);
             } else {
-                //console.log("Drawing svg face "+ndx + " with color " + color);
+                //clog("Drawing svg face "+ndx + " with color " + color);
                 // The polygon doesnt exist yet.  Create it.
                 //svg_polygons[ndx] = svg.polygon([
                 pg = svg.polygon([
@@ -423,7 +423,7 @@ function drawCube( ctx, viewProj, viewProjViewport, colors )
             if (sign) {
               arrowDirection = (2 + arrowDirection) % 4
             }
-            //console.log(arrowRotation[ndx], Math.floor(ndx/9), sign, arrowDirection)
+            //clog(arrowRotation[ndx], Math.floor(ndx/9), sign, arrowDirection)
             if (arrowDirection >= 0) {
               drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor );
             }
