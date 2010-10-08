@@ -4,9 +4,16 @@
 // ####################################################################
 
 
+// safe way to log things on webkit and not blow up firefox
+function clog(msg) {
+    if( window.console ) {
+        console.log(msg);
+    }
+}
+
 function on_message_pushed( datagram ) {
-     //console.log("Got message published");
-     //console.log( datagram );
+     //clog("Got message published");
+     //clog( datagram );
      current_cube_colors = decompress_datagram( datagram );
      update_view();  // calls into the renderer code
 }
@@ -14,8 +21,8 @@ function on_message_pushed( datagram ) {
 
 // Converts a long hex string into an array of 54 RGB-float-triples
 function decompress_datagram(datagram) {
-    //console.log("decompressing...");
-    //console.log(datagram);
+    //clog("decompressing...");
+    //clog(datagram);
     var output = [];
 
     while( datagram.length > 0 ) {
@@ -23,8 +30,8 @@ function decompress_datagram(datagram) {
         datagram = datagram.substring(6);
         output[output.length] = parse_hex_rgb(rgb);
     }
-    //console.log("decompressed to...");
-    //console.log(output);
+    //clog("decompressed to...");
+    //clog(output);
     return output;
 }
 
@@ -61,13 +68,13 @@ function rotate_view() {
     $("#canvas").click( function( eventObj ) {
        //var x = eventObj.pageX;
        //var y = eventObj.pageY;
-       //console.log("local click at absolute ("+x+","+y+")");
+       //clog("local click at absolute ("+x+","+y+")");
 
        var top_left_canvas_corner = $("#canvas").elementlocation();
        var x = eventObj.pageX - top_left_canvas_corner.x;
        var y = eventObj.pageY - top_left_canvas_corner.y;
 
-       //console.log("local click at relative ("+x+","+y+")");
+       //clog("local click at relative ("+x+","+y+")");
 
        cube_got_clicked_on(x,y);
     });
@@ -79,10 +86,10 @@ function cube_got_clicked_on(x,y) {
     facenum = whichFaceIsPointIn(x,y);
     if( facenum < 0 ) {
       // not on a cube face
-      console.log("Local click not on cube face.");
+      clog("Local click not on cube face.");
       return;
     }
-    console.log("Publishing local click on face "+facenum);
+    clog("Publishing local click on face "+facenum);
     //faceclick_subscription.publish( facenum );  // docs say this should work but it doesn't
     if (arrowRotation[facenum] != 0) {
       rotation_direction = arrowRotation[facenum][0] > 0;
@@ -116,7 +123,7 @@ hookbox_conn.onSubscribed = function(channelName, _subscription) {
     if( channelName == 'faceclick' ) {
         faceclick_subscription = _subscription;                
         faceclick_subscription.onPublish = function(frame) {
-            console.log('Heard about click on face ' + frame.payload);
+            clog('Heard about click on face ' + frame.payload);
         };  
     }
 };
