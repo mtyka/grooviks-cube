@@ -36,6 +36,7 @@ import random
 import sys
 import threading
 import time
+import datetime
 import urllib, urllib2
 
 import groovik
@@ -69,18 +70,34 @@ def compress_datagram(datagram):
     return output
 
 last_datagram_sent = None
+last_datagram_sent_timestamp = datetime.datetime.now()
+
+
+def too_long_since_last_datagram():
+    """Check if it's been more than a couple of seconds since we sent the last
+    datagram.  If not, so, return True.
+    This keeps a minimum framerate, which effectively acts as iframes for new clients
+    """
+    how_long_ago = datetime.datetime.now() - last_datagram_sent_timestamp
+    threshhold = datetime.timedelta(0,3) # seconds
+    return how_long_ago > threshhold
+
 
 def push_message(datagram):
     """Pushes a datagram out onto the hookbox channel
     """
 
     global last_datagram_sent
+    global last_datagram_sent_timestamp
 
     if datagram == last_datagram_sent:
-        # optimize
-        return
+        # In general we don't want to send repeated frames.
+        if not too_long_since_last_datagram():
+            return
     else:
         last_datagram_sent = datagram
+
+    last_datagram_sent_timestamp = datetime.datetime.now()
 
     # assume the hookbox server is on localhost:2974    
     url = "http://127.0.0.1:2974/rest/publish"
