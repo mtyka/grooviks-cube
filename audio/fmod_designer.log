@@ -1,0 +1,26 @@
+Warning: QPainter::begin: Paint device returned engine == 0, type: 1
+Warning: QPainter::setPen: Painter not active
+Warning: QPainter::setBrush: Painter not active
+Warning: QPainter::setRenderHint: Painter must be active to set rendering hints
+Warning: QPainter::setPen: Painter not active
+Debug: "14:37:07 ..\src\propertyeditor.cpp:1797 GU: Set Audio Source Directory" 
+Warning: Object::connect: No such slot EventControlWidget::slotStopEvent()
+Debug: 
+Building project 'grooviks'...
+Debug: Caching waveform details...
+Debug: stone_gears_002.wav
+Debug: Building project C:\Audio\Game Projects\Grooviks\Grooviks Code\audio\Grooviks Build Directory\grooviks.fev...
+Debug: Unique sound definitions 1/1
+Debug: Retrieving waveform info...
+Debug: Retrieving reverb info...
+Debug: FEV file written ok
+Debug: Building header file C:\Audio\Game Projects\Grooviks\Grooviks Code\audio\Grooviks Build Directory\grooviks.h...
+Debug: Creating list file 'grooviks_bank00.lst' for wave bank 'grooviks_bank00'
+Debug: Building programmer report C:\Audio\Game Projects\Grooviks\Grooviks Code\audio\Grooviks Build Directory\grooviks.txt...
+Debug: Building 'grooviks_bank00.fsb'
+Debug: Encoded C:\Audio\Game Projects\Grooviks\Grooviks Code\audio\Grooviks Audio Content\stone_gears_002.wav
+Debug: Writing final FSB...
+Debug: Finished building FSB
+Debug: Done.
+
+Debug: 

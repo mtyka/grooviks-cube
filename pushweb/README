@@ -1,0 +1,31 @@
+A web solution for the cube which achieves very low latency using comet-style http push.
+
+Hookbox is an HTTP publish/subscribe service.
+It relies on a web application, which is written in django and lives in ../onecube.
+
+
+How To Run
+----------
+SUMMARY: Install stuff, and try runall.sh.
+
+DETAILS: It's a bit of a p.i.t.a. right now, sorry about that.  It can be made easier if you're willing
+to deal with worse performance by switching to a hosted hookbox, but that isn't set up yet.
+
+ 0. Install hookbox and Quixote using some or all of the following steps
+   - Install easy_install http://pypi.python.org/pypi/setuptools
+   - easy_install hookbox
+   - easy_install pyjsiocompile
+   - easy_install django
+
+ 1. In terminal 1: Go to ../onecube and run "./manage.py runserver 0.0.0.0:8080"
+ 2. In terminal 2: `hookbox -d -r bakonv8 -p 2974 --cbhost=127.0.0.1 --cbport=8080`
+ 3. In terminal 3: Go to ../pacsci and run "./groovikhookbox.py"
+ 4. In Chrome: open http://localhost:8080
+
+
+
+Where is the cube code?
+-----------------------
+The file formerly "index.html" is now split up in ../onecube/templates 
+starting with cube.html which includes the others.
+

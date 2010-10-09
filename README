@@ -1,0 +1,17 @@
+Home of the groovikscube software v2.
+This is the web-based version of the software for installation at the
+Pacific Science Center.
+
+The directories are as follows:
+
+pushweb/ - Web UI using hookbox for http pub/sub.
+    Preferred and most bestest way of doing things.  
+    Check README for how to run, or try runall.sh
+
+pacsci/ - a port of the "server" code which ran in the belly of the playa cube
+    groovikhookbox.py is the current best version.  This is the main "server" process
+    
+
+onecube/ - a django project to handle multiple web clients connecting to a single cube.
+    This will replace a bunch of the code in pushweb/
+
