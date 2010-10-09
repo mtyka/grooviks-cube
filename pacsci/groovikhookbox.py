@@ -150,11 +150,18 @@ class Cube():
         while True:
             # generate random colors for every cube face every 1.5 seconds
             # and publish them via the HTTP/REST api.
+            frameStartTime = time.time();
+
             data = self.simulate()
             if data:
                 frame = data[-1][1]
                 push_message( frame )
-                time.sleep(1.0/ TARGET_FRAMERATE )
+
+            frameEndTime = time.time();
+            frameExecutionLength = frameEndTime-frameStartTime
+
+            if 1.0/ TARGET_FRAMERATE > frameExecutionLength:
+                time.sleep(1.0/ TARGET_FRAMERATE - frameExecutionLength)
 
     def simulate(self):
         simTime = time.time()
