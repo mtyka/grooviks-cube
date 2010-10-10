@@ -1,4 +1,5 @@
 import json
+import random
 
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -13,8 +14,9 @@ def json_response( json_object ):
 
 @csrf_exempt
 def connect(request):
-    # accept all connect requests and assume they are from 'guest'
-    return json_response( [ True, {"name":"guest"} ] )
+    username = "Player #%05d" % random.randint(1,99999)
+    # accept all connect requests and assign a random number
+    return json_response( [ True, {"name": username} ] )
 
 
 @csrf_exempt
