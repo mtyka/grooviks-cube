@@ -28,21 +28,31 @@ on channel "iframe".
 
 """
 
-import time, urllib, urllib2, json, random
-
-import sys
-import math
-import time
-import fileinput
-import groovik
 import copy
+import fileinput
+import json
+import math
+import random
+import sys
+import threading
+import time
+import datetime
+import urllib, urllib2
+
+import groovik
+import hbclient
+from glog import GLog
 from groovikutils import *
-from GScript import GScriptLibrary;
-from GScript import GScript
-from glog import GLog;
 from groovikconfig import *
+from GScript import GScript
+from GScript import GScriptLibrary
 
+TARGET_FRAMERATE = 20
+# 30 looks good on real PCs.  iphones and ipads max out at about 5-10.
+# TODO: publish multiple channels at different framerates
 
+# Ensure the cube is only accessed form one thread at a time
+cube_lock = threading.Lock()
 
 def compress_datagram(datagram):
     """Returns a JSON object to be sent through hookbox.
@@ -59,22 +69,35 @@ def compress_datagram(datagram):
     #print "sending %s" % output
     return output
 
-
-
-
 last_datagram_sent = None
+last_datagram_sent_timestamp = datetime.datetime.now()
+
+
+def too_long_since_last_datagram():
+    """Check if it's been more than a couple of seconds since we sent the last
+    datagram.  If not, so, return True.
+    This keeps a minimum framerate, which effectively acts as iframes for new clients
+    """
+    how_long_ago = datetime.datetime.now() - last_datagram_sent_timestamp
+    threshhold = datetime.timedelta(0,3) # seconds
+    return how_long_ago > threshhold
+
 
 def push_message(datagram):
     """Pushes a datagram out onto the hookbox channel
     """
 
     global last_datagram_sent
+    global last_datagram_sent_timestamp
 
     if datagram == last_datagram_sent:
-        # optimize
-        return
+        # In general we don't want to send repeated frames.
+        if not too_long_since_last_datagram():
+            return
     else:
         last_datagram_sent = datagram
+
+    last_datagram_sent_timestamp = datetime.datetime.now()
 
     # assume the hookbox server is on localhost:2974    
     url = "http://127.0.0.1:2974/rest/publish"
@@ -94,40 +117,59 @@ def push_message(datagram):
     #page = resp.read()
     #print page
 
-def simulate( grooviksCube ):
-    simTime = time.time()
-    keyframes, resync = grooviksCube.Update( simTime )
-    if keyframes:
-        return keyframes
+class Cube():
+    def __init__(self):
+        # connect to the hookbox client and receive commands
+        groovikConfig.SetConfigFileName( 'config_pc.txt' )
+        groovikConfig.LoadConfig()
 
-def main ():
-    groovikConfig.SetConfigFileName( 'config_pc.txt' )
-    groovikConfig.LoadConfig()
+        moveLogger = GLog("moves.log");
+        moveLogger.logLine("[ \"reset\" ]");
+        
+        self.grooviksCube = groovik.GrooviksCube( moveLogger )
+        curTime = time.time()
+        self.grooviksCube.SetStartTime( curTime )
+        
+        # simulate one frame so we have a valid state to render on first frame
+        self.simulate()
 
-    moveLogger = GLog("moves.log");
-    moveLogger.logLine("[ \"reset\" ]");
-    
-    grooviksCube = groovik.GrooviksCube( moveLogger )
-    curTime = time.time()
-    grooviksCube.SetStartTime( curTime )
-    
-    # simulate one frame so we have a valid state to render on first frame
-    simulate(grooviksCube)
+        client = hbclient.HookClient(self.process_rotation)
+        client_thread = threading.Thread(target = client.run)
+        client_thread.setDaemon(True)
+        client_thread.start()
 
-    while True:
-        # generate random colors for every cube face every 1.5 seconds
-        # and publish them via the HTTP/REST api.
-        if grooviksCube.IsIdle():
-          #pass
-          #grooviksCube.QueueRotation([[random.randrange(0,9), random.choice([True,False])]])
-          grooviksCube.QueueEffect( "victory0" )
+    def process_rotation(self, rtjp_frame):
+        if rtjp_frame[1] == "PUBLISH" and rtjp_frame[2]['channel_name'] == 'faceclick':
+            rot_command = rtjp_frame[2]['payload'][1:]
+            print rot_command
+            with cube_lock:
+                self.grooviksCube.QueueRotation([rot_command])
+                #self.grooviksCube.QueueEffect( "victory0" )
+      
+    def run(self):
+        while True:
+            # generate random colors for every cube face every 1.5 seconds
+            # and publish them via the HTTP/REST api.
+            frameStartTime = time.time();
 
-        data = simulate(grooviksCube)
-        if data:
-            frame = data[-1][1]
-            push_message( frame )
-            #time.sleep(1.0/30)  # 30fps goal
-            time.sleep(1.0/12)  # slower for ipad/iphone
+            data = self.simulate()
+            if data:
+                frame = data[-1][1]
+                push_message( frame )
+
+            frameEndTime = time.time();
+            frameExecutionLength = frameEndTime-frameStartTime
+
+            if 1.0/ TARGET_FRAMERATE > frameExecutionLength:
+                time.sleep(1.0/ TARGET_FRAMERATE - frameExecutionLength)
+
+    def simulate(self):
+        simTime = time.time()
+        with cube_lock:
+          keyframes, resync = self.grooviksCube.Update( simTime )
+        if keyframes:
+            return keyframes
 
 if __name__ == "__main__":
-    main()
+    cube = Cube()
+    cube.run()
