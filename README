@@ -4,14 +4,11 @@ Pacific Science Center.
 
 The directories are as follows:
 
-pushweb/ - Web UI using hookbox for http pub/sub.
+onecube/ - a django project to handle multiple web clients connecting to a single cube.
     Preferred and most bestest way of doing things.  
-    Check README for how to run, or try runall.sh
+    Code hosted at www.theonecube.com
 
-pacsci/ - a port of the "server" code which ran in the belly of the playa cube
-    groovikhookbox.py is the current best version.  This is the main "server" process
+pacsci/ - controller logic code.  Formerly referred to as "server" code, a term which is now horribly ambiguous.
+    This is a port of the code which ran in the belly of the playa cube.
+    groovikhookbox.py is the current best version.
     
-djangocube/ - Web server which servers pages with htmlrenderer.
-    Obsolete.  Use pushweb instead
-    Polling-based web solution using django and a relational database.
-
