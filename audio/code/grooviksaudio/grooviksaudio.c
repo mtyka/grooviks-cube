@@ -6,6 +6,13 @@
 #include <stdio.h>
 #include <unistd.h>
 
+
+    FMOD_EVENTSYSTEM *eventsystem;
+    FMOD_EVENTPROJECT      *project;
+    int               key;
+    unsigned int      version;
+  FMOD_EVENT *event; 
+
 void ERRCHECK(FMOD_RESULT result)
 {
     if (result != FMOD_OK)
@@ -15,22 +22,20 @@ void ERRCHECK(FMOD_RESULT result)
     }
 }
 
-int test()
+int Init()
 {
-    FMOD_SYSTEM      *system;
-    FMOD_EVENTSYSTEM *eventsystem;
-    FMOD_SOUND       *sound1, *sound2, *sound3;
-    FMOD_CHANNEL     *channel = 0;
     FMOD_RESULT       result;
-    FMOD_EVENTPROJECT      *project;
-    int               key;
-    unsigned int      version;
+    FMOD_SYSTEM      *system;
+
     /*
         Create a System object and initialize.
     */
 
+
     ERRCHECK(result = FMOD_EventSystem_Create(&eventsystem));
+
     ERRCHECK(result = FMOD_EventSystem_GetSystemObject(eventsystem, &system));
+
     ERRCHECK(result = FMOD_EventSystem_Init(eventsystem, 256, FMOD_INIT_NORMAL, 0, FMOD_EVENT_INIT_USE_GUIDS));
 
     ERRCHECK(result = FMOD_System_GetVersion(system, &version));
@@ -44,16 +49,28 @@ int test()
     ERRCHECK(result = FMOD_EventSystem_SetMediaPath(eventsystem, "media/"));
     printf("loading fev\n");
     ERRCHECK(result = FMOD_EventSystem_Load(eventsystem, "grooviks.fev", 0, &project));
-    
-    FMOD_EVENT *event; 
+
+    return 0;
+}
+
+void PlayStoneSound()
+{
+    FMOD_RESULT       result;
     printf("loading event\n");
     ERRCHECK(result = FMOD_EventSystem_GetEventByGUIDString(eventsystem, EVENTGUID_GROOVIKS_UNTITLED_STONE_GEARS, FMOD_EVENT_DEFAULT, &event));
 
    ERRCHECK(result = FMOD_Event_Start(event)); 
     ERRCHECK(result = FMOD_EventSystem_Update(eventsystem));
-    sleep(2);
-    FMOD_EventSystem_Unload(eventsystem);
-    result = FMOD_System_Close(system);
-    result = FMOD_System_Release(system);
-    return 0;
 }
+
+void Close()
+{
+    FMOD_SYSTEM      *system;
+    FMOD_RESULT       result;
+
+    ERRCHECK(result = FMOD_EventSystem_GetSystemObject(eventsystem, &system));
+    ERRCHECK(result = FMOD_EventSystem_Unload(eventsystem));
+    ERRCHECK(result = FMOD_System_Close(system));
+    ERRCHECK(result = FMOD_System_Release(system));
+}
+ 
