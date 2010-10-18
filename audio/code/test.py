@@ -1,10 +1,10 @@
 #/usr/bin/python
 import time
-from ctypes import *
+import ctypes
 
-gaudio = CDLL("grooviksaudio.so")
-
-gaudio.Init()
-gaudio.PlayStoneSound()
+gaudio = ctypes.CDLL("grooviksaudio.so")
+gaudio.Init.restype = ctypes.c_void_p
+eventSystem = gaudio.Init()
+gaudio.PlayStoneSound(eventSystem)
 time.sleep(3)
-gaudio.Close()
+gaudio.Close(eventSystem)
