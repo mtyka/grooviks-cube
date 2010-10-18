@@ -15,7 +15,7 @@ void ERRCHECK(FMOD_RESULT result)
     }
 }
 
-int main(int argc, char * argv[])
+int test()
 {
     FMOD_SYSTEM      *system;
     FMOD_EVENTSYSTEM *eventsystem;
@@ -41,7 +41,7 @@ int main(int argc, char * argv[])
         return 0;
     }
     printf("Setting media path\n"); 
-    ERRCHECK(result = FMOD_EventSystem_SetMediaPath(eventsystem, "../../Grooviks\\ Build\\ Directory/"));
+    ERRCHECK(result = FMOD_EventSystem_SetMediaPath(eventsystem, "media/"));
     printf("loading fev\n");
     ERRCHECK(result = FMOD_EventSystem_Load(eventsystem, "grooviks.fev", 0, &project));
     
