@@ -10,7 +10,7 @@ grooviksaudio:
 	cp -r ../build media/
 	
 run:
-	./grooviksaudio
+	./runtest.sh
 
 clean:
 	make -C grooviksaudio clean
