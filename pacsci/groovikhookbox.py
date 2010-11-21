@@ -144,7 +144,7 @@ class Cube():
                 rot_command = rtjp_frame[2]['payload'][1:]
                 print rot_command
                 with cube_lock:
-                    self.grooviksCube.QueueRotation([rot_command])
+                    self.grooviksCube.HandleInput( CubeInput.ROTATION, [rot_command])
                     #self.grooviksCube.QueueEffect( "victory0" )
             elif rtjp_frame[2]['channel_name'] == 'gamemode':
                 print "GameMode: %s " % (rtjp_frame[2]['payload'])
