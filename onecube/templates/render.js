@@ -175,16 +175,12 @@ function build_view_context( ) {
     var center = new vec4;
     var up = new vec4;
 
- //   center.v[0] = distance * Math.sin( azimuth ) * Math.sin( altitude )
- //   center.v[1] = distance * Math.cos( altitude )
- //   center.v[2] = distance * Math.cos( azimuth ) * Math.sin( altitude )     
- //   up.v[1] = 1.0;
  	up.v[0] = up.v[1] = up.v[2] = 1.0;
 	var start = new vec4;
 	start.v[0] = start.v[1] = 1.0; start.v[2] = -1.0; start.v[3] = 0.0;
 	var eyeUnnormalized = rotateVectorAboutAxisAndAngle( start, up, azimuth );
 	var eye = vectorMultiplyScalar( vectorNormalize( eyeUnnormalized ), distance );
-	clog( "azimuth " + azimuth + "eye " + eye.v[0] + " " + eye.v[1] + " " + eye.v[2] );
+
    	eye.v[3] = center.v[3] = up.v[3] = 0.0;   
     var view = buildViewMatrix( eye, center, up );    
 
