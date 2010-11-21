@@ -1,0 +1,32 @@
+Source for www.theonecube.com
+
+Django + hookbox + python controller.
+Solution which achieves very low latency using comet-style http push.
+
+Three parts:
+Controller: Standalone python process which understands cube logic, motion, etc
+Hookbox: Comet pub/sub message queue which pushes messages to clients with very low latency
+Django: Web app server which serves the HTML, javascript and supports hookbox.
+
+How To Run
+----------
+SUMMARY: Install stuff, and try runall.sh.
+
+ 0. Install a bunch of stuff...
+   - Use python 2.6 if you can.  2.5 might work too.
+   - First install "easy_install" by visiting http://pypi.python.org/pypi/setuptools
+   - easy_install hookbox
+   - easy_install pyjsiocompile
+   - easy_install django 
+     or follow instructions at http://www.djangoproject.com/download/ if you don't get v1.2
+
+ 1. In terminal 1: Run "./manage.py runserver 0.0.0.0:8080"
+ 2. In terminal 2: Run "hookbox -d -r bakonv8 -p 2974 --cbhost=127.0.0.1 --cbport=8080"
+ 3. In terminal 3: Go to ../pacsci and run "./groovikhookbox.py"
+ 4. In Chrome: open http://localhost:8080
+
+
+Where is the cube code?
+-----------------------
+The HTML and javascript are all in the templates/ directory
+

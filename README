@@ -1,0 +1,14 @@
+Home of the groovikscube software v2.
+This is the web-based version of the software for installation at the
+Pacific Science Center.
+
+The directories are as follows:
+
+onecube/ - a django project to handle multiple web clients connecting to a single cube.
+    Preferred and most bestest way of doing things.  
+    Code hosted at www.theonecube.com
+
+pacsci/ - controller logic code.  Formerly referred to as "server" code, a term which is now horribly ambiguous.
+    This is a port of the code which ran in the belly of the playa cube.
+    groovikhookbox.py is the current best version.
+    
