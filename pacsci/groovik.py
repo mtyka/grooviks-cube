@@ -74,6 +74,7 @@ class GrooviksCube:
    #-----------------------------------------------------------------------------   
    def HandleInput( self, cubeInputType, params ):
       # always handle mode switch ourselves. Otherwise, let the current mode deal.
+      self.LogEvent( "Input : " + str(cubeInputType) + ", " + str( params ) );
       if ( cubeInputType == CubeInput.SWITCH_MODE ):
          self.QueueModeChange( params )
       else:
@@ -190,6 +191,7 @@ class GrooviksCube:
    #-----------------------------------------------------------------------------
    def QueueEffect( self, effectName ):
       self.__ClearRotationQueue()
+      self.LogEvent( "Effect : " + effectName );
       groovikConfig.effectsLibrary.ForceQueueByID( effectName, self );
       if ( effectName == "victory0" ):
          self.__event_manager.reward(15) #15 is the magic victory number
@@ -200,7 +202,7 @@ class GrooviksCube:
    #-----------------------------------------------------------------------------
    def ResetColors( self ):
       # reset colors
-      self.__logger.logLine("[ \"reset\" ]");
+      self.LogEvent( "Reset" );
       self.__colors = []
       for i in range( len(self.__initialColorIndices) ):
          if ( self.__initialColorIndices[i] >= 0 ):
@@ -439,11 +441,14 @@ class GrooviksCube:
       if ( self.__currentCubeState == CubeState.IDLE ):
          self.__currentCubeState = CubeState.UNKNOWN
    
+   def LogEvent( self, str ):
+      if ( self.__logger != None ):
+         self.__logger.logLine( str )
+			
    def __AppendState(self, params):
       if ( params[0] == CubeState.IDLE ):
          raise NameError( 'Illegal to Append the IDLE state' )
       self.__queuedStates.append( params );
-      if (self.__logger != None):
-         self.__logger.logLine( str(params) );
+      // self.LogEvent( "State:" + str(params) );
 
 
