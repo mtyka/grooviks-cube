@@ -148,7 +148,16 @@ function multiplyMatrix( a, b )
     r.m[3][3] = a.m[3][0] * b.m[0][3] + a.m[3][1] * b.m[1][3] + a.m[3][2] * b.m[2][3] + a.m[3][3] * b.m[3][3];
     return r;
 }
-                  
+                 
+function clogMatrix( m, name )
+{
+	clog( "matrix " + name + " : " );
+	clog( "[" + m.m[0][0] + " " + m.m[0][1] + " " + m.m[0][2] + " " + m.m[0][3] + "]" );
+	clog( "[" + m.m[1][0] + " " + m.m[1][1] + " " + m.m[1][2] + " " + m.m[1][3] + "]" );
+	clog( "[" + m.m[2][0] + " " + m.m[2][1] + " " + m.m[2][2] + " " + m.m[2][3] + "]" );
+	clog( "[" + m.m[3][0] + " " + m.m[3][1] + " " + m.m[3][2] + " " + m.m[3][3] + "]" );	
+} 
+
 function vectorMultiply( m, v )
 {
     var res = new vec4( );
@@ -184,7 +193,7 @@ function vectorMultiplyProjective( m, v )
 function matrixInvert( src )
 {
     // NOTE: This only works for orthonormal matrices
-    var r = new matrix()
+    var r = new matrix();
 
     // Transpose the upper 3x3.
     r.m[0][0] = src.m[0][0];  r.m[0][1] = src.m[1][0]; r.m[0][2] = src.m[2][0];
@@ -199,6 +208,41 @@ function matrixInvert( src )
     r.m[1][3] = vNewTrans.v[1];
     r.m[2][3] = vNewTrans.v[2]; 
     return r;
+}
+
+function buildMatrixToRotateAroundAxisByAngle( vAxis, angle )
+{
+	var r = new matrix();
+	
+	var u = vectorNormalize( vAxis );
+	var cosAngle = Math.cos( angle );
+	var sinAngle = Math.sin( angle );
+	
+	r.m[0][0] = cosAngle + u.v[0] * u.v[0] * ( 1.0 - cosAngle ); 
+	r.m[0][1] = u.v[0] * u.v[1] * ( 1.0 - cosAngle ) - u.v[2] * sinAngle;
+	r.m[0][2] = u.v[0] * u.v[2] * ( 1.0 - cosAngle ) + u.v[1] * sinAngle;
+	r.m[0][3] = 0.0;
+	
+    r.m[1][0] = u.v[1] * u.v[0] * ( 1.0 - cosAngle ) + u.v[2] * sinAngle;
+	r.m[1][1] = cosAngle + u.v[1] * u.v[1] * ( 1.0 - cosAngle ); 
+	r.m[1][2] = u.v[1] * u.v[2] * ( 1.0 - cosAngle ) - u.v[1] * sinAngle;
+	r.m[1][3] = 0.0;
+	
+    r.m[2][0] = u.v[2] * u.v[0] * ( 1.0 - cosAngle ) - u.v[1] * sinAngle;
+  	r.m[2][1] = u.v[2] * u.v[1] * ( 1.0 - cosAngle ) + u.v[0] * sinAngle;
+ 	r.m[2][2] = cosAngle + u.v[2] * u.v[2] * ( 1.0 - cosAngle );
+ 	r.m[2][3] = 0.0;
+
+   	r.m[3][0] = 0.0;  r.m[3][1] = 0.0; r.m[3][2] = 0.0; r.m[3][3] = 1.0;
+
+	return r;
+}
+
+function rotateVectorAboutAxisAndAngle( v, vAxis, angle )
+{
+	// Build a rotation matrix rotating by angle about axis
+	var m = buildMatrixToRotateAroundAxisByAngle( vAxis, angle );
+	return vectorMultiply( m, v );
 }
 
 
