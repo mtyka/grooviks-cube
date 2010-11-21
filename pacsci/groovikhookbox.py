@@ -45,7 +45,6 @@ from glog import GLog
 from groovikutils import *
 from groovikconfig import *
 from GScript import GScript
-from GScript import GScriptLibrary
 
 TARGET_FRAMERATE = 20
 # 30 looks good on real PCs.  iphones and ipads max out at about 5-10.
@@ -133,19 +132,26 @@ class Cube():
         # simulate one frame so we have a valid state to render on first frame
         self.simulate()
 
-        client = hbclient.HookClient(self.process_rotation)
+        client = hbclient.HookClient(self.process_commands)
         client_thread = threading.Thread(target = client.run)
         client_thread.setDaemon(True)
         client_thread.start()
 
-    def process_rotation(self, rtjp_frame):
-        if rtjp_frame[1] == "PUBLISH" and rtjp_frame[2]['channel_name'] == 'faceclick':
-            rot_command = rtjp_frame[2]['payload'][1:]
-            print rot_command
-            with cube_lock:
-                self.grooviksCube.QueueRotation([rot_command])
-                #self.grooviksCube.QueueEffect( "victory0" )
-      
+    def process_commands(self, rtjp_frame):
+        
+        if rtjp_frame[1] == "PUBLISH":
+            if rtjp_frame[2]['channel_name'] == 'faceclick':
+                rot_command = rtjp_frame[2]['payload'][1:]
+                print rot_command
+                with cube_lock:
+                    self.grooviksCube.QueueRotation([rot_command])
+                    #self.grooviksCube.QueueEffect( "victory0" )
+            elif rtjp_frame[2]['channel_name'] == 'gamemode':
+                print "GameMode: %s " % (rtjp_frame[2]['payload'])
+                depth = rtjp_frame[2]['payload']['difficulty']
+                self.grooviksCube.ResetColors()
+                self.grooviksCube.Randomize(depth)
+        
     def run(self):
         while True:
             # generate random colors for every cube face every 1.5 seconds

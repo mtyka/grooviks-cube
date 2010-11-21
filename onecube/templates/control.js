@@ -137,8 +137,13 @@ function cube_got_clicked_on(x,y) {
       // See QueueRotation in groovik.py
       // TODO(bretford): mapping is weird, fix
       rotation_index = arrowRotation[facenum][1] + (Math.abs(arrowRotation[facenum][0]))%3*3;
-      hookbox_conn.publish( 'faceclick', [facenum, rotation_index, rotation_direction] );
+      hookbox_conn.publish('faceclick', [facenum, rotation_index, rotation_direction] );
     }
+}
+
+function reset_gamestate(difficulty) {
+    clog("Resetting gamestate: " + difficulty);
+    hookbox_conn.publish('gamemode', {'difficulty' : difficulty});
 }
 
 
@@ -179,6 +184,7 @@ function establish_hookbox_connections() {
    // Subscribe to the pubsub channel with the colors
    hookbox_conn.subscribe("iframe");
    hookbox_conn.subscribe("faceclick");
+   hookbox_conn.subscribe("gamemode");
 }
 
 
