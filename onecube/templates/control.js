@@ -122,23 +122,33 @@ function rotate_view() {
 });
 
 var faceclick_subscription;
+var lastFaceClicked = -1;
+var renderClickedFaceCount = 0;
 
-function cube_got_clicked_on(x,y) {
+function cube_got_clicked_on(x,y) 
+{
     facenum = whichFaceIsPointIn(x,y);
-    if( facenum < 0 ) {
-      // not on a cube face
-      clog("Local click not on cube face.");
-      return;
+    if( facenum < 0 )
+	{
+     	// not on a cube face
+     	clog("Local click not on cube face.");
+     	return;
     }
     clog("Publishing local click on face "+facenum);
     //faceclick_subscription.publish( facenum );  // docs say this should work but it doesn't
     if (arrowRotation[facenum] != 0) {
-      rotation_direction = arrowRotation[facenum][0] > 0;
-      // See QueueRotation in groovik.py
-      // TODO(bretford): mapping is weird, fix
-      rotation_index = arrowRotation[facenum][1] + (Math.abs(arrowRotation[facenum][0]))%3*3;
-      hookbox_conn.publish('faceclick', [facenum, rotation_index, rotation_direction] );
-    }
+      	var rotation_direction = arrowRotation[facenum][0] > 0;
+      	// See QueueRotation in groovik.py
+      	// TODO(bretford): mapping is weird, fix
+      	var rotation_index = arrowRotation[facenum][1] + (Math.abs(arrowRotation[facenum][0]))%3*3;
+      	hookbox_conn.publish('faceclick', [facenum, rotation_index, rotation_direction] );
+    
+		if ( INCLUDE_ARROWS )
+		{
+			lastFaceClicked = facenum;
+			renderClickedFaceCount = 5;
+		}
+	}
 }
 
 function reset_gamestate(difficulty) {

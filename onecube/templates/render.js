@@ -297,10 +297,6 @@ function buildQuadList( ctx, viewProj, viewProjViewport ) {
 //-----------------------------------------------------------------------------
 function drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, orientation, color )
 {
-    if( ! INCLUDE_ARROWS ) {
-        return;
-    }
-
     // Backface cull first
     var b1 = vectorMultiplyProjective( viewProj, p1 );
     var b2 = vectorMultiplyProjective( viewProj, p2 );
@@ -411,7 +407,7 @@ function clear_svg() {
 
 function drawCube( ctx, viewProj, viewProjViewport, colors )
 {
-
+	var red = [ 0.0, 0.7, 1.0 ];
     var quadlist = buildQuadList( ctx, viewProj, viewProjViewport );
     for( ndx=0; ndx<54; ndx++) {
         var quad = quadlist[ndx];
@@ -419,6 +415,7 @@ function drawCube( ctx, viewProj, viewProjViewport, colors )
         // draw the arrow slightly darker than the actual color
         var darkcolor = [ colors[ndx][0]*.6, colors[ndx][1]*.6, colors[ndx][2]*.6 ]
         drawQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], colors[ndx], ndx );
+		var arrowDirection = -1;
         if (arrowRotation[ndx][0] !=0) {
             sign = arrowRotation[ndx][0] < 0;
             arrowDirection = rotToOrient[Math.abs(arrowRotation[ndx][0]) - 1][Math.floor(ndx / 9)]
@@ -426,10 +423,27 @@ function drawCube( ctx, viewProj, viewProjViewport, colors )
               arrowDirection = (2 + arrowDirection) % 4
             }
             //clog(arrowRotation[ndx], Math.floor(ndx/9), sign, arrowDirection)
-            if (arrowDirection >= 0) {
-              drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor );
-            }
+            if (arrowDirection >= 0) 
+			{
+			    if( INCLUDE_ARROWS ) 
+				{
+              		drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor );
+            	}
+			}
         }
+
+		if ( ( lastFaceClicked >= 0 ) && (lastFaceClicked == ndx ) )
+		{
+       		if (arrowDirection >= 0) 
+			{
+	             drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, red );
+	        }
+			renderClickedFaceCount--;
+			if ( renderClickedFaceCount <= 0 )
+			{
+				lastFaceClicked = -1;
+			}
+		}
     }           
 }
 
