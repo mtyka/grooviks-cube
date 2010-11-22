@@ -5,15 +5,14 @@ CONTENTDIR     = ../../audio/Grooviks Build Directory/
 
 .PHONY: grooviksaudio
 grooviksaudio: 
-	make -C  grooviksaudio
-	cp grooviksaudio/*.so .
+	make -C  grooviksAudioEngine
+	cp grooviksAudioEngine/*.so .
 	cp -r ../build media/
-	
-run:
-	./runtest.sh
 
 clean:
-	make -C grooviksaudio clean
+	make -C grooviksAudioEngine clean
 	rm -f grooviksaudio.so
 	rm -fr media
+	rm -f libfmodevent64.so
+	rm -f libfmod64.so
 	

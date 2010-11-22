@@ -46,6 +46,10 @@ from groovikutils import *
 from groovikconfig import *
 from GScript import GScript
 
+sys.path.append("../audio/code")
+
+import grooviksFmod
+
 TARGET_FRAMERATE = 20
 # 30 looks good on real PCs.  iphones and ipads max out at about 5-10.
 # TODO: publish multiple channels at different framerates
@@ -118,6 +122,9 @@ def push_message(datagram):
 
 class Cube():
     def __init__(self):
+	self.audio = grooviksFmod.GrooviksFmod()
+	self.audio.PlayStoneSound()
+	
         # connect to the hookbox client and receive commands
         groovikConfig.SetConfigFileName( 'config_pc.txt' )
         groovikConfig.LoadConfig()

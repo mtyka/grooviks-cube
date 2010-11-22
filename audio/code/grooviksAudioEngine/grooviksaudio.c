@@ -1,10 +1,11 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
 #include "../fmodapi/inc/fmod.h"
 #include "../fmodapi/inc/fmod_event.h"
 #include "../fmodapi/inc/fmodlinux.h"
 #include "../fmodapi/inc/fmod_errors.h"
 #include "../../Grooviks Build Directory/grooviks.h"
-#include <stdio.h>
-#include <unistd.h>
 
 void ERRCHECK(FMOD_RESULT result)
 {
@@ -15,7 +16,7 @@ void ERRCHECK(FMOD_RESULT result)
     }
 }
 
-FMOD_EVENTSYSTEM* Init()
+FMOD_EVENTSYSTEM* Init(char *event_media_path)
 {
     FMOD_EVENTSYSTEM *eventsystem;
     FMOD_RESULT       result;
@@ -38,7 +39,7 @@ FMOD_EVENTSYSTEM* Init()
         return 0;
     }
     printf("Setting media path\n"); 
-    ERRCHECK(result = FMOD_EventSystem_SetMediaPath(eventsystem, "media/"));
+    ERRCHECK(result = FMOD_EventSystem_SetMediaPath(eventsystem, event_media_path));
     printf("loading fev\n");
     ERRCHECK(result = FMOD_EventSystem_Load(eventsystem, "grooviks.fev", 0, &project));
 
