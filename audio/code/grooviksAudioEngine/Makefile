@@ -4,7 +4,7 @@ FMODINCDIR     = fmodapi/inc/
 CONTENTDIR     = ../../audio/Grooviks Build Directory/
 
 grooviksaudio: grooviksaudio.o
-	gcc -o grooviksaudio.so grooviksaudio.o ${FMODLIBDIR}/libfmodevent64.so  ${FMODLIBDIR}/libfmodex64.so -pthread -shared
+	gcc -o grooviksaudio.so grooviksaudio.o -L../fmodapi/lib -lfmodevent64  -lfmodex64 -pthread -shared
 	
 grooviksaudio.o: grooviksaudio.c
 	gcc -O3 -fPIC -c grooviksaudio.c 
@@ -14,3 +14,5 @@ run:
 clean:
 	@rm -f *.o
 	@rm -f grooviksaudio.so
+	@rm -f libfmodevent64.so
+	@rm -f libfmodex64.so
