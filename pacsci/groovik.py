@@ -438,8 +438,8 @@ class GrooviksCube:
    def __ClearRotationQueue( self ):
       while( len( self.__queuedStates ) ):
          self.__queuedStates.pop( 0 )
-      if ( self.__currentCubeState == CubeState.IDLE ):
-         self.__currentCubeState = CubeState.UNKNOWN
+      #if ( self.__currentCubeState == CubeState.IDLE ):
+      #   self.__currentCubeState = CubeState.UNKNOWN
    
    def LogEvent( self, str ):
       if ( self.__logger != None ):
@@ -449,6 +449,6 @@ class GrooviksCube:
       if ( params[0] == CubeState.IDLE ):
          raise NameError( 'Illegal to Append the IDLE state' )
       self.__queuedStates.append( params );
-      // self.LogEvent( "State:" + str(params) );
+      self.LogEvent( "State:" + str(params) );
 
 
