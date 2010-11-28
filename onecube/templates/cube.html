@@ -140,20 +140,80 @@ jQuery.fn.elementlocation = function() {
     }
 
     #container {
-        text-align: center;
-    }
+      text-align: center;
+			margin: 0px auto;
+		}
 
-
+		.toprow{
+			margin-left: auto;
+			margin-right: auto;
+			width: 1000px;
+		}
+		.bottomrow{
+			clear: both;
+			margin-left: auto;
+			margin-right: auto;
+			margin-top: 3px;
+			width: 900px;
+		}
+		.bigbutton{
+			float:left;
+			margin-left:  4px;
+			margin-right:  4px;
+		}
+		.rightbutton{
+			float:right;
+			margin-left:  4px;
+			margin-right:  4px;
+		}
+		.clear{
+			clear: both;
+		}
 </style>
-    </head>
+<!--
+position: absolute; left: 610px; top: 80px;
+
+
+style="float:left; left:  350px; top: 90px;"  
+style="float:left; left:  540px; top: 90px;"  
+style=" left:  730px; top: 90px;"             
+style=" left:  920px; top: 90px;"             
+style=" left: 1110px; top: 90px;"             
+style=" left:  425px; top: 650px;"            
+style=" left: 1110px; top: 650px;"            
+
+
+
+p
+			width: 100px;
+-->
+
+	</head>
     <body>
     <div id="container">
 
        <h1 class="pulse">One cube to rule them all</h1>
-       <div id="svgholder"></div>
 
-
+			<div class="toprow" >
+				<img class="bigbutton"   id="rookie"      src="/static/button_rookie.png"  alt="Rookie"  >
+				<img class="bigbutton"   id="student"     src="/static/button_student.png" alt="Student" >
+				<img class="bigbutton"   id="ninja"       src="/static/button_ninja.png"   alt="Ninja"   >
+				<img class="bigbutton"   id="master"      src="/static/button_master.png"  alt="Master"  >
+				<img class="bigbutton"   id="god"         src="/static/button_god.png"     alt="God"     >
+				<div class="clear"></div>
+			</div>
+			
+			<div id="svgholder"></div>
        <canvas id="canvas" width="400" height="400"></canvas>   
+			
+			<div class="bottomrow" >
+				<img class="bigbutton"   id="buttonleft"  src="/static/button_left.png"      alt="Left"  >
+				<img class="rightbutton"   id="buttonright" src="/static/button_right.png"     alt="Right" >
+				<div class="clear"></div>
+			</div>
+	
+
+
        <div id="cube_status">Waiting for controller...</div>
 
        <div id="manual_rotate" class="debug">
@@ -238,6 +298,10 @@ if( ! document.location.port ) {
 
 </script>
     </script>
+
+
+
+
 
     </body> 
 </html>  
