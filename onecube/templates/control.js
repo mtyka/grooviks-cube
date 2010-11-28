@@ -106,7 +106,7 @@ function rotate_view() {
     // Draw the cube in its default state when the page first loads
     update_view();
 
-    $("#canvas").click( function( eventObj ) {
+    $("body").click( function( eventObj ) {
        //var x = eventObj.pageX;
        //var y = eventObj.pageY;
        //clog("local click at absolute ("+x+","+y+")");
@@ -118,7 +118,9 @@ function rotate_view() {
        //clog("local click at relative ("+x+","+y+")");
 
        cube_got_clicked_on(x,y);
-    });
+    
+			 return true;
+		});
 });
 
 var faceclick_subscription;
