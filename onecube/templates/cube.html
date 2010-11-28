@@ -129,9 +129,34 @@ $(document).ready(function(){
  $("#ninja").click(   function(){ reset_gamestate(3); } );
  $("#master").click(  function(){ reset_gamestate(4); } );
  $("#god").click(     function(){ reset_gamestate(20); } );
+ 
+ $("#buttonleft").click( function(){ 
+    animate_spin( -Math.PI*2/3 );
+ });
+ $("#buttonright").click( function(){ 
+    animate_spin( Math.PI*2/3 );
+ });
 
 });
 
+
+function animate_spin(delta_radians) {
+		var azimuth = $("#slide_azi").val()*1.0; // convert from string to number. javascript sucks
+		azimuth = azimuth % (100*Math.PI*2);  // Re-center
+		$("#slide_azi").attr("animate_val", azimuth); // prep temporary animation variable
+		azimuth += delta_radians*100;
+		//console.log(azimuth);
+		$("#slide_azi").animate( { 
+			animate_val: azimuth 
+		},{ duration: 2000, 
+		    step: function() {  
+					//console.log($("#slide_azi").attr("animate_val") ); 
+					$("#slide_azi").val( $("#slide_azi").attr("animate_val") );
+					rotate_view(); 
+		    }     
+      }
+		);
+}
 
 
 
@@ -194,6 +219,12 @@ $(document).ready(function(){
 			top: -75px;
 			z-index:   -1;	
 		}
+
+		#manual_rotate {
+			position: relative;
+			top: -400px;
+		}
+
 </style>
 <!--
 position: absolute; left: 610px; top: 80px;
@@ -238,26 +269,14 @@ p
        <div id="cube_status">Waiting for controller...</div>
 
        <div id="manual_rotate" class="debug">
-          Altitude: <input id="slide_alt" type="range" min="1" max="313" value="220" onchange="rotate_view();"><br/>
-          Azimuth: <input id="slide_azi" type="range" min="0" max="628" value="233" onchange="rotate_view();"><br/>
+          Altitude: <input id="slide_alt" type="range" min="-1000" max="1000" value="220" onchange="rotate_view();"><br/>
+          Azimuth: <input id="slide_azi" type="range" min="-1000" max="1000" value="0" onchange="rotate_view();"><br/>
        </div>
        <div id="frameratediv" class="debug">
        Framerate: <span id="framerate">...</span> fps
        </div>
 
    <script>
-     // pick a view randomly
-     $(document).ready( function() {
-        set_viewing_location( Math.floor( Math.random() * 3 ) );
-     });
-     function set_viewing_location(which_spot) {
-        // which spot will be 0, 1 or 2
-        clog("setting viewing location to #" + which_spot);
-        var azi = 77 + 156 * which_spot;
-        $('#slide_azi').val(azi);
-        rotate_view();
-     }
-
 
      // Display debug stuff if URL snippet is #debug
      $(document).ready( function() {
