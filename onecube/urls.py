@@ -1,4 +1,5 @@
 from django.conf.urls.defaults import *
+from django.conf import settings
 from django.views.generic.simple import direct_to_template
 
 
@@ -20,5 +21,7 @@ urlpatterns = patterns('',
     (r'^hookbox/', include('hookbox_callbacks.urls')),
 
     (r'^$', direct_to_template, {'template': 'cube.html'} ),
+
+		(r'^static/(?P<path>[-\w]+.[-\w]+)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
 
 )
