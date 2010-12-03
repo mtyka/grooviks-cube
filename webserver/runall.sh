@@ -7,7 +7,7 @@ sleep 2
 echo "Starting hookbox server"
 hookbox -d -r bakonv8 -a lair2low -p 2974 --cbhost=127.0.0.1 --cbport=8080 &
 sleep 2
-cd ../pacsci
+cd ../controller
 
 echo "Starting controller processs"
 ./groovikhookbox.py &

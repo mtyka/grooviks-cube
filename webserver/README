@@ -29,12 +29,11 @@ SUMMARY: Install stuff, and try runall.sh.
 
  1. In terminal 1: Run "./manage.py runserver 0.0.0.0:8080"
  2. In terminal 2: Run "hookbox -d -r bakonv8 -p 2974 --cbhost=127.0.0.1 --cbport=8080"
-    [Note that hookbox sometimes logs an OSError about a missing egg, but runs anyway.]
- 		If the restkit module is giving you problems (module reventlet not found) try 
+        -If you get "OSError: [Errno 2] No such file or directory" ignore it -- everything's fine.
+ 		-If the restkit module is giving you problems (module reventlet not found) try 
 		manually downloading restkit 2.2.3 instead of the newer 2.3xxx
-
  	
- 3. In terminal 3: Go to ../pacsci and run "./groovikhookbox.py"
+ 3. In terminal 3: Go to ../controller and run "./groovikhookbox.py"
  4. In Chrome: open http://localhost:8080
 
 
