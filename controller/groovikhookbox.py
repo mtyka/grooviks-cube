@@ -122,10 +122,10 @@ class Cube():
         groovikConfig.SetConfigFileName( 'config_pc.txt' )
         groovikConfig.LoadConfig()
 
-        moveLogger = GLog("moves.log");
-        moveLogger.logLine("[ \"reset\" ]");
+        self.logger = GLog("moves.log");
+        self.logger.logLine("[ \"reset\" ]");
         
-        self.grooviksCube = groovik.GrooviksCube( moveLogger )
+        self.grooviksCube = groovik.GrooviksCube( self.logger )
         curTime = time.time()
         self.grooviksCube.SetStartTime( curTime )
         
@@ -142,12 +142,12 @@ class Cube():
         if rtjp_frame[1] == "PUBLISH":
             if rtjp_frame[2]['channel_name'] == 'faceclick':
                 rot_command = rtjp_frame[2]['payload'][1:]
-                print rot_command
+                #print rot_command
                 with cube_lock:
                     self.grooviksCube.HandleInput( CubeInput.ROTATION, [rot_command])
                     #self.grooviksCube.QueueEffect( "victory0" )
             elif rtjp_frame[2]['channel_name'] == 'gamemode':
-                print "GameMode: %s " % (rtjp_frame[2]['payload'])
+                self.logger.logLine( "GameMode: %s " % (rtjp_frame[2]['payload']) )
                 depth = rtjp_frame[2]['payload']['difficulty']
                 self.grooviksCube.ResetColors()
                 self.grooviksCube.Randomize(depth)
