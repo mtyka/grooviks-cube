@@ -91,7 +91,8 @@ function display_framerate() {
 }
 
 $(document).ready(function() {
-    setInterval( display_framerate, HOW_OFTEN_DISPLAY_FRAMERATE );
+   	set_ignore_clicks( true ); 
+		setInterval( display_framerate, HOW_OFTEN_DISPLAY_FRAMERATE );
 });
 
 
@@ -124,12 +125,6 @@ jQuery.fn.elementlocation = function() {
 {% include "render.js" %}
 
 $(document).ready(function(){
- $("#rookie").click(  function(){ reset_gamestate(1); } );
- $("#student").click( function(){ reset_gamestate(2); } );
- $("#ninja").click(   function(){ reset_gamestate(3); } );
- $("#master").click(  function(){ reset_gamestate(4); } );
- $("#god").click(     function(){ reset_gamestate(20); } );
- 
  $("#buttonleft").click( function(){ 
     animate_spin( -Math.PI*2/3 );
  });

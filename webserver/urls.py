@@ -12,6 +12,7 @@ urlpatterns = patterns('',
 
     (r'^$', direct_to_template, {'template': 'homepage.html'} ),
     (r'^super_sekret_cube$', direct_to_template, {'template': 'cube.html'} ),
+    (r'^cube_inspector$', direct_to_template, {'template': 'cube_inspector.html'} ),
 
     (r'^static/(?P<path>[-\w]+.[-\w]+)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
 
