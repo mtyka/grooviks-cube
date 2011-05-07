@@ -97,6 +97,12 @@ function update_view() {
    frames_rendered ++;
 }
 
+var ignore_clicks = false;
+
+function set_ignore_clicks( value ){
+	ignore_clicks = value;
+}
+
 function rotate_view() {
     clear_svg();
     update_view();
@@ -106,20 +112,22 @@ function rotate_view() {
     // Draw the cube in its default state when the page first loads
     update_view();
 
-    $("body").click( function( eventObj ) {
-       //var x = eventObj.pageX;
-       //var y = eventObj.pageY;
-       //clog("local click at absolute ("+x+","+y+")");
+		$("body").click( function( eventObj ) {
+			if( !ignore_clicks ){
+				 //var x = eventObj.pageX;
+				 //var y = eventObj.pageY;
+				 //clog("local click at absolute ("+x+","+y+")");
 
-       var top_left_canvas_corner = $("#canvas").elementlocation();
-       var x = eventObj.pageX - top_left_canvas_corner.x;
-       var y = eventObj.pageY - top_left_canvas_corner.y;
+				 var top_left_canvas_corner = $("#canvas").elementlocation();
+				 var x = eventObj.pageX - top_left_canvas_corner.x;
+				 var y = eventObj.pageY - top_left_canvas_corner.y;
 
-       //clog("local click at relative ("+x+","+y+")");
+				 //clog("local click at relative ("+x+","+y+")");
 
-       cube_got_clicked_on(x,y);
-    
-			 return true;
+				 cube_got_clicked_on(x,y);
+			
+				 return true;
+			}
 		});
 });
 
