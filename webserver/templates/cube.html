@@ -1,0 +1,364 @@
+<html>   
+    <head>
+        <title>One cube to rule them all</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
+        <script src="http://leodirac.com/jquery.svg/jquery.svg.js"></script>
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svganim.js"></script> 
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svgdom.js"></script> 
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svgfilter.js"></script> 
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svggraph.js"></script> 
+        <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svgplot.js"></script> 
+
+
+<script type="text/javascript"> 
+function isIE()
+{
+  return /msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent);
+}
+
+if( isIE() ) {
+    alert("Sorry, this site does not work in Internet Explorer.");
+}
+
+</script>
+
+<script type="text/javascript"> 
+    // load the hookbox library, or display an error
+    var is_hookbox_loaded = false;
+
+    // This code loads the hookbox.js from the current host but changing the port to 2974.
+    var server = location.protocol + '//' + location.hostname + ':2974';
+
+    // Dynamically inserts the code to load the script into the page.
+
+
+    function loadScript(sScriptSrc) {
+        var headelem = document.getElementsByTagName('head')[0];
+        var oScript = document.createElement('script');
+        oScript.type = 'text/javascript';
+        oScript.src = sScriptSrc;
+        oScript.onload = function() {
+            is_hookbox_loaded = true;
+            establish_hookbox_connections();
+        }
+        oScript.onerror = function() {
+            alert("Could not load library from hookbox server.");
+        }
+        headelem.appendChild(oScript);
+    }
+    $(document).ready(function() {
+        loadScript( server + '/static/hookbox.js' );
+    });
+</script>
+<script type="text/javascript">
+
+// ####################################################################
+// ######################## Configuration #############################
+// ####################################################################
+
+var HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS = 700;  // ms
+
+var HOW_OFTEN_DISPLAY_FRAMERATE = 400;  // ms between updates
+var RENDER_WITH_CANVAS = true;
+
+/* SVG is an alternate way to render. It's not fully hooked up (no arrows, or input)
+but does offer smooth blending between frames using jquery.animate.
+It also renders vector-based when zooming on ipad/iphone although doesn't
+seem to offer real performance benefits on that platform.
+*/
+var RENDER_WITH_SVG = false;
+var SVG_ANIMATION_SPEED = 65;  // how many ms to blend color transitions over
+
+
+
+// ####################################################################
+// #################### Framerate calculation #########################
+// ####################################################################
+
+var frames_rendered=0;
+var frame_cnt_reset_at = (new Date()).getTime(); // epoch time in ms
+
+function display_framerate() {
+    var now = (new Date()).getTime();
+    var howlong_ms = now - frame_cnt_reset_at;
+    var fps = frames_rendered * 1000 / howlong_ms;
+    $('#framerate').html( Math.floor(fps*10) / 10 );
+
+    // reset
+    frames_rendered = 0;
+    frame_cnt_reset_at = now;
+}
+
+$(document).ready(function() {
+    setInterval( display_framerate, HOW_OFTEN_DISPLAY_FRAMERATE );
+});
+
+
+
+// ####################################################################
+// ###################### jquery helpers ##############################
+// ####################################################################
+
+
+jQuery.fn.elementlocation = function() {
+  var curleft = 0;
+  var curtop = 0;
+ 
+  var obj = this;
+ 
+  do {
+    curleft += obj.attr('offsetLeft');
+    curtop += obj.attr('offsetTop');
+ 
+    obj = obj.offsetParent();
+  } while ( obj.attr('tagName') != 'BODY' );
+ 
+ 
+  return ( {x:curleft, y:curtop} );
+};
+
+
+{% include "control.js" %}
+{% include "vector.js" %}
+{% include "render.js" %}
+
+$(document).ready(function(){
+ $("#rookie").click(  function(){ reset_gamestate(1); } );
+ $("#student").click( function(){ reset_gamestate(2); } );
+ $("#ninja").click(   function(){ reset_gamestate(3); } );
+ $("#master").click(  function(){ reset_gamestate(4); } );
+ $("#god").click(     function(){ reset_gamestate(20); } );
+ 
+ $("#buttonleft").click( function(){ 
+    animate_spin( -Math.PI*2/3 );
+ });
+ $("#buttonright").click( function(){ 
+    animate_spin( Math.PI*2/3 );
+ });
+
+});
+
+
+var locked_buttons=false;
+
+function animate_spin(delta_radians) {
+		// lock the buttons
+		if(locked_buttons) return;
+		locked_buttons = true;
+		
+
+		// do the boogie 
+		var azimuth = $("#slide_azi").val()*1.0; // convert from string to number. javascript sucks
+		azimuth = azimuth % (100*Math.PI*2);  // Re-center
+		$("#slide_azi").attr("animate_val", azimuth); // prep temporary animation variable
+		azimuth += delta_radians*100;
+		//console.log(azimuth);
+		$("#slide_azi").animate( { 
+			animate_val: azimuth 
+		},{ duration: 2000, 
+		    complete: function(){
+					locked_buttons = false;
+				},
+				step: function() {  
+					//console.log($("#slide_azi").attr("animate_val") ); 
+					$("#slide_azi").val( $("#slide_azi").attr("animate_val") );
+					rotate_view(); 
+		    }     
+      }
+		);
+}
+
+
+
+</script>   
+<style>
+    .debug {
+        display:none;
+    }
+
+    body {
+        font-family: verdana, sans-serif;
+        background: black;
+        color: #ffffdd;
+    }
+
+    h1 {
+        text-shadow: 0px 0px 5px #ff8888; 
+    }
+
+    #container {
+      text-align: center;
+			margin: 0px auto;
+		}
+
+		.toprow{
+			margin-left: auto;
+			margin-right: auto;
+			width: 1000px;
+			position: relative;
+			top: 30px;
+		}
+		.bottomrow{
+			clear: both;
+			margin-left: auto;
+			margin-right: auto;
+			top: -285px;
+			position: relative;
+			width: 600px;
+		}
+		.bigbutton{
+			float:left;
+			margin-left:  4px;
+			margin-right:  4px;
+			z-index: 3;
+		}
+		.rightbutton{
+			float:right;
+			margin-left:  4px;
+			margin-right:  4px;
+			z-index: 3;
+		}
+		.clear{
+			clear: both;
+		}
+
+		#canvas{
+			width: 750px;
+			height: 750px;
+			position: relative;
+			top: -75px;
+			z-index:   -1;	
+		}
+
+		#manual_rotate {
+			position: relative;
+			top: -400px;
+		}
+
+</style>
+<!--
+position: absolute; left: 610px; top: 80px;
+
+
+style="float:left; left:  350px; top: 90px;"  
+style="float:left; left:  540px; top: 90px;"  
+style=" left:  730px; top: 90px;"             
+style=" left:  920px; top: 90px;"             
+style=" left: 1110px; top: 90px;"             
+style=" left:  425px; top: 650px;"            
+style=" left: 1110px; top: 650px;"            
+
+
+       <h1 class="pulse">One cube to rule them all</h1>
+
+p
+			width: 100px;
+-->
+
+	</head>
+    <body>
+    <div id="container">
+			<div class="toprow" >
+				<img class="bigbutton"   id="rookie"      src="/static/button_rookie.png"  alt="Rookie"  >
+				<img class="bigbutton"   id="student"     src="/static/button_student.png" alt="Student" >
+				<img class="bigbutton"   id="ninja"       src="/static/button_ninja.png"   alt="Ninja"   >
+				<img class="bigbutton"   id="master"      src="/static/button_master.png"  alt="Master"  >
+				<img class="bigbutton"   id="god"         src="/static/button_genius.png"  alt="Genius"     >
+				<div class="clear"></div>
+			</div>
+			<div id="svgholder"></div>
+       <canvas id="canvas" width=750 height=750></canvas>   
+			<div class="bottomrow" >
+				<img class="bigbutton"   id="buttonleft"  src="/static/button_left.png"      alt="Left"  >
+				<img class="rightbutton"   id="buttonright" src="/static/button_right.png"     alt="Right" >
+				<div class="clear"></div>
+			  <br>
+        <center>
+          www.groovik.com
+        </center>
+      </div>
+	
+
+
+       <div id="cube_status">Waiting for controller...</div>
+
+       <div id="manual_rotate" class="debug">
+          Altitude: <input id="slide_alt" type="range" min="-1000" max="1000" value="220" onchange="rotate_view();"><br/>
+          Azimuth: <input id="slide_azi" type="range" min="-1000" max="1000" value="0" onchange="rotate_view();"><br/>
+       </div>
+       <div id="frameratediv" class="debug">
+       Framerate: <span id="framerate">...</span> fps
+       </div>
+
+   <script>
+
+     // Display debug stuff if URL snippet is #debug
+     $(document).ready( function() {
+        if( location.hash == "#debug" ) {
+            $(".debug").css('display','block');
+        }
+     });
+    
+    // Show SVG element if configured.
+    var svg;
+    if( RENDER_WITH_SVG ) {
+        $(document).ready( function() {
+            $('#svgholder').append('<h4>svg</h4><div id="svgdiv" style="width:300px; height:300px; background: black;"> </div>');
+            $('#svgdiv').svg({onLoad: store_svg_obj});
+        });
+    }
+    function store_svg_obj(new_svg) { 
+        svg = new_svg;
+    }
+
+    // Pulse the color of the header
+    function fade_to_red() {
+        $('.pulse').animate(
+          { 'color': '#f88' },
+          40000, 'linear', fade_to_yellow
+        );
+    }
+    function fade_to_yellow() {
+        $('.pulse').animate(
+          { 'color': '#ffd' },
+          40000, 'linear',fade_to_red
+        );
+    }
+    $(document).ready( function() {
+        fade_to_red();
+    });
+
+</script>
+    </div>
+
+    <script>
+
+<script type="text/javascript">
+
+// Only include GA if we're on port 80, i.e. production
+if( ! document.location.port ) {
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-16219925-1']);
+  _gaq.push(['_setDomainName', 'none']);
+  _gaq.push(['_setAllowLinker', true]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+}
+
+</script>
+    </script>
+
+
+
+
+
+    </body> 
+</html>  
+
+
