@@ -50,10 +50,21 @@ class GScript:
 				
 	def CreateRandom(self, depth, time):
 		self.moves = [];
+		# These indicate the last rotated slice. THe default values are out of the range of possible values
+		# intentionally such that the first comparison (see below) will always fail.
+
+		last_rot = -1
 		for i in range(depth):
 			# note... if we want to add more commands that this script can hit, we'll need to update this randint as well
-			rot = random.randint( 0, 8 )
-			clockwise = ( random.randint( 0, 1 ) == 1 )
+			while True:
+				rot = random.randint( 0, 8 )
+				clockwise = ( random.randint( 0, 1 ) == 1 )
+				# Ensure the rotation axis is differetn from the previous roation axis. This makes much 
+				# better randomizations then allowing consecutive rotations to be on the same axis.
+				# The integer div-by-3 takes advantage of the fact that rotations 0,1,2  and 3,4,5 and 6,7,8 are on the same axis respectively. 
+				if (rot/3) != (last_rot/3): break;
+			
+			last_rot = rot
 			# NOTE: The '2' is the enum for rotation
 			self.moves.append([2, rot, clockwise, time]);
 
