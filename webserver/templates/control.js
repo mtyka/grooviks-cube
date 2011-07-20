@@ -47,7 +47,6 @@ function decompress_datagram(datagram) {
 
 function parse_hex_rgb(hexstring) {
     var rgb_floats = [];
-    var int;
     for(i=0; i<3; i++) {
       var rgbhex = hexstring.substring(i*2, 2 + i*2);
       var rgbint = parseInt(rgbhex,16);
@@ -144,9 +143,9 @@ function cube_got_clicked_on(x,y)
      	clog("Local click not on cube face.");
      	return;
     }
-    clog("Publishing local click on face "+facenum);
     //faceclick_subscription.publish( facenum );  // docs say this should work but it doesn't
-    if (arrowRotation[facenum] != 0) {
+    if (arrowRotation[facenum][0] != 0) {
+        clog("Publishing local click on face "+facenum);
       	var rotation_direction = arrowRotation[facenum][0] > 0;
       	// See QueueRotation in groovik.py
       	// TODO(bretford): mapping is weird, fix
