@@ -417,7 +417,7 @@ function drawCube( ctx, viewProj, viewProjViewport, colors )
         drawQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], colors[ndx], ndx );
 		var arrowDirection = -1;
         if (arrowRotation[ndx][0] !=0) {
-            sign = arrowRotation[ndx][0] < 0;
+            var sign = arrowRotation[ndx][0] < 0;
             arrowDirection = rotToOrient[Math.abs(arrowRotation[ndx][0]) - 1][Math.floor(ndx / 9)]
             if (sign) {
               arrowDirection = (2 + arrowDirection) % 4

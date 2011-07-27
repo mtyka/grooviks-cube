@@ -53,6 +53,10 @@ if( isIE() ) {
 </script>
 <script type="text/javascript">
 
+function get_querystring_parameter(name) {
+    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
 // ####################################################################
 // ######################## Configuration #############################
 // ####################################################################
@@ -69,6 +73,8 @@ seem to offer real performance benefits on that platform.
 */
 var RENDER_WITH_SVG = false;
 var SVG_ANIMATION_SPEED = 65;  // how many ms to blend color transitions over
+
+var position = get_querystring_parameter('position') || null;
 
 
 
@@ -118,24 +124,33 @@ jQuery.fn.elementlocation = function() {
   return ( {x:curleft, y:curtop} );
 };
 
-
 {% include "control.js" %}
 {% include "vector.js" %}
 {% include "render.js" %}
 
 $(document).ready(function(){
- $("#rookie").click(  function(){ reset_gamestate(1); } );
- $("#student").click( function(){ reset_gamestate(2); } );
- $("#ninja").click(   function(){ reset_gamestate(3); } );
- $("#master").click(  function(){ reset_gamestate(4); } );
- $("#god").click(     function(){ reset_gamestate(20); } );
- 
- $("#buttonleft").click( function(){ 
-    animate_spin( -Math.PI*2/3 );
- });
- $("#buttonright").click( function(){ 
-    animate_spin( Math.PI*2/3 );
- });
+    $("#rookie").click(  function(){ reset_gamestate(1); } );
+    $("#student").click( function(){ reset_gamestate(2); } );
+    $("#ninja").click(   function(){ reset_gamestate(3); } );
+    $("#master").click(  function(){ reset_gamestate(4); } );
+    $("#god").click(     function(){ reset_gamestate(20); } );
+
+    if (!position) {
+        $("#buttonleft").click( function(){ 
+           animate_spin( -Math.PI*2/3 );
+        });
+        $("#buttonright").click( function(){ 
+           animate_spin( Math.PI*2/3 );
+        });
+    } else {
+        $("#buttonleft, #buttonright").css('visibility', 'hidden');
+
+        // using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
+        var start_azimuth = parseInt([ -Math.PI*2/3.1, 0, Math.PI*2/3.1 ][position-1] * 100);
+        clog('start azi: ' + start_azimuth);
+        $("#slide_azi").val(  start_azimuth );
+        rotate_view(); 
+    }
 
 });
 
@@ -207,21 +222,14 @@ function animate_spin(delta_radians) {
 			position: relative;
 			width: 600px;
 		}
-		.bigbutton{
-			float:left;
-			margin-left:  4px;
+    .button {
+ 			margin-left:  4px;
 			margin-right:  4px;
 			z-index: 3;
-		}
-		.rightbutton{
-			float:right;
-			margin-left:  4px;
-			margin-right:  4px;
-			z-index: 3;
-		}
-		.clear{
-			clear: both;
-		}
+   }
+		.button.left{ float:left; }
+		.button.right{ float:right; }
+		.clear{ clear: both; }
 
 		#canvas{
 			width: 750px;
@@ -264,8 +272,8 @@ p
 			<div id="svgholder"></div>
        <canvas id="canvas" width=750 height=750></canvas>   
 			<div class="bottomrow" >
-				<img class="bigbutton"   id="buttonleft"  src="/static/button_left.png"      alt="Left"  >
-				<img class="rightbutton"   id="buttonright" src="/static/button_right.png"     alt="Right" >
+				<img class="button left"   id="buttonleft"  src="/static/button_left.png"      alt="Left"  >
+				<img class="button right"   id="buttonright" src="/static/button_right.png"     alt="Right" >
 				<div class="clear"></div>
 			  <br>
         {% block bottom %}
