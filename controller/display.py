@@ -1,5 +1,6 @@
 import lightboard
 import time;
+import platform
 
 from glog import GLog;
 
@@ -34,7 +35,10 @@ class Display:
          print "First try for"
          print i;
          self.trackers[i] = lightboard.LightBoardTracker();
-         self.trackers[i].openSerial(i);
+         if (platform.system() == 'Darwin' ):
+             self.trackers[i].openSerial('/dev/tty.usbserial-A6008iGf');
+         else:
+             self.trackers[i].openSerial(i);
          self.trackers[i].setLid(i);
        
       # 5 second delay to let the arduino boards stabilize
@@ -75,7 +79,10 @@ class Display:
             print "Reconnecting to lightboard ";
             print i;
             #tracker.close();
-            tracker.openSerial(i);
+            if (platform.system() == 'Darwin' ):
+                tracker.openSerial('/dev/tty.usbserial-A6008iGf');
+            else:
+                tracker.openSerial(i);
             tracker.triednow();
          clock3 = time.clock()
          if (tracker.lastgood != None and tracker.guid != tracker.lastgood.guid):
