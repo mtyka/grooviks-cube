@@ -38,6 +38,9 @@ import threading
 import time
 import datetime
 import urllib, urllib2
+import display
+import serial
+import lightboard
 
 import groovik
 import hbclient
@@ -118,6 +121,13 @@ def push_message(datagram):
 
 class Cube():
     def __init__(self):
+        plat = sys.platform.lower()
+        count = 25
+        if plat[:5] == 'linux':
+          count = 11
+
+        self.displayc = display.Display(count, "input_playa.py" )
+        
         # connect to the hookbox client and receive commands
         groovikConfig.SetConfigFileName( 'config_pc.txt' )
         groovikConfig.LoadConfig()
@@ -154,7 +164,9 @@ class Cube():
         
     def run(self):
         while True:
-            # generate random colors for every cube face every 1.5 seconds
+            self.displayc.loop()
+						
+						# generate random colors for every cube face every 1.5 seconds
             # and publish them via the HTTP/REST api.
             frameStartTime = time.time();
 
@@ -173,6 +185,7 @@ class Cube():
         simTime = time.time()
         with cube_lock:
           keyframes, resync = self.grooviksCube.Update( simTime )
+          self.displayc.renderFrames( keyframes, resync )
         if keyframes:
             return keyframes
 
