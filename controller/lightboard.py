@@ -2,7 +2,6 @@
 import time;
 import serial;
 import fileinput;
-import copy 
 import sys;
 import StringIO;
 
@@ -59,6 +58,8 @@ class LightBoardTracker:
          #print serialID
          #this.ser = serial.Serial(serialID, 9600, EIGHTBITS, PARITY_NONE, STOPBITS_TWO, None, xonxoff=0, rtscts=0, None, None, None);
          this.ser = serial.Serial(serialID, 9600, 8, 'N', 1, None, 0, 0, None, None, None);
+         # Use this on a MAC (apparently)
+				 #this.ser = serial.Serial('/dev/tty.usbserial-A6008iGf', 9600, 8, 'N', 1, None, 0, 0, None, None, None);
          
          print "Successfully opened serialID:"
          print serialID;
