@@ -231,10 +231,12 @@ class Message:
 class BoardMap:
    def __init__(self):
       self.pixels = [];
+      self.offsets = []; # These are mapped to physical PixelIDs
       self.lbt = None;
       self.id = None;
       for x in range(5):
          self.pixels.append(-1);
+         self.offsets.append([1,1,1]);
 
 #fields:  
 #    pixelMap --> A hashmap which goes from the logicalPixelID to the Input line that created it (And hence, the boardID, and physical pixelID)
@@ -254,10 +256,12 @@ class LightMapping:
          logicalPixelID = l[0];
          boardID        = l[1];
          boardPixelID   = l[2];
+         physPixelOffset = l[3];
          if (not this.boardMap.__contains__(boardID)):
             this.boardMap[boardID] = BoardMap();            
          this.pixelMap[logicalPixelID] = l;
          this.boardMap[boardID].pixels[boardPixelID] = logicalPixelID;
+         this.boardMap[boardID].offsets[boardPixelID] = physPixelOffset 
    
    def addBoard(this, lbt):
       id = lbt.lastgood.guid;
@@ -353,9 +357,10 @@ class LightMapping:
                #  ? Update them if necessary
                #  Send a message to the board.
                p = [0,0,0,0,0];
+               
                for x in range(5):
                   p[x] = boardmap.pixels[x];
-                  pv[x] = pixels[p[x]];
+                  pv[x] = [ i*j for i, j in zip(pixels[p[x]],boardmap.offsets[x]) ]
                   
                #print("LRP : {0}".format(lrp - lrpLag));
                message = message + m.createFromFPPixelList(lrp - lrpLag, pv);
