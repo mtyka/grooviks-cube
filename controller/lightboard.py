@@ -240,6 +240,7 @@ class BoardMap:
 
 #fields:  
 #    pixelMap --> A hashmap which goes from the logicalPixelID to the Input line that created it (And hence, the boardID, and physical pixelID)
+#                   Can be out of date as it is not updated when pixels are swapped, etc.
 #    boardMap --> A hashmap of boardMaps that goes from boardID, to a BoardMap object, containing:
 #         a LightBoardTracker (if there is one tracking this item)
 #         an ID, 
@@ -311,6 +312,34 @@ class LightMapping:
          file.writelines([self.pixels[ID].__str__()]);
       file.flush();
       file.close();
+
+   # Don't want to modify dumpMapping, don't know what uses it
+   # This saves a complete Mapping that can be loaded with initMapping
+   def saveMapping(self, file):
+      pixelMap = []
+      for i, board in self.boardMap.items():
+          boardID = i
+          for j, pixel in enumerate(board.pixels):
+              boardPixelID = j
+              if (pixel == -1 ):
+                  # this pixel doesn't actually exist, the last open lightboard slot on the last arduino
+                  continue
+              logicalPixelID = pixel
+              physPixelOffset = tuple(board.offsets[j])
+              pixelMap.append( (logicalPixelID, boardID, boardPixelID, physPixelOffset  ) )
+              
+      pixelMap.sort(key=lambda x:x[0])
+      output = open(file, 'w');
+      for line in pixelMap:
+          output.write("( %s, %s, %s, %s )\n" % line)
+      output.close();
+
+   
+   # Called when pixels will be remapped from the admin panel
+   # Turns off all pixels, walks through and flashes one pixel at a time
+   def adminRemap(self):
+       pass
+
    
    #Note:  Frames is a list of lists.  Format is:
    # [ [ lrpDurationInLrpCycles, [P_0.b, P_0.g, P_0.r], [P_1.b, P_1.g, P_1.r], ... , [P_51.b, P_51.g, P_51.r] ],
