@@ -15,7 +15,7 @@ class ModeCalibration( ModeBase ):
 			faceIndices.append( 0 )
 		return groovikConfig.calibrationColors, faceIndices
 	
-	def HandleInput( self, grooviksCube, cubeInputType, params ):
+	def HandleInput( self, grooviksCube, display, cubeInputType, params ):
 		if ( cubeInputType == CubeInput.ROTATION ):
 			self.__CalibrationMode = self.__CalibrationMode + 1
 			self.__CalibrationMode = self.__CalibrationMode % len(groovikConfig.calibrationColors)

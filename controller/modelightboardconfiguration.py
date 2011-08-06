@@ -10,27 +10,24 @@ from modebase import ModeBase
 
 class ModeLightBoardConfiguration( ModeBase ):		    
 	def StartMode( self, grooviksCube ):
-		self.__CalibrationMode = 0
+		self.currentFace = 0
 		faceIndices = []
 		for i in range( 54 ):
-			faceIndices.append( -1 )
-		faceIndices[ self.__CalibrationMode ] = 0
-		return [ [ 1.0, 1.0, 1.0 ] ], faceIndices
+			faceIndices.append( 1 )
+		faceIndices[ self.currentFace ] = 0 
+		return [ [ 1.0, 1.0, 1.0 ], [1.0, 0.0, 1.0 ], [ 0.0, 0.0, 1.0 ] ], faceIndices
 	
-	def HandleInput( self, grooviksCube, cubeInputType, params ):
-		if ( cubeInputType == CubeInput.ROTATION ):
-			if ( params[0][1] is False ):
-				self.__CalibrationMode = self.__CalibrationMode + 1
-				self.__CalibrationMode = self.__CalibrationMode % 54
+	def HandleInput( self, grooviksCube, display, cubeInputType, params ):
+		if ( cubeInputType == CubeInput.FACE_CLICK ):
+			display.lm.switchPixels( params, self.currentFace )
+			faceIndices = grooviksCube.GetFaceColorIndicies()
+			if ( self.currentFace < 52 ) :
+				faceIndices[self.currentFace] = 2
+				self.currentFace += 1
+				faceIndices[self.currentFace] = 0
+				grooviksCube.QueueFade( 0, False, faceIndices )
 			else:
-				self.__CalibrationMode = self.__CalibrationMode - 1
-				if ( self.__CalibrationMode < 0 ):
-					self.__CalibrationMode = 53
-			faceIndices = []
-			for i in range( 54 ):
-				faceIndices.append( -1 )
-			faceIndices[ self.__CalibrationMode ] = 0
-			grooviksCube.QueueFade( 0.5, False, faceIndices )
+				grooviksCube.QueueModeChange( CubeMode.NORMAL )
 		
 	def CanQueueState( self, grooviksCube, state ):	
 		return not grooviksCube.HasQueuedStates()
