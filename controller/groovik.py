@@ -64,6 +64,9 @@ class GrooviksCube:
    def GetFaceColors( self ):
       return self.__faceColors   
    
+   def GetFaceColorIndicies( self ):
+      return self.__initialColorIndices;
+   
    def HasQueuedStates(self): 
       return ( len( self.__queuedStates ) > 1 )
    
@@ -78,7 +81,7 @@ class GrooviksCube:
       if ( cubeInputType == CubeInput.SWITCH_MODE ):
          self.QueueModeChange( params )
       else:
-         self.__currentMode.HandleInput( self, cubeInputType, params )
+         self.__currentMode.HandleInput( self, self.display, cubeInputType, params )
    
    #-----------------------------------------------------------------------------
    # This method will queue a game mode change. mode is member of the CubeMode enum.
@@ -286,8 +289,9 @@ class GrooviksCube:
    #-----------------------------------------------------------------------------
    # Methods related to initialization of the cube simulation
    #-----------------------------------------------------------------------------
-   def __init__(self, logger):
+   def __init__(self, logger, display):
       self.__queuedStates = [ ]
+      self.display = display
 
       # create all states
       self.__idleState = StateIdle()

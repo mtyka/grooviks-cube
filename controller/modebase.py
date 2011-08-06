@@ -22,7 +22,7 @@ class ModeBase:
 	# Here, the game mode can respond to the input event by queueing a state change onto the simulation object.
 	# Typically, you'd call methods like grooviksCube.QueueFade() or grooviksCube.QueueRotation().
 	# There are no return values from this function.
-	def HandleInput( self, grooviksCube, cubeInputType, params ):
+	def HandleInput( self, grooviksCube, display, cubeInputType, params ):
 		raise NotImplementedError
 
 	# Every simulation step, this method is called to check if it wants to queue a new state 

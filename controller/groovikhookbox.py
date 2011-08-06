@@ -135,7 +135,7 @@ class Cube():
         self.logger = GLog("moves.log");
         self.logger.logLine("[ \"reset\" ]");
         
-        self.grooviksCube = groovik.GrooviksCube( self.logger )
+        self.grooviksCube = groovik.GrooviksCube( self.logger, self.displayc )
         curTime = time.time()
         self.grooviksCube.SetStartTime( curTime )
         
@@ -152,21 +152,30 @@ class Cube():
         if rtjp_frame[1] == "PUBLISH":
             if rtjp_frame[2]['channel_name'] == 'faceclick':
                 rot_command = rtjp_frame[2]['payload'][1:]
+                face = rtjp_frame[2]['payload'][0]
                 #print rot_command
                 with cube_lock:
+                    # callbacks for both rotation and pixel click
+					# better way of doing this?
                     self.grooviksCube.HandleInput( CubeInput.ROTATION, [rot_command])
+                    self.grooviksCube.HandleInput( CubeInput.FACE_CLICK, face)
                     #self.grooviksCube.QueueEffect( "victory0" )
             elif rtjp_frame[2]['channel_name'] == 'gamemode':
                 self.logger.logLine( "GameMode: %s " % (rtjp_frame[2]['payload']) )
                 depth = rtjp_frame[2]['payload']['difficulty']
                 self.grooviksCube.ResetColors()
                 self.grooviksCube.Randomize(depth)
+            elif rtjp_frame[2]['channel_name'] == 'cubemode':
+                self.logger.logLine( "CubeMode: %s " % (rtjp_frame[2]['payload']) )
+                mode = rtjp_frame[2]['payload']['mode']
+                if( self.grooviksCube.GetCurrentMode() != mode):
+                    self.grooviksCube.QueueModeChange(mode)
         
     def run(self):
         while True:
             self.displayc.loop()
 						
-						# generate random colors for every cube face every 1.5 seconds
+            # generate random colors for every cube face every 1.5 seconds
             # and publish them via the HTTP/REST api.
             frameStartTime = time.time();
 

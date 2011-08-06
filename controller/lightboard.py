@@ -260,7 +260,7 @@ class LightMapping:
          physPixelOffset = l[3];
          if (not this.boardMap.__contains__(boardID)):
             this.boardMap[boardID] = BoardMap();            
-         this.pixelMap[logicalPixelID] = l;
+         this.pixelMap[logicalPixelID] = list(l);
          this.boardMap[boardID].pixels[boardPixelID] = logicalPixelID;
          this.boardMap[boardID].offsets[boardPixelID] = physPixelOffset 
    
@@ -283,8 +283,9 @@ class LightMapping:
    def switchPixels(this, iPixelOne, iPixelTwo):
       # Update the pixelMap
       #  Note, these are references, so updating them updates the original list as well.
-      pixelOne = this.pixels[iPixelOne]
-      pixelTwo = this.pixels[iPixelTwo]
+	  # Correctly does not update color offsets as those are physical pixel ID dependent
+      pixelOne = this.pixelMap[iPixelOne]
+      pixelTwo = this.pixelMap[iPixelTwo]
       
       #Note, since these will hold int's, they are value, not reference, and so will persist
       p1_ID    = pixelOne[0];
@@ -299,8 +300,9 @@ class LightMapping:
       pixelTwo[0] = p1_ID;
       
       # Update the pixelMap
-      this.pixels[iPixelOne] = pixelTwo;
-      this.pixels[iPixelTwo] = pixelOne;
+      this.pixelMap[iPixelOne] = pixelTwo;
+      this.pixelMap[iPixelTwo] = pixelOne;
+
             
       # Update the boardMap
       this.boardMap[p1_BOARD].pixels[p1_PIXEL] = p2_ID;

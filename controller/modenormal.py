@@ -18,7 +18,7 @@ class ModeNormal( ModeBase ):
       self.__normalModeState = ModeNormalState.NORMAL
       return groovikConfig.standardFaceColors, None
       
-   def HandleInput( self, grooviksCube, cubeInputType, params ):
+   def HandleInput( self, grooviksCube, display, cubeInputType, params ):
       if ( cubeInputType == CubeInput.ROTATION ):
          grooviksCube.QueueRotation( params )      
          
