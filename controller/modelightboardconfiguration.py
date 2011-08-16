@@ -20,7 +20,7 @@ class ModeLightBoardConfiguration( ModeBase ):
 	def HandleInput( self, grooviksCube, display, cubeInputType, params ):
 		if ( cubeInputType == CubeInput.FACE_CLICK ):
 			display.lm.switchPixels( params, self.currentFace )
-            display.lm.saveMapping("input_playa.py")
+			display.lm.saveMapping("input_playa.py")
 			faceIndices = grooviksCube.GetFaceColorIndicies()
 			if ( self.currentFace < 52 ) :
 				faceIndices[self.currentFace] = 2

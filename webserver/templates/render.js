@@ -286,6 +286,23 @@ function buildQuadList( ctx, viewProj, viewProjViewport ) {
     return quadlist;
 }
 
+//-----------------------------------------------------------------------------
+//  This determines whether an arrow should be drawn, and/or should be 
+//   available for click
+//-----------------------------------------------------------------------------
+function shouldDrawArrow( faceNum )
+{
+    // If we're in single player mode, verify that this arrow is intended for this player
+    if (position)
+    {
+	if (arrowRotation[faceNum][2] != position)
+	    return false;
+    }
+
+    // Verify that this is a facet that deserves an arrow in any condition
+    return (arrowRotation[faceNum][0] != 0);
+
+}
 
 //-----------------------------------------------------------------------------
 // This draws an arrow, projecting it from world space to screenspace, and then rendering it.
@@ -379,14 +396,14 @@ function drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, orientation
 // x = 1,-1 y = 2,-2 z = 3,-3 !rotate = 0
 // Second ordinal is the row #
 arrowRotation = [
-[2,2],[0,0],[-2,2],[2,1],[0,0],[-2,1],[2,0],[0,0],[-2,0],  
-[2,2],[0,0],[-2,2],[2,1],[0,0],[-2,1],[2,0],[0,0],[-2,0], 
+		 [2,2,3],[0,0,3],[-2,2,3],[2,1,3],[0,0,3],[-2,1,3],[2,0,3],[0,0,3],[-2,0,3],  
+		 [2,2,3],[0,0,3],[-2,2,3],[2,1,3],[0,0,3],[-2,1,3],[2,0,3],[0,0,3],[-2,0,3], 
 
-[3,0],[3,1],[3,2],[0,0],[0,0],[0,0],[-3,0],[-3,1],[-3,2],
-[-3,2],[-3,1],[-3,0],[0,0],[0,0],[0,0],[3,2],[3,1],[3,0],
+		 [3,0,1],[3,1,1],[3,2,1],[0,0,1],[0,0,1],[0,0,1],[-3,0,1],[-3,1,1],[-3,2,1],
+		 [-3,2,1],[-3,1,1],[-3,0,1],[0,0,1],[0,0,1],[0,0,1],[3,2,1],[3,1,1],[3,0,1],
 
-[1,2],[0,0],[-1,2],[1,1],[0,0],[-1,1],[1,0],[0,0],[-1,0],
-[1,2],[0,0],[-1,2],[1,1],[0,0],[-1,1],[1,0],[0,0],[-1,0],
+		 [1,2,2],[0,0,2],[-1,2,2],[1,1,2],[0,0,2],[-1,1,2],[1,0,2],[0,0,2],[-1,0,2],
+		 [1,2,2],[0,0,2],[-1,2,2],[1,1,2],[0,0,2],[-1,1,2],[1,0,2],[0,0,2],[-1,0,2],
 ];
 
 // x[],y[],z[] then
@@ -416,7 +433,7 @@ function drawCube( ctx, viewProj, viewProjViewport, colors )
         var darkcolor = [ colors[ndx][0]*.6, colors[ndx][1]*.6, colors[ndx][2]*.6 ]
         drawQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], colors[ndx], ndx );
 		var arrowDirection = -1;
-        if (arrowRotation[ndx][0] !=0) {
+		if (shouldDrawArrow(ndx)) {
             var sign = arrowRotation[ndx][0] < 0;
             arrowDirection = rotToOrient[Math.abs(arrowRotation[ndx][0]) - 1][Math.floor(ndx / 9)]
             if (sign) {

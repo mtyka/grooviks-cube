@@ -144,7 +144,7 @@ function cube_got_clicked_on(x,y)
      	return;
     }
     //faceclick_subscription.publish( facenum );  // docs say this should work but it doesn't
-    if (arrowRotation[facenum][0] != 0) {
+    if (shouldDrawArrow(facenum)) {
         clog("Publishing local click on face "+facenum);
       	var rotation_direction = arrowRotation[facenum][0] > 0;
       	// See QueueRotation in groovik.py
