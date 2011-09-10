@@ -49,7 +49,7 @@ class LightBoardTracker:
    def openSerial(this, serialID):
       # Note:  Calling this method will pick up the default serial speed (currently configured as 76800 baud)
       #  This is the method that the cube calls to open the serial ports.  
-      openSerialSpeed(this, serialID, 76800);
+      this.openSerialSpeed(serialID, 76800);
    
    def openSerialSpeed(this, serialID, baud):
       if (time.time() - this.triedopen < 5):

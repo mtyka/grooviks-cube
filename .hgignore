@@ -5,3 +5,4 @@ syntax: glob
 moves.log
 local_*
 .git
+.orig
