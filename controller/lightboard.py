@@ -49,7 +49,7 @@ class LightBoardTracker:
    def openSerial(this, serialID):
       # Note:  Calling this method will pick up the default serial speed (currently configured as 76800 baud)
       #  This is the method that the cube calls to open the serial ports.  
-      this.openSerialSpeed(serialID, 76800);
+      this.openSerialSpeed(serialID, 57600);
    
    def openSerialSpeed(this, serialID, baud):
       if (time.time() - this.triedopen < 5):
@@ -61,21 +61,20 @@ class LightBoardTracker:
       try:
          this.triedopen = time.time();
          #print "Asking to open "
-         #print serialID
          #this.ser = serial.Serial(serialID, 9600, EIGHTBITS, PARITY_NONE, STOPBITS_TWO, None, xonxoff=0, rtscts=0, None, None, None);
-         this.ser = serial.Serial(serialID, baud, 8, 'N', 1, None, 0, 0, None, None, None);
+         this.ser = serial.Serial('/dev/ttyUSB%d' % serialID, baud, 8, 'N', 1, None, 0, 0, None, None);
          # Use this on a MAC (apparently)
 				 #this.ser = serial.Serial('/dev/tty.usbserial-A6008iGf', 9600, 8, 'N', 1, None, 0, 0, None, None, None);
          
          print "Successfully opened serialID:"
          print serialID;
-         
+
          #print "past that"
          this.isOpen = True;
       except (KeyboardInterrupt, SystemExit):
          raise
       except:
-         print "Unexpected error:", sys.exc_info()[0]
+         print "Unexpected error:", sys.exc_info()[1]
          this.isOpen = False;
          this.ser = None;
       finally:
