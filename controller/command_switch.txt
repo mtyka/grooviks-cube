@@ -1,0 +1,6 @@
+[True, "commentLine"] # Note, this line is here only for documentation purposes.  
+[True, "commentLine"] #  First value controls which command mode (multi-press, or chorded) is used True = Multipress, where every button that is down is reported on key-up
+[True, "commentLine"] #  Second value is the name of the file to load with the command mappings
+[True, "commentLine"] #  Note, last entry wins. If you want to change which thing is active, simply switch which entry is last.
+[False, "simpleControls.txt"]     # This is the standard mapping file
+[True, "singleControlSolve.txt"]  # This is the mapping file that allows the cube to be solved from a single station
