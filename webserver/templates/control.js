@@ -1,4 +1,66 @@
+// ####################################################################
+// ######################## SoundManager2 #############################
+// ####################################################################
+{% include "soundmanager2-jsmin.js" %}
 
+// soundManager.url = "static/soundmanager2/swf";
+soundManager.preferFlash = false;
+soundManager.useHTML5Audio = true;
+soundManager.onload = function(){
+    soundManager.createSound({
+        id: 'column1_1',
+        url: 'static/synth_8bit_low_001.wav',
+        autoLoad: true
+    });
+
+    soundManager.createSound({
+        id: 'column1_2',
+        url: 'static/synth_8bit_med_001.wav',
+        autoLoad: true
+    });
+
+    soundManager.createSound({
+        id: 'column1_3',
+        url: 'static/synth_8bit_high_001.wav',
+        autoLoad: true 
+    }); 
+
+     soundManager.createSound({
+        id: 'column2_1',
+        url: 'static/synth_tal_low_002.wav',
+        autoLoad: true
+    });
+
+    soundManager.createSound({
+        id: 'column2_2',
+        url: 'static/synth_tal_med_002.wav',
+        autoLoad: true
+    });
+
+    soundManager.createSound({
+        id: 'column2_3',
+        url: 'static/synth_tal_high_002.wav',
+        autoLoad: true
+    });    
+    
+    soundManager.createSound({
+        id: 'column3_1',
+        url: 'static/vocoder_low_001.wav',
+        autoLoad: true
+    });
+
+    soundManager.createSound({
+        id: 'column3_2',
+        url: 'static/vocoder_med_001.wav',
+        autoLoad: true
+    });
+
+    soundManager.createSound({
+        id: 'column3_3',
+        url: 'static/vocoder_high_001.wav',
+        autoLoad: true
+    });
+};
 // ####################################################################
 // ######################## Control Logic #############################
 // ####################################################################
@@ -195,6 +257,9 @@ function establish_hookbox_connections() {
         if( channelName == 'faceclick' ) {
             faceclick_subscription = _subscription;                
             faceclick_subscription.onPublish = function(frame) {
+                var faceSound = soundManager.load('column'+ (Math.floor(frame.payload[1]/ 3) + 1) + '_' + ((frame.payload[1] % 3) + 1));
+		soundManager.stopAll();
+		faceSound.play(); 
                 clog('Heard about click on face ' + frame.payload);
             };  
         }
