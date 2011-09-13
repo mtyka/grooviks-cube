@@ -257,7 +257,9 @@ function establish_hookbox_connections() {
         if( channelName == 'faceclick' ) {
             faceclick_subscription = _subscription;                
             faceclick_subscription.onPublish = function(frame) {
-                var faceSound = soundManager.load('column'+ (Math.floor(frame.payload[1]/ 3) + 1) + '_' + ((frame.payload[1] % 3) + 1));
+		var playerNumber = Math.floor(frame.payload[1]/ 3) + 1;
+		var columnNumber = (frame.payload[1] % 3) + 1;
+                var faceSound = soundManager.load('column'+ playerNumber  + '_' + columnNumber);
 		soundManager.stopAll();
 		faceSound.play(); 
                 clog('Heard about click on face ' + frame.payload);
