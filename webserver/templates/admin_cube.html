@@ -11,6 +11,64 @@
         <script type="text/javascript" src="http://leodirac.com/jquery.svg/jquery.svgplot.js"></script> 
 
 
+	<style>
+	#red, #green, #blue {
+		float: left;
+		clear: left;
+		width: 300px;
+		margin: 15px;
+	}
+	#swatch {
+		width: 120px;
+		height: 100px;
+		margin-top: 18px;
+		margin-left: 350px;
+		background-image: none;
+	}
+	#red .ui-slider-range { background: #ef2929; }
+	#red .ui-slider-handle { border-color: #ef2929; }
+	#green .ui-slider-range { background: #8ae234; }
+	#green .ui-slider-handle { border-color: #8ae234; }
+	#blue .ui-slider-range { background: #729fcf; }
+	#blue .ui-slider-handle { border-color: #729fcf; }
+	#demo-frame > div.demo { padding: 10px !important; };
+	</style>
+	<script>
+	    function hexFromRGB(r, g, b) {
+	        var hex = [
+			r.toString(16),
+			g.toString(16),
+			b.toString(16)
+		];
+	        $.each(hex, function (nr, val) {
+	            if (val.length === 1) {
+	                hex[nr] = "0" + val;
+	            }
+	        });
+	        return hex.join("").toUpperCase();
+	    }
+	    function refreshSwatch() {
+	        var red = $("#red").slider("value"),
+			green = $("#green").slider("value"),
+			blue = $("#blue").slider("value"),
+			hex = hexFromRGB(red, green, blue);
+	        $("#swatch").css("background-color", "#" + hex);
+	    }
+	    $(function () {
+	        $("#red, #green, #blue").slider({
+	            orientation: "horizontal",
+	            range: "min",
+	            max: 255,
+	            value: 127,
+	            slide: refreshSwatch,
+	            change: refreshSwatch
+	        });
+	        $("#red").slider("value", 255);
+	        $("#green").slider("value", 140);
+	        $("#blue").slider("value", 60);
+	    });
+	</script>
+
 <script type="text/javascript"> 
 function isIE()
 {
@@ -133,6 +191,21 @@ $(document).ready(function(){
     $("#colorcalibration").click(     function(){ set_cubemode(1); } );
     $("#normal").click(     function(){ set_cubemode(0); } );
 
+    alert("YO!");
+    $( "#slider").slider();
+    $( "#slider-vertical" ).slider({
+         range: "min", 
+         min: 0,
+         max: 100,
+         value: 60,
+         slide: function( event, ui ) {
+              $( "#amount" ).val( ui.value );
+           }
+    });
+    
+    $( "#amount" ).val( $( "#slider-vertical" ).slider( "value" ) );     
+    alert("Gaba");
+
     if (!position) {
         $("#buttonleft").click( function(){ 
            animate_spin( -Math.PI*2/3 );
@@ -185,6 +258,23 @@ function animate_spin(delta_radians) {
 
 
 </script>   
+<script>
+
+ function loadSliders() {
+     alert("Here");
+     $( "#color_calibration_sliders > span").each(function () {
+      // read initial values from markup and remove
+      var value = parseInt( $( this ).text(), 10);
+      $( this ).empty().slider({
+        value: value,
+        range: "min", 
+        animate: true,
+        orientation: "vertical"
+        });
+      })'
+  };
+
+</script>
 <style>
     .debug {
         display:none;
@@ -273,6 +363,33 @@ p
                 <img class="bigbutton"   id="normal"     src="/static/button_normalmode.png" alt="Normal Mode" >
                 <div class="clear"></div>
             </div>
+            <div id="color_calibration_sliders" class="toprow">
+               Power of Love!
+	       <span>255</span>
+	       <span>255</span>
+	       <span>255</span>
+            </div>
+           <div class="demo">
+
+                <p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
+	                <span class="ui-icon ui-icon-pencil" style="float:left; margin:-2px 5px 0 0;"></span>
+	                Simple Colorpicker
+                </p>
+
+                <div id="red"></div>
+                <div id="green"></div>
+                <div id="blue"></div>
+
+                <div id="swatch" class="ui-widget-content ui-corner-all"></div>
+
+           </div><!-- End demo -->
+
+
+
+           <div class="demo-description" style="clear:left;">
+                <p>Combine three sliders to create a simple RGB colorpicker.</p>
+           </div><!-- End demo-description -->
+
       {% endblock %}
 			<div id="svgholder"></div>
        <canvas id="canvas" width=750 height=750></canvas>   
@@ -286,8 +403,14 @@ p
       </div>
 	
 
-
        <div id="cube_status">Waiting for controller...</div>
+     
+       <div id="color_calibration_sliders">
+         Show me some love  
+	 <span>255</span>
+	 <span>255</span>
+	 <span>255</span>
+       </div>
 
        <div id="manual_rotate" class="debug">
           Altitude: <input id="slide_alt" type="range" min="-1000" max="1000" value="220" onchange="rotate_view();"><br/>
