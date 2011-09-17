@@ -259,61 +259,6 @@ class LightMapping:
       this.pixelMap = {};
       this.boardMap = {};
       this.loadMapping()
-      this.faceToPixelMap={0:8, \
-                        1:7, \
-                        2:6, \
-                        3:5, \
-                        4:4, \
-                        5:3, \
-                        6:2, \
-                        7:1, \
-                        8:0, \
-                        9:17, \
-                        10:16, \
-                        11:15, \
-                        12:14, \
-                        13:13, \
-                        14:12, \
-                        15:11, \
-                        16:10, \
-                        17:9, \
-                        18:26, \
-                        19:25, \
-                        20:24, \
-                        21:23, \
-                        22:22, \
-                        23:21, \
-                        24:20, \
-                        25:19, \
-                        26:18, \
-                        27:35, \
-                        28:34, \
-                        29:33, \
-                        30:32, \
-                        31:31, \
-                        32:30, \
-                        33:29, \
-                        34:28, \
-                        35:27, \
-                        36:44, \
-                        37:43, \
-                        38:42, \
-                        39:41, \
-                        40:40, \
-                        41:39, \
-                        42:38, \
-                        43:37, \
-                        44:36, \
-                        45:53, \
-                        46:52, \
-                        47:51, \
-                        48:50, \
-                        49:49, \
-                        50:48, \
-                        51:47, \
-                        52:46, \
-                        53:45}
-
    def loadMapping(this):
       for line in fileinput.input(this.inputfile):
          l = eval(line);
@@ -339,10 +284,6 @@ class LightMapping:
       if (lbt.lastgood != None and this.boardMap[lbt.lastgood.guid].lbt != None):
          return True;
       return False;
-
-   def faceToPixel(this, face):
-	    # This converts webserver face mapping to backend pixel mapping, then calls switch pixels
-      return this.faceToPixelMap[face]
 
    # we need to update the in-memory fields
    #    pixelMap

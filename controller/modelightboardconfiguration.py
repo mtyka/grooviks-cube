@@ -27,7 +27,6 @@ class ModeLightBoardConfiguration( ModeBase ):
 				return
 			logicalPixel = display.lm.xthPixel(self.physPixel)
 			print "logical pixel %d" % logicalPixel
-			mappedparams = display.lm.faceToPixel(params)
 			print " params %d" % params
 			display.lm.switchPixels( params, logicalPixel )
 			display.lm.saveMapping()
