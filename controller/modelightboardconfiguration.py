@@ -10,22 +10,37 @@ from modebase import ModeBase
 
 class ModeLightBoardConfiguration( ModeBase ):		    
 	def StartMode( self, grooviksCube ):
-		self.currentFace = 0
+		self.physPixel = -1
 		faceIndices = []
 		for i in range( 54 ):
 			faceIndices.append( 1 )
-		faceIndices[ self.currentFace ] = 0 
-		return [ [ 1.0, 1.0, 1.0 ], [1.0, 0.0, 1.0 ], [ 0.0, 0.0, 1.0 ] ], faceIndices
+		return [ [ 1.0, 0, 0 ], [0, 1, 0 ], [ 0.0, 0.0, 1.0 ] ], faceIndices
 	
 	def HandleInput( self, grooviksCube, display, cubeInputType, params ):
 		if ( cubeInputType == CubeInput.FACE_CLICK ):
-			display.lm.switchPixels( params, self.currentFace )
-			display.lm.saveMapping("input_playa.py")
 			faceIndices = grooviksCube.GetFaceColorIndicies()
-			if ( self.currentFace < 52 ) :
-				faceIndices[self.currentFace] = 2
-				self.currentFace += 1
-				faceIndices[self.currentFace] = 0
+			if (self.physPixel == -1 ):
+				self.physPixel += 1
+				logicalPixel = display.lm.xthPixel(self.physPixel)
+				faceIndices[logicalPixel] = 0
+				grooviksCube.QueueFade( 0, False, faceIndices )
+				return
+			logicalPixel = display.lm.xthPixel(self.physPixel)
+			print "logical pixel %d" % logicalPixel
+			mappedparams = display.lm.faceToPixel(params)
+			print " params %d" % params
+			display.lm.switchPixels( params, logicalPixel )
+			display.lm.saveMapping()
+			if ( self.physPixel < 53 ) :
+				faceIndices[logicalPixel] = 1
+				faceIndices[params] = 2
+				if (display.lm.xthPixel(self.physPixel+1) == logicalPixel ):
+					faceIndices[logicalPixel] = 2
+					self.physPixel += 1 #this is if you put two faces in the right spot with one swap
+				self.physPixel += 1
+				logicalPixel = display.lm.xthPixel(self.physPixel)
+				print "new logical pixel %d" % logicalPixel
+				faceIndices[logicalPixel] = 0
 				grooviksCube.QueueFade( 0, False, faceIndices )
 			else:
 				grooviksCube.QueueModeChange( CubeMode.NORMAL )
