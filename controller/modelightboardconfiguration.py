@@ -12,9 +12,9 @@ class ModeLightBoardConfiguration( ModeBase ):
 	def StartMode( self, grooviksCube ):
 		self.physPixel = -1
 		faceIndices = []
-		for i in range( 54 ):
+		for i in range( 55 ):
 			faceIndices.append( 1 )
-		return [ [ 1.0, 0, 0 ], [0, 1, 0 ], [ 0.0, 0.0, 1.0 ] ], faceIndices
+		return [ [ 1.0, 0, 0 ], [0, 1, 0 ], [ 0.0, 0.0, 1.0 ] ], faceIndices[:-1]
 	
 	def HandleInput( self, grooviksCube, display, cubeInputType, params ):
 		if ( cubeInputType == CubeInput.FACE_CLICK ):
@@ -22,15 +22,16 @@ class ModeLightBoardConfiguration( ModeBase ):
 			if (self.physPixel == -1 ):
 				self.physPixel += 1
 				logicalPixel = display.lm.xthPixel(self.physPixel)
-				faceIndices[logicalPixel] = 0
-				grooviksCube.QueueFade( 0, False, faceIndices )
+				if (logicalPixel != 54):
+					faceIndices[logicalPixel] = 0
+				grooviksCube.QueueFade( 0, False, faceIndices[:-1] )
 				return
 			logicalPixel = display.lm.xthPixel(self.physPixel)
 			print "logical pixel %d" % logicalPixel
 			print " params %d" % params
 			display.lm.switchPixels( params, logicalPixel )
 			display.lm.saveMapping()
-			if ( self.physPixel < 53 ) :
+			if ( self.physPixel < 54 ) :
 				faceIndices[logicalPixel] = 1
 				faceIndices[params] = 2
 				if (display.lm.xthPixel(self.physPixel+1) == logicalPixel ):
@@ -40,7 +41,7 @@ class ModeLightBoardConfiguration( ModeBase ):
 				logicalPixel = display.lm.xthPixel(self.physPixel)
 				print "new logical pixel %d" % logicalPixel
 				faceIndices[logicalPixel] = 0
-				grooviksCube.QueueFade( 0, False, faceIndices )
+				grooviksCube.QueueFade( 0, False, faceIndices[:-1] )
 			else:
 				grooviksCube.QueueModeChange( CubeMode.NORMAL )
 		
