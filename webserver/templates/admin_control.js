@@ -207,7 +207,9 @@ function set_cubemode(mode) {
     }
 }
 
-
+function map_blank_pixel() {
+    hookbox_conn.publish('faceclick', [54, 0, 0] );
+}
 
 
 // ####################################################################
