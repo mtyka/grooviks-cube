@@ -90,7 +90,7 @@ class StateRotation( StateBase ):
 		simTime = self.__ComputeNextSimTime( currentTime )
 
                 # tracks how far along in the cube rotation we are
-                rotationStep = 3 - self.__step3Index		
+                rotationStep = self.__step3Index		
 
 		# Update the target rotation state ( 3 step )
 		if ( self.__step3Index < 3 ):
