@@ -233,6 +233,8 @@ class GrooviksCube:
 
       colorKeyframes = []
       simStartClock = time.clock()
+      rotationStep = 0;
+
       while True:
          # Do simulation
          output = self.__currentState.Update( currentTime )
@@ -246,6 +248,11 @@ class GrooviksCube:
          if ( lrpCycles > 255 ):
             lrpCycles = 255
          colorKeyframes.append( [ lrpCycles, output[0] ] )
+         
+         # tracks the current rotation step we're on, if we're rotating
+         if len(output) > 1:
+             rotationStep = output[1]         
+ 
          lastTime = simTime
          
          # provide an opportunity for code to supply cube states
@@ -284,7 +291,7 @@ class GrooviksCube:
          f[1] = self.__RemapOutputs( f[1] )
       resync = self.__RemapOutputs( resync )
       #print "CT: " + str( currentTime ) + "LT: " + str( lastTime ) + "FT: " + str( frameClockDuration ) + " ST: " + str( simEndClock - simStartClock ) + " NK: " + str( len(colorKeyframes) ) + " resync: " +str(len(resync)) + " duration " + str(duration) + ", " + str(int(diffTime * 250));
-      return colorKeyframes, resync
+      return colorKeyframes, resync, rotationStep
 
    #-----------------------------------------------------------------------------
    # Methods related to initialization of the cube simulation
