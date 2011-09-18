@@ -85,7 +85,7 @@ def too_long_since_last_datagram():
     return how_long_ago > threshhold
 
 
-def push_message(datagram):
+def push_iframe_message(datagram):
     """Pushes a datagram out onto the hookbox channel
     """
 
@@ -119,10 +119,29 @@ def push_message(datagram):
     #page = resp.read()
     #print page
 
+def push_rotationStep_message( rotationStep):
+    """Pushes a datagram out onto the hookbox channel
+    """
+
+    # assume the hookbox server is on localhost:2974    
+    url = "http://127.0.0.1:2974/rest/publish"
+
+    values = { "secret" : "bakonv8",
+               "channel_name" : "rotationStep",
+               "payload" : []
+             }
+
+    values["payload"] = rotationStep
+    formdata = urllib.urlencode(values)
+    req = urllib2.Request(url, formdata)
+    resp = urllib2.urlopen(req)
+
 class Cube():
     def __init__(self):
         plat = sys.platform.lower()
         count = 25
+        self.lastRotationStep = 0
+
         if plat[:5] == 'linux':
           count = 11
 
@@ -179,10 +198,15 @@ class Cube():
             # and publish them via the HTTP/REST api.
             frameStartTime = time.time();
 
-            data = self.simulate()
+            data, rotationStep = self.simulate()
+	
             if data:
                 frame = data[-1][1]
-                push_message( frame )
+                push_iframe_message( frame )
+            
+            if rotationStep != self.lastRotationStep :
+                self.lastRotationStep = rotationStep
+                push_rotationStep_message(rotationStep)
 
             frameEndTime = time.time();
             frameExecutionLength = frameEndTime-frameStartTime
@@ -193,10 +217,10 @@ class Cube():
     def simulate(self):
         simTime = time.time()
         with cube_lock:
-          keyframes, resync = self.grooviksCube.Update( simTime )
+          keyframes, resync, rotationStep = self.grooviksCube.Update( simTime )
           self.displayc.renderFrames( keyframes, resync )
         if keyframes:
-            return keyframes
+            return keyframes, rotationStep
 
 if __name__ == "__main__":
     cube = Cube()

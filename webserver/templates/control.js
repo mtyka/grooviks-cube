@@ -87,18 +87,17 @@ function playFaceClickSound(frame){
 	var columnNumber = (frame.payload[1] % 3) + 1;
         var faceSound = soundManager.getSoundById('column'+ playerNumber  + '_' + columnNumber);
 	soundManager.stopAll();
-
-	var gear1 = soundManager.getSoundById('gear1');
-	var gear2 = soundManager.getSoundById('gear2');
-	var gear3 = soundManager.getSoundById('gear3');
-
-	faceSound.play({onfinish:function(){ 
-	gear1.play({onfinish: function(){
-		gear2.play({onfinish: function(){
-			gear3.play();
-		}});
-	 }})}});
+	faceSound.play();
 }
+
+function playRotationSound(rotationStep){
+        if(rotationStep != 0){
+            var gearSound = soundManager.getSoundById('gear' + rotationStep);
+	    //soundManager.stopAll();
+            gearSound.play();
+        }
+}
+
 // ####################################################################
 // ######################## Control Logic #############################
 // ####################################################################
@@ -289,15 +288,22 @@ function establish_hookbox_connections() {
         if( channelName == 'iframe' ) {
             subscription = _subscription;                
             subscription.onPublish = function(frame) {
-                on_message_pushed( frame.payload )
+                on_message_pushed( frame.payload );
             };  
         }
         if( channelName == 'faceclick' ) {
             faceclick_subscription = _subscription;                
             faceclick_subscription.onPublish = function(frame) {
-		playFaceClickSound(frame);
+                playFaceClickSound(frame);
                 clog('Heard about click on face ' + frame.payload);
             };  
+        }
+        if( channelName == 'rotationStep' ) {
+            rotation_subscription = _subscription;
+            rotation_subscription.onPublish = function(frame) {
+                playRotationSound(frame.payload);
+                clog(frame);
+            };
         }
     };
 
@@ -305,6 +311,7 @@ function establish_hookbox_connections() {
    hookbox_conn.subscribe("iframe");
    hookbox_conn.subscribe("faceclick");
    hookbox_conn.subscribe("gamemode");
+   hookbox_conn.subscribe("rotationStep");
 }
 
 

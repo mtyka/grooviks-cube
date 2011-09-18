@@ -88,7 +88,10 @@ class StateRotation( StateBase ):
 		# Simulate to the next control point / current time, which ever comes first
 		# Update returns a list; first element is a list containing colors, second element is time, 3rd element is whether the state is done
 		simTime = self.__ComputeNextSimTime( currentTime )
-		
+
+                # tracks how far along in the cube rotation we are
+                rotationStep = self.__step3Index		
+
 		# Update the target rotation state ( 3 step )
 		if ( self.__step3Index < 3 ):
 			t = ( simTime - self.__step3Times[ self.__step3Index ] ) / ( self.__step3Times[ self.__step3Index + 1 ] - self.__step3Times[ self.__step3Index ] )
@@ -108,7 +111,7 @@ class StateRotation( StateBase ):
 			indices = self.__rotdesc2step[ self.__activeRotations[i][0] ]		
 			self.__BlendTargetState( t, indices, self.__activeRotations[i][1] )
 		
-		output = [ copy.deepcopy( self.__colors ), simTime, ( self.__step2Index == 2 and self.__step3Index == 3 ) ]
+		output = [ copy.deepcopy( self.__colors ), rotationStep,  simTime, ( self.__step2Index == 2 and self.__step3Index == 3 ) ]
 		
 		# dim out non-rotating cubes, but not while in victory
 		if ( self.__doFade and ( self.__step3Index < 3 ) and ( self.__step2Index < 2 ) ):
