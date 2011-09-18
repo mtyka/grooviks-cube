@@ -49,7 +49,7 @@ from groovikutils import *
 from groovikconfig import *
 from GScript import GScript
 
-TARGET_FRAMERATE = 3
+TARGET_FRAMERATE = 20
 # 30 looks good on real PCs.  iphones and ipads max out at about 5-10.
 # TODO: publish multiple channels at different framerates
 
