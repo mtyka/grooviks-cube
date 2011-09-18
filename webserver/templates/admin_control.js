@@ -199,11 +199,11 @@ function set_cubemode(mode) {
 
     if (mode == 1)
     {
-	$("#demo").show();
+	$("#calibration-sliders").show();
     }
     else
     {
-    	$("#demo").hide();	
+    	$("#calibration-sliders").hide();	
     }
 }
 
