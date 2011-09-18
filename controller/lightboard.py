@@ -49,7 +49,7 @@ class LightBoardTracker:
    def openSerial(this, serialID):
       # Note:  Calling this method will pick up the default serial speed (currently configured as 76800 baud)
       #  This is the method that the cube calls to open the serial ports.  
-      this.openSerialSpeed(serialID, 57600);
+      this.openSerialSpeed(serialID, 38400)
    
    def openSerialSpeed(this, serialID, baud):
       if (time.time() - this.triedopen < 5):
@@ -252,12 +252,15 @@ class BoardMap:
 #         a list of 5 pixelIDs
 class LightMapping:
    def initMapping(this, file):
+      this.inputfile = file
       this.pixels = [];
       for x in range(54):
          this.pixels.append([128,0,0]);
       this.pixelMap = {};
       this.boardMap = {};
-      for line in fileinput.input(file):
+      this.loadMapping()
+   def loadMapping(this):
+      for line in fileinput.input(this.inputfile):
          l = eval(line);
          logicalPixelID = l[0];
          boardID        = l[1];
@@ -268,7 +271,7 @@ class LightMapping:
          this.pixelMap[logicalPixelID] = list(l);
          this.boardMap[boardID].pixels[boardPixelID] = logicalPixelID;
          this.boardMap[boardID].offsets[boardPixelID] = physPixelOffset 
-   
+
    def addBoard(this, lbt):
       id = lbt.lastgood.guid;
       bm = this.boardMap[id];
@@ -288,7 +291,7 @@ class LightMapping:
    def switchPixels(this, iPixelOne, iPixelTwo):
       # Update the pixelMap
       #  Note, these are references, so updating them updates the original list as well.
-	  # Correctly does not update color offsets as those are physical pixel ID dependent
+			# Correctly does not update color offsets as those are physical pixel ID dependent
       pixelOne = this.pixelMap[iPixelOne]
       pixelTwo = this.pixelMap[iPixelTwo]
       
@@ -312,7 +315,11 @@ class LightMapping:
       # Update the boardMap
       this.boardMap[p1_BOARD].pixels[p1_PIXEL] = p2_ID;
       this.boardMap[p2_BOARD].pixels[p2_PIXEL] = p1_ID;
-      
+
+   def colorCalibrate(this, pixel, rgb):
+      pixelInfo = this.pixelMap[pixel]
+      this.boardMap[pixelInfo[1]].offsets[pixelInfo[2]]  = rgb
+
    def dumpMapping(self, fileName):
       file = open(fileName, 'w');
       for ID in self.pixels:
@@ -320,9 +327,20 @@ class LightMapping:
       file.flush();
       file.close();
 
+   def xthPixel(this, x):
+      count = 0
+      for bmID in iter(this.boardMap):
+         boardmap = this.boardMap[bmID];
+         for y in range(5):
+            if( boardmap.pixels[y] == -1 ):
+               continue
+            if( count == x ):
+               return boardmap.pixels[y]
+            count += 1
+
    # Don't want to modify dumpMapping, don't know what uses it
    # This saves a complete Mapping that can be loaded with initMapping
-   def saveMapping(self, file):
+   def saveMapping(self):
       pixelMap = []
       for i, board in self.boardMap.items():
           boardID = i
@@ -336,7 +354,7 @@ class LightMapping:
               pixelMap.append( (logicalPixelID, boardID, boardPixelID, physPixelOffset  ) )
               
       pixelMap.sort(key=lambda x:x[0])
-      output = open(file, 'w');
+      output = open(self.inputfile, 'w');
       for line in pixelMap:
           output.write("( %s, %s, %s, %s )\n" % line)
       output.close();
@@ -361,12 +379,13 @@ class LightMapping:
       
       #if len(resync) > 0:
       #   frames.insert( 0, [50, resync] );
-
+     # print "------------"
       for bmID in iter(this.boardMap):
          message = "";
          boardmap = this.boardMap[bmID];
          if (boardmap == None or boardmap.lbt == None or boardmap.lbt.ser == None):
-            continue;
+            continue
+       #  print boardmap.pixels
          
          now = time.time();
          startFrame = start;
