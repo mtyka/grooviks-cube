@@ -11,9 +11,10 @@ urlpatterns = patterns('',
     (r'^hookbox/', include('hookbox_callbacks.urls')),
 
     (r'^$', direct_to_template, {'template': 'homepage.html'} ),
-    (r'^super_sekret_cube$', direct_to_template, {'template': 'cube.html'} ),
     (r'^admin_cube$', direct_to_template, {'template': 'admin_cube.html'} ),
+    (r'^super_sekret_cube$', direct_to_template, {'template': 'cube.html'} ),
     (r'^cube_inspector$', direct_to_template, {'template': 'cube_inspector.html'} ),
 
     (r'^static/(?P<path>[-\w]+.[-\w]+)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
+    (r'^static/(?P<path>[-\w]+.[-\w]+.[-\w]+)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),                   
 )

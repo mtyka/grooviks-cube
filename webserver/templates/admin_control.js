@@ -112,6 +112,20 @@ function rotate_view() {
     update_view();
 
 		$("body").click( function( eventObj ) {
+			if(eventObj.shiftKey) {
+			    	//Shift-Click
+
+				 var top_left_canvas_corner = $("#canvas").elementlocation();
+				 var x = eventObj.pageX - top_left_canvas_corner.x;
+				 var y = eventObj.pageY - top_left_canvas_corner.y;
+
+				 clog("local shift click at relative ("+x+","+y+")");
+
+				 cube_got_shift_clicked_on(x,y);
+			
+				 return true;
+  			}
+
 			if( !ignore_clicks ){
 				 //var x = eventObj.pageX;
 				 //var y = eventObj.pageY;
@@ -149,10 +163,42 @@ function cube_got_clicked_on(x,y)
     hookbox_conn.publish('faceclick', [facenum, rotation_index, rotation_direction] );
 }
 
+var calibrationFace = -1;
+
+
+
+function cube_got_shift_clicked_on(x,y)
+{
+     	var facenum = whichFaceIsPointIn(x,y);
+	calibrationFace = faceNum;   	
+}
+
+function calibrate(face, red, green, blue) {
+	clog("Calibrating face: " + face +" r: " + red + " g: " + green + " b: " + blue);
+	hookbox_conn.publish('colorcalib', {face, red, green, blue});
+}
+
+function calibrateEvent()
+{
+	if (faceNum == -1) {
+		clog("Escaping out of calibration because no face selected");
+		return;
+	}
+
+	// TODO: (CWhite) Add mode check
+
+	var red = $( "#red" ).slider( "value" ),
+	green = $( "#green" ).slider( "value" ),
+	blue = $( "#blue" ).slider( "value" ),
+	calibrate(calibrationFace ,red, green, blue);     	
+}
+
 function set_cubemode(mode) {
     clog("Setting cube mode: " + mode);
     hookbox_conn.publish('cubemode', {'mode' : mode});
 }
+
+
 
 
 // ####################################################################
@@ -187,6 +233,13 @@ function establish_hookbox_connections() {
                 clog('Heard about click on face ' + frame.payload);
             };  
         }
+
+	if( channelName == 'colorcalib') {
+	    calib_subscription = _subscription;
+            calib_subscription.opPublish = function(frame) {
+		clog('Heard calibration message');
+	    };
+	}
     };
 
    // Subscribe to the pubsub channel with the colors

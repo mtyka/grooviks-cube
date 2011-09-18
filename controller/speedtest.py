@@ -21,7 +21,7 @@ import display
 
 import sys;
 
-def returnIDForPort(port, baud)
+def returnIDForPort(port, baud):
 	m = lightboard.Message();
 	r = m.createFromQuantizedPixelList(0, [[200,0,0], [200,0,0], [200,0,0], [200,0,0], [200,0,0] ])
 	g = m.createFromQuantizedPixelList(0, [[0,200,0], [0,200,0], [0,200,0], [0,200,0], [0,200,0] ])
