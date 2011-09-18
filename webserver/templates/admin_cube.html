@@ -35,13 +35,7 @@ if( isIE() ) {
 		width: 300px;
 		margin: 15px;
 	}
-	#swatch {
-		width: 120px;
-		height: 100px;
-		margin-top: 18px;
-		margin-left: 350px;
-		background-image: none;
-	}
+
 	#red .ui-slider-range { background: #ef2929; }
 	#red .ui-slider-handle { border-color: #ef2929; }
 	#green .ui-slider-range { background: #8ae234; }
@@ -69,7 +63,7 @@ if( isIE() ) {
 			green = $( "#green" ).slider( "value" ),
 			blue = $( "#blue" ).slider( "value" ),
 			hex = hexFromRGB( red, green, blue );
-		$( "#swatch" ).css( "background-color", "#" + hex );
+		//  Add your code here $( "#swatch" ).css( "background-color", "#" + hex );
 	}
 	$(function() {
 		$( "#red, #green, #blue" ).slider({
@@ -337,16 +331,9 @@ p
             </div>
 	    <div class="demo">
 
-		<p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
-			<span class="ui-icon ui-icon-pencil" style="float:left; margin:-2px 5px 0 0;"></span>
-			Simple Colorpicker
-		</p>
-
       	        <div id="red"></div>
 	    	<div id="green"></div>
 	    	<div id="blue"></div>
-
-		<div id="swatch" class="ui-widget-content ui-corner-all"></div>
 
 	    </div><!-- End demo -->
       {% endblock %}
