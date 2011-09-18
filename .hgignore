@@ -6,4 +6,3 @@ moves.log
 local_*
 .git
 .orig
-controller/input_playa.py
