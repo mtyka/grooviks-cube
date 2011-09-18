@@ -108,7 +108,7 @@ try:
          wall_time = time.time()
                
       #print "Entering update";
-      keyframes, resync = grooviksCube.Update( sim_time );
+      keyframes, resync, rotationStep = grooviksCube.Update( sim_time );
       display.renderFrames( keyframes, resync );
       #print "Exiting render";
       cFrames += 1;

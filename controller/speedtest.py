@@ -30,9 +30,9 @@ def returnIDForPort(port, baud):
 	lb = lightboard.LightBoardTracker();
 	lb.openSerialSpeed(port, baud);
 	lb.ser.write(r);
-	wait(2.0);
+	time.sleep(2.0);
 	lb.read();
-	print 'A' + lb.lastgood.guid 
+	print lb.lastgood.guid 
 
 
 def runLoopTest(port, baud):   
