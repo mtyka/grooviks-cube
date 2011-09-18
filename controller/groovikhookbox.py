@@ -195,7 +195,7 @@ class Cube():
     def simulate(self):
         simTime = time.time()
         with cube_lock:
-          keyframes, resync = self.grooviksCube.Update( simTime )
+          keyframes, resync, rotationStep = self.grooviksCube.Update( simTime );
           self.displayc.renderFrames( keyframes, resync )
         if keyframes:
             return keyframes
