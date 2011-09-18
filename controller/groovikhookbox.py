@@ -187,7 +187,7 @@ class Cube():
             data = self.simulate()
             self.simTime = self.simTime + (1.0 / TARGET_FRAMERATE);
 
-            while ((self.simTime - time.time()) > ((1.0/TARGET_FRAMERATE)/3):
+            while ((self.simTime - time.time()) > ((1.0/TARGET_FRAMERATE)/3)):
                 # Here we will want to interpolate across the frames, or if there are none use current state.
                 if data:
                     frame = data[-1][1]
