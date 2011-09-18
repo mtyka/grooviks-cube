@@ -189,6 +189,11 @@ class Cube():
                 mode = rtjp_frame[2]['payload']['mode']
                 if( self.grooviksCube.GetCurrentMode() != mode):
                     self.grooviksCube.QueueModeChange(mode)
+            elif rtjp_frame[2]['channel_name'] == 'colorcalib':
+                command = rtjp_frame[2]['payload']
+                self.logger.logLine( "Color calibration: Pixel, (R G B) = %s " % (commmand) )
+                with cube_lock:
+                    self.grooviksCube.HandleInput( CubeInput.COLOR_CAL, command)
         
     def run(self):
         while True:

@@ -46,6 +46,7 @@ class CubeInput:
 	ROTATION = 0     # Requires input parameter of the form [ [ rotation type (0-8), clockwise (True or False) ], ... ] (used to queue multiple simultaneous rotations)
 	SWITCH_MODE = 1  # Requires input parameter of the form < cube mode to switch to (see CubeMode) >
 	FACE_CLICK = 2 # Requires input parameter of the form < logicalPixelID (see lightboard.py) >
+	COLOR_CAL = 3 # Requires input parameter of the form [ Pixel to change calib for, ( R G B ) ], where R G B are from 0 to 1
 	
 	
 #-------------------------------------------------------------------------------
