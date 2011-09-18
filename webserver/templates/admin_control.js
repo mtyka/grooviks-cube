@@ -196,6 +196,15 @@ function calibrateEvent()
 function set_cubemode(mode) {
     clog("Setting cube mode: " + mode);
     hookbox_conn.publish('cubemode', {'mode' : mode});
+
+    if (mode == 1)
+    {
+	$("#demo").Show();
+    }
+    else
+    {
+    	$("#demo").Hide();	
+    }
 }
 
 
