@@ -196,9 +196,20 @@ function calibrateEvent()
 function set_cubemode(mode) {
     clog("Setting cube mode: " + mode);
     hookbox_conn.publish('cubemode', {'mode' : mode});
+
+    if (mode == 1)
+    {
+	$("#calibration-sliders").show();
+    }
+    else
+    {
+    	$("#calibration-sliders").hide();	
+    }
 }
 
-
+function map_blank_pixel() {
+    hookbox_conn.publish('faceclick', [54, 0, 0] );
+}
 
 
 // ####################################################################

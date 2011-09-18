@@ -254,7 +254,7 @@ class LightMapping:
    def initMapping(this, file):
       this.inputfile = file
       this.pixels = [];
-      for x in range(54):
+      for x in range(55):
          this.pixels.append([128,0,0]);
       this.pixelMap = {};
       this.boardMap = {};
@@ -291,7 +291,8 @@ class LightMapping:
    def switchPixels(this, iPixelOne, iPixelTwo):
       # Update the pixelMap
       #  Note, these are references, so updating them updates the original list as well.
-			# Correctly does not update color offsets as those are physical pixel ID dependent
+      # Correctly does not update color offsets as those are physical pixel ID dependent
+          
       pixelOne = this.pixelMap[iPixelOne]
       pixelTwo = this.pixelMap[iPixelTwo]
       
@@ -320,6 +321,10 @@ class LightMapping:
       pixelInfo = this.pixelMap[pixel]
       this.boardMap[pixelInfo[1]].offsets[pixelInfo[2]]  = rgb
 
+   def getPixelOffset(this, pixel):
+      pixelInfo = this.pixelMap[pixel]
+      return this.boardMap[pixelInfo[1]].offsets[pixelInfo[2]]
+
    def dumpMapping(self, fileName):
       file = open(fileName, 'w');
       for ID in self.pixels:
@@ -332,8 +337,6 @@ class LightMapping:
       for bmID in iter(this.boardMap):
          boardmap = this.boardMap[bmID];
          for y in range(5):
-            if( boardmap.pixels[y] == -1 ):
-               continue
             if( count == x ):
                return boardmap.pixels[y]
             count += 1
@@ -346,9 +349,6 @@ class LightMapping:
           boardID = i
           for j, pixel in enumerate(board.pixels):
               boardPixelID = j
-              if (pixel == -1 ):
-                  # this pixel doesn't actually exist, the last open lightboard slot on the last arduino
-                  continue
               logicalPixelID = pixel
               physPixelOffset = tuple(board.offsets[j])
               pixelMap.append( (logicalPixelID, boardID, boardPixelID, physPixelOffset  ) )
@@ -415,7 +415,11 @@ class LightMapping:
                
                for x in range(5):
                   p[x] = boardmap.pixels[x];
-                  pv[x] = [ i*j for i, j in zip(pixels[p[x]],boardmap.offsets[x]) ]
+                  if (p[x] == 54):
+                      pv[x] = [ 0,0,0]
+                  else:
+                      print p[x]
+                      pv[x] = [ i*j for i, j in zip(pixels[p[x]],boardmap.offsets[x]) ]
                   
                #print("LRP : {0}".format(lrp - lrpLag));
                message = message + m.createFromFPPixelList(lrp - lrpLag, pv);

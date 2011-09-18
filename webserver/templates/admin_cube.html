@@ -64,6 +64,7 @@ if( isIE() ) {
 			blue = $( "#blue" ).slider( "value" ),
 			hex = hexFromRGB( red, green, blue );
 		//  Add your code here $( "#swatch" ).css( "background-color", "#" + hex );
+		calibrateEvent();
 	}
 	$(function() {
 		$( "#red, #green, #blue" ).slider({
@@ -188,6 +189,7 @@ $(document).ready(function(){
     $("#pixelmapping").click(  function(){ set_cubemode(2); } );
     $("#colorcalibration").click(     function(){ set_cubemode(1); } );
     $("#normal").click(     function(){ set_cubemode(0); } );
+    $("#blankpixel").click(     function(){ map_blank_pixel(); } );
 
     if (!position) {
         $("#buttonleft").click( function(){ 
@@ -205,6 +207,9 @@ $(document).ready(function(){
         $("#slide_azi").val(  start_azimuth );
         rotate_view(); 
     }
+
+    $("#calibration-sliders").hide();
+    set_cubemode(0);
 
 });
 
@@ -336,10 +341,11 @@ p
 	
        <canvas id="canvas" width=750 height=750></canvas>   
 			<div class="bottomrow" >
+				<img class="blankpixel"   id="blankpixel"  src="/static/blankpixel.png"      alt="blank"  >
 				<img class="button left"   id="buttonleft"  src="/static/button_left.png"      alt="Left"  >
 				<img class="button right"   id="buttonright" src="/static/button_right.png"     alt="Right" >
 				<div class="clear"></div>
-					    <div class="demo">
+					    <div class="demo" id="calibration-sliders">
 
       	        <div id="red"></div>
 	    	<div id="green"></div>
