@@ -120,8 +120,26 @@ def push_message(payload, channel):
     #page = resp.read()
     #print page
 
+def push_rotationStep_message( rotationStep):		
+    """Pushes a datagram out onto the hookbox channel		
+    """		
+		
+    # assume the hookbox server is on localhost:2974		
+    url = "http://127.0.0.1:2974/rest/publish"		
+	
+    values = { "secret" : "bakonv8",		
+               "channel_name" : "rotationStep",		
+               "payload" : []		
+             }		
+	
+    values["payload"] = rotationStep		
+    formdata = urllib.urlencode(values)		
+    req = urllib2.Request(url, formdata)		
+    resp = urllib2.urlopen(req)
+
 class Cube():
     def __init__(self):
+        self.lastRotationStep = 0
 
         count = 25
         self.displayc = display.Display(count, "input_playa.py" )
@@ -192,10 +210,14 @@ class Cube():
             # and publish them via the HTTP/REST api.
             frameStartTime = time.time();
 
-            data = self.simulate()
+            data, rotationStep = self.simulate()
             if data:
                 frame = data[-1][1]
                 push_datagram( frame )
+
+            if rotationStep != self.lastRotationStep :		
+                self.lastRotationStep = rotationStep		
+                push_rotationStep_message(rotationStep)
 
             frameEndTime = time.time();
             frameExecutionLength = frameEndTime-frameStartTime
@@ -209,7 +231,7 @@ class Cube():
           keyframes, resync, rotationStep = self.grooviksCube.Update( simTime );
           self.displayc.renderFrames( keyframes, resync )
         if keyframes:
-            return keyframes
+            return keyframes, rotationStep
 
 if __name__ == "__main__":
     cube = Cube()
