@@ -180,7 +180,7 @@ function calibrate(face, red, green, blue) {
 
 function calibrateEvent()
 {
-	if (faceNum == -1) {
+	if (calibrationFace == -1) {
 		clog("Escaping out of calibration because no face selected");
 		return;
 	}
