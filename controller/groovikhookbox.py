@@ -84,11 +84,7 @@ def too_long_since_last_datagram():
     threshhold = datetime.timedelta(0,3) # seconds
     return how_long_ago > threshhold
 
-
-def push_message(datagram):
-    """Pushes a datagram out onto the hookbox channel
-    """
-
+def push_datagram(datagram):
     global last_datagram_sent
     global last_datagram_sent_timestamp
 
@@ -100,16 +96,21 @@ def push_message(datagram):
         last_datagram_sent = datagram
 
     last_datagram_sent_timestamp = datetime.datetime.now()
+    push_message(compress_datagram(datagram), "iframe")
+
+
+def push_message(payload, channel):
+    """Pushes a compressed message out onto the hookbox channel
+    """
 
     # assume the hookbox server is on localhost:2974    
     url = "http://127.0.0.1:2974/rest/publish"
 
     values = { "secret" : "bakonv8",
-               "channel_name" : "iframe",
-               "payload" : []
+               "channel_name" : channel,
+               "payload" : payload 
              }
 
-    values["payload"] = compress_datagram(datagram)
     formdata = urllib.urlencode(values)
     req = urllib2.Request(url, formdata)
     resp = urllib2.urlopen(req)
@@ -119,8 +120,26 @@ def push_message(datagram):
     #page = resp.read()
     #print page
 
+def push_rotationStep_message( rotationStep):		
+    """Pushes a datagram out onto the hookbox channel		
+    """		
+		
+    # assume the hookbox server is on localhost:2974		
+    url = "http://127.0.0.1:2974/rest/publish"		
+	
+    values = { "secret" : "bakonv8",		
+               "channel_name" : "rotationStep",		
+               "payload" : []		
+             }		
+	
+    values["payload"] = rotationStep		
+    formdata = urllib.urlencode(values)		
+    req = urllib2.Request(url, formdata)		
+    resp = urllib2.urlopen(req)
+
 class Cube():
     def __init__(self):
+        self.lastRotationStep = 0
 
         count = 25
         self.displayc = display.Display(count, "input_playa.py" )
@@ -170,6 +189,16 @@ class Cube():
             elif rtjp_frame[2]['channel_name'] == 'colorcalib':
                 command = rtjp_frame[2]['payload']
                 self.logger.logLine( "Color calibration: Pixel, (R G B) = %s " % (commmand) )
+                if ( len(command) ) == 1:
+                    offsets = self.displayc.lm.getPixelOffset(command[0])
+                    hex_datagram = ''
+                    for rgb in facet:
+                        hexval = "%02x" % (rgb * 255)
+                        hex_datagram += hexval
+                    output = '"%s"' % hex_datagram
+
+                    push_message(output, "colorcalib")
+                    return
                 with cube_lock:
                     self.grooviksCube.HandleInput( CubeInput.COLOR_CAL, command)
         
@@ -181,10 +210,14 @@ class Cube():
             # and publish them via the HTTP/REST api.
             frameStartTime = time.time();
 
-            data = self.simulate()
+            data, rotationStep = self.simulate()
             if data:
                 frame = data[-1][1]
-                push_message( frame )
+                push_datagram( frame )
+
+            if rotationStep != self.lastRotationStep :		
+                self.lastRotationStep = rotationStep		
+                push_rotationStep_message(rotationStep)
 
             frameEndTime = time.time();
             frameExecutionLength = frameEndTime-frameStartTime
@@ -198,7 +231,7 @@ class Cube():
           keyframes, resync, rotationStep = self.grooviksCube.Update( simTime );
           self.displayc.renderFrames( keyframes, resync )
         if keyframes:
-            return keyframes
+            return keyframes, rotationStep
 
 if __name__ == "__main__":
     cube = Cube()
