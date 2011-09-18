@@ -6,7 +6,7 @@
 // BOARD CONFIGURATION
 // Each board must have a unique ID, so the central computer can map boards to faces. There is no way
 // for the boards to do this on their own, so you must change this ID before flashing each dimmer board.
-const byte kGuid = 'L' - 'A' + 1;
+const byte kGuid = 'D' - 'A' + 1;
 
 // For demo purposes, we will connect some common-cathode RGB LEDs to the arduino boards. To control these
 // we must invert our signal: LOW to light the LED and HIGH to switch it off, the opposite of what the
@@ -452,7 +452,7 @@ void setup()
   DDRB |= 0x3F;
   DDRC |= 0x07;
   // Connect the serial port so we can receive commands & respond with status information.
-  Serial.begin( 38400 );
+  Serial.begin( 9600 );
   //Serial.begin( 9600 );
   // Now that we're ready to rock, fire up the interrupt timer that drives our PWM cycle.
   SetupInterrupt();
