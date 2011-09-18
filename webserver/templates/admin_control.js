@@ -189,7 +189,7 @@ function calibrateEvent()
 
 	var red = $( "#red" ).slider( "value" ),
 	green = $( "#green" ).slider( "value" ),
-	blue = $( "#blue" ).slider( "value" ),
+	blue = $( "#blue" ).slider( "value" );
 	calibrate(calibrationFace ,red, green, blue);     	
 }
 
