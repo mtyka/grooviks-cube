@@ -199,11 +199,11 @@ function set_cubemode(mode) {
 
     if (mode == 1)
     {
-	$("#demo").Show();
+	$("#demo").show();
     }
     else
     {
-    	$("#demo").Hide();	
+    	$("#demo").hide();	
     }
 }
 
