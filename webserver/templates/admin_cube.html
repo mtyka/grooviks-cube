@@ -64,6 +64,7 @@ if( isIE() ) {
 			blue = $( "#blue" ).slider( "value" ),
 			hex = hexFromRGB( red, green, blue );
 		//  Add your code here $( "#swatch" ).css( "background-color", "#" + hex );
+		calibrateEvent();
 	}
 	$(function() {
 		$( "#red, #green, #blue" ).slider({
