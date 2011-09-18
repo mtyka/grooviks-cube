@@ -175,7 +175,7 @@ function cube_got_shift_clicked_on(x,y)
 
 function calibrate(face, red, green, blue) {
 	clog("Calibrating face: " + face +" r: " + red + " g: " + green + " b: " + blue);
-	hookbox_conn.publish('colorcalib', {face, red, green, blue});
+	hookbox_conn.publish('colorcalib', [face, red, green, blue]);
 }
 
 function calibrateEvent()
