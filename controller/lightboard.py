@@ -316,7 +316,10 @@ class LightMapping:
       this.boardMap[p1_BOARD].pixels[p1_PIXEL] = p2_ID;
       this.boardMap[p2_BOARD].pixels[p2_PIXEL] = p1_ID;
 
-      
+   def colorCalibrate(this, pixel, rgb):
+      pixelInfo = this.pixelMap[pixel]
+      this.boardMap[pixelInfo[1]].offsets[pixelInfo[2]]  = rgb
+
    def dumpMapping(self, fileName):
       file = open(fileName, 'w');
       for ID in self.pixels:

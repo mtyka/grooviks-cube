@@ -20,6 +20,8 @@ class ModeCalibration( ModeBase ):
 			self.__CalibrationMode = self.__CalibrationMode + 1
 			self.__CalibrationMode = self.__CalibrationMode % len(groovikConfig.calibrationColors)
 			grooviksCube.QueueFade( 0.5, False, groovikConfig.calibrationColors[self.__CalibrationMode] )
+		if ( cubeInputType == CubeInput.COLOR_CAL ):
+			self.__CalibrationMode = self.__CalibrationMode + 1
 		
 	def CanQueueState( self, grooviksCube, state ):	
 		return not grooviksCube.HasQueuedStates()
