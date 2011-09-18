@@ -418,7 +418,6 @@ class LightMapping:
                   if (p[x] == 54):
                       pv[x] = [ 0,0,0]
                   else:
-                      print p[x]
                       pv[x] = [ i*j for i, j in zip(pixels[p[x]],boardmap.offsets[x]) ]
                   
                #print("LRP : {0}".format(lrp - lrpLag));
