@@ -353,7 +353,7 @@ class LightMapping:
               physPixelOffset = tuple(board.offsets[j])
               pixelMap.append( (logicalPixelID, boardID, boardPixelID, physPixelOffset  ) )
               
-      pixelMap.sort(key=lambda x:x[0])
+      pixelMap.sort(key=lambda x:x[1])
       output = open(self.inputfile, 'w');
       for line in pixelMap:
           output.write("( %s, %s, %s, %s )\n" % line)
