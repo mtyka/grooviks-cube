@@ -50,6 +50,8 @@ from groovikconfig import *
 from GScript import GScript
 
 TARGET_FRAMERATE = 3
+TARGET_FRAMETIME = 1.0 / TARGET_FRAMERATE
+
 # 30 looks good on real PCs.  iphones and ipads max out at about 5-10.
 # TODO: publish multiple channels at different framerates
 
@@ -207,25 +209,25 @@ class Cube():
                         
     
     def run(self):
+        lastFrameLerpedColors = []
         while True:
             self.displayc.loop()
 
+            frameStartTime = time.time()
+              
             data = self.simulate()
             # generate random colors for every cube face every 1.5 seconds
             # and publish them via the HTTP/REST api.
-            frameStartTime = time.time();
-            frameEndTime = time.time();
-            frameExecutionLength = frameEndTime-frameStartTime
 
-            self.simTime = self.simTime + (1.0 / TARGET_FRAMERATE);
-            
-            while ((self.simTime - time.time()) > ((1.0/TARGET_FRAMERATE)/3)):
+            frameLerpedColors = []
+            self.simTime = self.simTime + TARGET_FRAMETIME;            
+            while ((self.simTime - time.time()) > (TARGET_FRAMETIME/3)):
                 # Here we will want to interpolate across the frames, or if there are none use current state.
-                if data:
-                    frame = interpolateFrames(data, time.time()- frameStartTime);
-                    frame = data[-1][1]
-                    push_message( frame );
-                   
+                frameLerpedColors = interpolateFrames( data, time.time()- frameStartTime, lastFrameLerpedColors );
+                if ( len(frameLerpedColors) > 0 ):
+                    push_message( frameLerpedColors );
+            lastFrameLerpedColors = frameLerpedColors
+              
     def simulate(self):
         with cube_lock:
           keyframes, resync, rotationStep = self.grooviksCube.Update( self.simTime );
