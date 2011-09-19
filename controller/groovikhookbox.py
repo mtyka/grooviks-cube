@@ -49,7 +49,7 @@ from groovikutils import *
 from groovikconfig import *
 from GScript import GScript
 
-TARGET_FRAMERATE = 20
+TARGET_FRAMERATE = 3
 # 30 looks good on real PCs.  iphones and ipads max out at about 5-10.
 # TODO: publish multiple channels at different framerates
 
@@ -173,23 +173,56 @@ class Cube():
                 self.logger.logLine( "Color calibration: Pixel, (R G B) = %s " % (commmand) )
                 with cube_lock:
                     self.grooviksCube.HandleInput( CubeInput.COLOR_CAL, command)
-        
+    
+    def interpolateFrames( data, passedTime, dataLast ):
+        if not data:
+            return dataLast;
+        beforeTime = 0.0
+        afterTime = 0.0
+        for ( i in range( len( data ) ):
+            beforeTime = afterTime
+            afterTime += data[i][0]
+            if ( passedTime >= beforeTime && passedTime <= afterTime ):
+                if ( i == 0 )
+                    before = dataLast
+                else
+                    before = data[i-1][1]
+                after = data[i][1]
+                lerpedColors = []
+                c = []
+                if ( afterTime != beforeTime ):
+                    t = ( passedTime - beforeTime ) / ( afterTime - beforeTime )
+                else:
+                    t = 1.0
+                for ( j in range( 0, 53 ) ):
+                    c = BlendColorsRGB( before[j], after[j], t )
+                    lerpedColors.append( c[:] )
+                return lerpedColors
+        return dataLast
+                
+                      
+                
+
+        if len(data) == 1:
+                        
+    
     def run(self):
         while True:
             self.displayc.loop()
 
+            data = self.simulate()
             # generate random colors for every cube face every 1.5 seconds
             # and publish them via the HTTP/REST api.
             frameStartTime = time.time();
             frameEndTime = time.time();
             frameExecutionLength = frameEndTime-frameStartTime
 
-            data = self.simulate()
             self.simTime = self.simTime + (1.0 / TARGET_FRAMERATE);
-
+            
             while ((self.simTime - time.time()) > ((1.0/TARGET_FRAMERATE)/3)):
                 # Here we will want to interpolate across the frames, or if there are none use current state.
                 if data:
+                    frame = interpolateFrames(data, time.time()- frameStartTime);
                     frame = data[-1][1]
                     push_message( frame );
                    
