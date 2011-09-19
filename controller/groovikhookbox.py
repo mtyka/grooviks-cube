@@ -176,27 +176,29 @@ class Cube():
                 with cube_lock:
                     self.grooviksCube.HandleInput( CubeInput.COLOR_CAL, command)
     
-    def interpolateFrames( data, passedTime, dataLast ):
+    def interpolateFrames( this, data, passedTime, dataLast ):
         if not data:
             return dataLast;
         beforeTime = 0.0
         afterTime = 0.0
-        for ( i in range( len( data ) ):
+        for i in range( len( data ) ):
             beforeTime = afterTime
             afterTime += data[i][0]
-            if ( passedTime >= beforeTime && passedTime <= afterTime ):
-                if ( i == 0 )
+            if ( passedTime >= beforeTime and passedTime <= afterTime ):
+                if ( i == 0 ):
                     before = dataLast
-                else
+                else:
                     before = data[i-1][1]
                 after = data[i][1]
+                if ( len(before) == 0):
+                    before = after
                 lerpedColors = []
                 c = []
                 if ( afterTime != beforeTime ):
                     t = ( passedTime - beforeTime ) / ( afterTime - beforeTime )
                 else:
                     t = 1.0
-                for ( j in range( 0, 53 ) ):
+                for j in range( 54 ) :
                     c = BlendColorsRGB( before[j], after[j], t )
                     lerpedColors.append( c[:] )
                 return lerpedColors
@@ -205,8 +207,6 @@ class Cube():
                       
                 
 
-        if len(data) == 1:
-                        
     
     def run(self):
         lastFrameLerpedColors = []
@@ -223,7 +223,8 @@ class Cube():
             self.simTime = self.simTime + TARGET_FRAMETIME;            
             while ((self.simTime - time.time()) > (TARGET_FRAMETIME/3)):
                 # Here we will want to interpolate across the frames, or if there are none use current state.
-                frameLerpedColors = interpolateFrames( data, time.time()- frameStartTime, lastFrameLerpedColors );
+                frameLerpedColors = self.interpolateFrames( data, time.time()- frameStartTime, lastFrameLerpedColors );
+                time.sleep(0.05)
                 if ( len(frameLerpedColors) > 0 ):
                     push_message( frameLerpedColors );
             lastFrameLerpedColors = frameLerpedColors
