@@ -224,9 +224,10 @@ class Cube():
             while ((self.simTime - time.time()) > (TARGET_FRAMETIME/3)):
                 # Here we will want to interpolate across the frames, or if there are none use current state.
                 frameLerpedColors = self.interpolateFrames( data, time.time()- frameStartTime, lastFrameLerpedColors );
-                time.sleep(0.05)
+                time.sleep(0.02)
                 if ( len(frameLerpedColors) > 0 ):
                     push_message( frameLerpedColors );
+                    print time.time();
             lastFrameLerpedColors = data[-1][1];
               
     def simulate(self):
