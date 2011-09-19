@@ -227,7 +227,7 @@ class Cube():
                 time.sleep(0.05)
                 if ( len(frameLerpedColors) > 0 ):
                     push_message( frameLerpedColors );
-            lastFrameLerpedColors = frameLerpedColors
+            lastFrameLerpedColors = data[-1][1];
               
     def simulate(self):
         with cube_lock:
