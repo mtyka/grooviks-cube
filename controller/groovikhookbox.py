@@ -181,10 +181,11 @@ class Cube():
             return dataLast;
         beforeTime = 0.0
         afterTime = 0.0
+        passedTick = passedTime / 0.004
         for i in range( len( data ) ):
             beforeTime = afterTime
             afterTime += data[i][0]
-            if ( passedTime >= beforeTime and passedTime <= afterTime ):
+            if ( passedTick >= beforeTime and passedTick <= afterTime ):
                 if ( i == 0 ):
                     before = dataLast
                 else:
@@ -195,19 +196,15 @@ class Cube():
                 lerpedColors = []
                 c = []
                 if ( afterTime != beforeTime ):
-                    t = ( passedTime - beforeTime ) / ( afterTime - beforeTime )
+                    t = ( passedTick - beforeTime ) / ( afterTime - beforeTime )
                 else:
                     t = 1.0
-                print str( passedTime ) + " b " + str( beforeTime ) + " a " + str( afterTime ) + " t " + str(t) + " bc " + str( before[0] ) + " ac " + str( after[0] )
+               # print str( passedTime ) + " b " + str( beforeTime ) + " a " + str( afterTime ) + " t " + str(t) + " bc " + str( before[0] ) + " ac " + str( after[0] )
                 for j in range( 54 ) :
                     c = BlendColorsRGB( before[j], after[j], t )
                     lerpedColors.append( c[:] )
                 return lerpedColors
         return dataLast
-                
-                      
-                
-
     
     def run(self):
         lastFrameLerpedColors = []
