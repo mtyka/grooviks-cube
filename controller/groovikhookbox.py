@@ -190,7 +190,7 @@ class Cube():
                 else:
                     before = data[i-1][1]
                 after = data[i][1]
-                if ( len(before) == 0):
+                if ( len(before) == 0 ):
                     before = after
                 lerpedColors = []
                 c = []
@@ -198,6 +198,7 @@ class Cube():
                     t = ( passedTime - beforeTime ) / ( afterTime - beforeTime )
                 else:
                     t = 1.0
+                print string( passedTime ) + " b " + string( beforeTime ) + " a " + string( afterTime ) + " t " + string(t) + " bc " + string( before[0] ) + " ac " + string( after[0] )
                 for j in range( 54 ) :
                     c = BlendColorsRGB( before[j], after[j], t )
                     lerpedColors.append( c[:] )
@@ -227,7 +228,6 @@ class Cube():
                 time.sleep(0.02)
                 if ( len(frameLerpedColors) > 0 ):
                     push_message( frameLerpedColors );
-                    print time.time();
             lastFrameLerpedColors = data[-1][1];
               
     def simulate(self):
