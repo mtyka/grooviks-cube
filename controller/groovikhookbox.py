@@ -198,7 +198,7 @@ class Cube():
                     t = ( passedTime - beforeTime ) / ( afterTime - beforeTime )
                 else:
                     t = 1.0
-                print string( passedTime ) + " b " + string( beforeTime ) + " a " + string( afterTime ) + " t " + string(t)
+                print str( passedTime ) + " b " + str( beforeTime ) + " a " + str( afterTime ) + " t " + str(t) + " bc " + str( before[0] ) + " ac " + str( after[0] )
                 for j in range( 54 ) :
                     c = BlendColorsRGB( before[j], after[j], t )
                     lerpedColors.append( c[:] )
