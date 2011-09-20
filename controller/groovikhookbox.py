@@ -124,7 +124,7 @@ def push_message(message, channel):
 
     values = { "secret" : "bakonv8",
                "channel_name" : channel,
-               "payload" : payload 
+               "payload" : message
              }
 
     formdata = urllib.urlencode(values)
@@ -188,7 +188,7 @@ class Cube():
             elif rtjp_frame[2]['channel_name'] == 'colorcalib':
                 command = rtjp_frame[2]['payload']
                 if ( len(command) == 1 ):
-                    push_message( compress_rgbfloat(self.displayc.lm.getPixelOffset(command[0])
+                    push_message( compress_rgbfloat(self.displayc.lm.getPixelOffset(command[0])))
                     return
                 with cube_lock:
                     self.logger.logLine( "Color calibration: Pixel, (R G B) = %s " % (command) )
