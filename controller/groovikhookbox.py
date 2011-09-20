@@ -204,8 +204,11 @@ class Cube():
                     c = BlendColorsRGB( before[j], after[j], t )
                     lerpedColors.append( c[:] )
                 return lerpedColors
-        return dataLast
-    
+        if (len(data) == 0):
+            return dataLast
+        else:
+            return data[-1][1];
+        
     def run(self):
         lastFrameLerpedColors = []
         while True:
