@@ -29,7 +29,7 @@ class ModeLightBoardConfiguration( ModeBase ):
 			logicalPixel = display.lm.xthPixel(self.physPixel)
 			display.lm.switchPixels( params, logicalPixel )
 			display.lm.saveMapping()
-			if ( self.physPixel < 55 ) :
+			if ( self.physPixel < 54 ) :
 				faceIndices[logicalPixel] = 1
 				faceIndices[params] = 2
 				self.physPixel += 1
