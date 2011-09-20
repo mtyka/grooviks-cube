@@ -76,6 +76,19 @@ def compress_datagram(datagram):
 last_datagram_sent = None
 last_datagram_sent_timestamp = datetime.datetime.now()
 
+def compress_rgbfloat(datagram):
+    """Returns a JSON object to be sent through hookbox.
+    """
+
+    datagram = ''
+
+    for rgb in facet:
+        val = "%f" % rgb
+        datagram += val
+
+    output = '"%s"' % datagram
+    #print "sending %s" % output
+    return output
 
 def too_long_since_last_datagram():
     """Check if it's been more than a couple of seconds since we sent the last
@@ -87,13 +100,9 @@ def too_long_since_last_datagram():
     return how_long_ago > threshhold
 
 
-def push_message(datagram):
-    """Pushes a datagram out onto the hookbox channel
-    """
-
+def push_datagram(datagram):
     global last_datagram_sent
     global last_datagram_sent_timestamp
-
     if datagram == last_datagram_sent:
         # In general we don't want to send repeated frames.
         if not too_long_since_last_datagram():
@@ -102,16 +111,22 @@ def push_message(datagram):
         last_datagram_sent = datagram
 
     last_datagram_sent_timestamp = datetime.datetime.now()
+    push_message( compress_datagram(datagram), "iframe")
+
+
+def push_message(message, channel):
+    """Pushes a message out onto a hookbox channel
+    """
+
 
     # assume the hookbox server is on localhost:2974    
     url = "http://127.0.0.1:2974/rest/publish"
 
     values = { "secret" : "bakonv8",
-               "channel_name" : "iframe",
-               "payload" : []
+               "channel_name" : channel,
+               "payload" : payload 
              }
 
-    values["payload"] = compress_datagram(datagram)
     formdata = urllib.urlencode(values)
     req = urllib2.Request(url, formdata)
     resp = urllib2.urlopen(req)
@@ -172,9 +187,12 @@ class Cube():
                     self.grooviksCube.QueueModeChange(mode)
             elif rtjp_frame[2]['channel_name'] == 'colorcalib':
                 command = rtjp_frame[2]['payload']
-                self.logger.logLine( "Color calibration: Pixel, (R G B) = %s " % (commmand) )
+                if ( len(command) == 1 ):
+                    push_message( compress_rgbfloat(self.displayc.lm.getPixelOffset(command[0])
+                    return
                 with cube_lock:
-                    self.grooviksCube.HandleInput( CubeInput.COLOR_CAL, command)
+                    self.logger.logLine( "Color calibration: Pixel, (R G B) = %s " % (command) )
+                    self.grooviksCube.HandleInput( CubeInput.COLOR_CAL,command)
     
     def interpolateFrames( this, data, passedTime, dataLast ):
         if not data:
@@ -227,7 +245,7 @@ class Cube():
                 frameLerpedColors = self.interpolateFrames( data, time.time()- frameStartTime, lastFrameLerpedColors );
                 time.sleep(0.02)
                 if ( len(frameLerpedColors) > 0 ):
-                    push_message( frameLerpedColors );
+                    push_datagram( frameLerpedColors );
             lastFrameLerpedColors = data[-1][1];
               
     def simulate(self):
