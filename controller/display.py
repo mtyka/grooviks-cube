@@ -78,7 +78,7 @@ class Display:
                tracker.lastgood = None;
 
             # only try to reconnect if we are not actively tracking all arduinos
-            if (self.lm.countTrackers < 11):
+            if (self.lm.countTracked() < 11):
                print "Reconnecting to lightboard ";
                print i;
                #tracker.close();
