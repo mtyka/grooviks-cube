@@ -259,13 +259,17 @@ function establish_hookbox_connections() {
             };  
         }
 
-	if( channelName == 'colorcalib') {
-	    calib_subscription = _subscription;
-            calib_subscription.opPublish = function(frame) {
-                clog('Heard calibration message');
-                var rgb_floats = decompress_rgbfloat(frame.payload)
-	    };
-	}
+        if( channelName == 'colorcalibrx') {
+            calib_subscription = _subscription;
+                calib_subscription.onPublish = function(frame) {
+                    clog('Heard calibration message');
+                    clog(frame.payload);
+                    var rgb_floats = decompress_rgbfloat(frame.payload);
+                    
+                    changeSlider ( rgb_floats );
+                    clog('done with calibration message');
+            };
+        }
     };
 
    // Subscribe to the pubsub channel with the colors
@@ -273,6 +277,8 @@ function establish_hookbox_connections() {
    hookbox_conn.subscribe("faceclick");
    hookbox_conn.subscribe("gamemode");
    hookbox_conn.subscribe("cubemode");
+   hookbox_conn.subscribe("colorcalib");
+   hookbox_conn.subscribe("colorcalibrx");
 }
 
 

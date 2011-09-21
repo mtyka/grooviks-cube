@@ -23,7 +23,8 @@ class ModeCalibration( ModeBase ):
 		if ( cubeInputType == CubeInput.COLOR_CAL ):
 			logicalPixel = params[0]
 			rgb = (params[1:])
-			self.display.lm.colorCalibrate( logicalPixel, rgb )
+			display.lm.colorCalibrate( logicalPixel, rgb )
+			grooviksCube.QueueFade( 0.5, False, groovikConfig.calibrationColors[self.__CalibrationMode] )
 		
 	def CanQueueState( self, grooviksCube, state ):	
 		return not grooviksCube.HasQueuedStates()
