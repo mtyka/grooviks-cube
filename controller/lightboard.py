@@ -275,8 +275,7 @@ class LightMapping:
             this.boardMap[boardID] = BoardMap();            
          this.pixelMap[logicalPixelID] = list(l);
          this.boardMap[boardID].pixels[boardPixelID] = logicalPixelID;
-         this.boardMap[boardID].offsets[boardPixelID] = physPixelOffset 
-         this.cTracked += 1;
+         this.boardMap[boardID].offsets[boardPixelID] = physPixelOffset;
 
    def addBoard(this, lbt):
       id = lbt.lastgood.guid;
