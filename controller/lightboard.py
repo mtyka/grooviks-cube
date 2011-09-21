@@ -114,7 +114,7 @@ class LightBoardTracker:
             print "Unexpected error [2]:", sys.exc_info()[1]
             #ser.close();
          finally:
-            ;
+            pass
             #this.ser = None;
             #this.isOpen = False;
             #this.portindex = -1;
