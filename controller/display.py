@@ -35,7 +35,10 @@ class Display:
          print "First try for"
          print i;
          self.trackers[i] = lightboard.LightBoardTracker();
-         self.trackers[i].openSerial(i);
+         if (platform.system() == 'Darwin' ):
+             self.trackers[i].openSerial('/dev/tty.usbserial-A6008iGf');
+         else:
+             self.trackers[i].openSerial(i);
          self.trackers[i].setLid(i);
        
       # 5 second delay to let the arduino boards stabilize
@@ -51,7 +54,7 @@ class Display:
       now = time.time();
       if ((now - self.lastLogged) > self.logInterval):
          self.lastLogged = now;
-         log = False;
+         log = True;
          logLines = [];
 
       #print "looping";
@@ -96,6 +99,7 @@ class Display:
             self.lm.addBoard(tracker);
       if log:
          self.logger.logLines(logLines);
+         log = False;
 
    #Note:  Frames is a list of lists.  Format is:
    # [ [ lrpDurationInLrpCycles, [P_0.b, P_0.g, P_0.r], [P_1.b, P_1.g, P_1.r], ... , [P_51.b, P_51.g, P_51.r] ],
