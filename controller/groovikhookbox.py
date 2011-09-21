@@ -76,14 +76,14 @@ def compress_datagram(datagram):
 last_datagram_sent = None
 last_datagram_sent_timestamp = datetime.datetime.now()
 
-def compress_rgbfloat(datagram):
+def compress_rgbfloat(rgb):
     """Returns a JSON object to be sent through hookbox.
     """
 
     datagram = ''
 
-    for rgb in facet:
-        val = "%f " % rgb
+    for color in rgb:
+        val = "%f " % color
         datagram += val
 
     output = '"%s"' % datagram
@@ -216,8 +216,9 @@ class Cube():
                     self.grooviksCube.QueueModeChange(mode)
             elif rtjp_frame[2]['channel_name'] == 'colorcalib':
                 command = rtjp_frame[2]['payload']
+                print command
                 if ( len(command) == 1 ):
-                    push_message( compress_rgbfloat(self.displayc.lm.getPixelOffset(command[0])))
+                    push_message( compress_rgbfloat(self.displayc.lm.getPixelOffset(command[0])), "colorcalibrx")
                     return
                 with cube_lock:
                     self.logger.logLine( "Color calibration: Pixel, (R G B) = %s " % (command) )

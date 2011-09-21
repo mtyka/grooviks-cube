@@ -25,7 +25,9 @@ class HookClient:
     self.frame_id += 1
     self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'cubemode' }))
     self.frame_id += 1
-    self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'colorcal' }))
+    self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'colorcalib' }))
+    self.frame_id += 1
+    self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'colorcalibrx' }))
 
   def on_message(self, m):
     self.callback(core.deserialize_frame(m))
