@@ -35,10 +35,7 @@ class Display:
          print "First try for"
          print i;
          self.trackers[i] = lightboard.LightBoardTracker();
-         if (platform.system() == 'Darwin' ):
-             self.trackers[i].openSerial('/dev/tty.usbserial-A6008iGf');
-         else:
-             self.trackers[i].openSerial(i);
+         self.trackers[i].openSerial(i);
          self.trackers[i].setLid(i);
        
       # 5 second delay to let the arduino boards stabilize

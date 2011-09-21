@@ -30,6 +30,7 @@ from statestrobe import StateStrobe
 from modenormal import ModeNormal
 from modecalibration import ModeCalibration
 from modelightboardconfiguration import ModeLightBoardConfiguration
+from modescreensaver import ModeScreenSaver
 from groovikconfig import *
 
    
@@ -313,6 +314,7 @@ class GrooviksCube:
       self.__normalMode = ModeNormal()
       self.__calibrationMode = ModeCalibration()
       self.__lightBoardConfiguration = ModeLightBoardConfiguration()
+      self.__screensaver = ModeScreenSaver()
       
       self.__currentCubeState = CubeState.UNKNOWN
       self.__currentCubeMode = CubeMode.UNKNOWN
@@ -330,7 +332,7 @@ class GrooviksCube:
          self.__initialColorIndices.append( -1 )
          
       # Skip 
-      self.__AppendState( [ CubeState.SWITCH_MODE, CubeMode.NORMAL ] )
+      self.__AppendState( [ CubeState.SWITCH_MODE, CubeMode.SCREENSAVER ] )
       
    def SetStartTime( self, currentTime ):
       self.__appStartTime = currentTime
@@ -424,6 +426,8 @@ class GrooviksCube:
          self.__currentMode = self.__calibrationMode
       elif ( params[0] == CubeMode.LIGHT_BOARD_CONFIGURATION ):
          self.__currentMode = self.__lightBoardConfiguration
+      elif ( params[0] == CubeMode.SCREENSAVER ):
+         self.__currentMode = self.__screensaver
       else:
          print "Unknown cube mode requested!"
       
