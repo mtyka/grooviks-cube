@@ -121,6 +121,35 @@ def push_message(datagram):
     #page = resp.read()
     #print page
 
+def push_color_calib_result(r,g,b):
+    # assume the hookbox server is on localhost:2974    
+    url = "http://127.0.0.1:2974/rest/publish"
+
+    values = { "secret" : "bakonv8",
+               "channel_name" : "colorcalib",
+               "payload" : []
+             }
+
+    datagram = ''
+
+    floatval = "%f " % (r)
+    datagram += floatval
+    
+    floatval = "%f " % (g)
+    datagram += floatval
+
+    floatval = "%f" % (b)
+    datagram += floatval
+    
+    output = '"%s"' % datagram
+    #print "sending %s" % output
+
+    values["payload"] = output;
+    formdata = urllib.urlencode(values)
+    req = urllib2.Request(url, formdata)
+    resp = urllib2.urlopen(req)    
+    
+
 class Cube():
     def __init__(self):
 

@@ -173,6 +173,7 @@ function cube_got_shift_clicked_on(x,y)
 	calibrationFace = faceNum;   	
 }
 
+// r,g,b should be floats from 0-1
 function calibrate(face, red, green, blue) {
 	clog("Calibrating face: " + face +" r: " + red + " g: " + green + " b: " + blue);
 	hookbox_conn.publish('colorcalib', [face, red, green, blue]);
@@ -190,7 +191,12 @@ function calibrateEvent()
 	var red = $( "#red" ).slider( "value" ),
 	green = $( "#green" ).slider( "value" ),
 	blue = $( "#blue" ).slider( "value" );
-	calibrate(calibrationFace ,red, green, blue);     	
+	calibrate(calibrationFace ,red / 1000.0, green / 1000.0, blue / 1000.0);     	
+}
+
+function pullColors()
+{
+	hookbox_conn.publish('colorcalib', [calibrationFace]);
 }
 
 function set_cubemode(mode) {

@@ -258,7 +258,9 @@ class LightMapping:
          this.pixels.append([128,0,0]);
       this.pixelMap = {};
       this.boardMap = {};
+      this.cTracked = 0;
       this.loadMapping()
+
    def loadMapping(this):
       for line in fileinput.input(this.inputfile):
          l = eval(line);
@@ -271,15 +273,21 @@ class LightMapping:
          this.pixelMap[logicalPixelID] = list(l);
          this.boardMap[boardID].pixels[boardPixelID] = logicalPixelID;
          this.boardMap[boardID].offsets[boardPixelID] = physPixelOffset 
+         this.cTracked++;
 
    def addBoard(this, lbt):
       id = lbt.lastgood.guid;
       bm = this.boardMap[id];
       bm.lbt = lbt;
+      this.cTracked++;
       
    def dropBoard(this, lbt):
       this.boardMap[lbt.lastgood.guid].lbt = None;
-      
+      this.cTracked--;
+
+   def countTracked(this):
+      return cTracked;
+   
    def tracking(this, lbt):
       if (lbt.lastgood != None and this.boardMap[lbt.lastgood.guid].lbt != None):
          return True;
