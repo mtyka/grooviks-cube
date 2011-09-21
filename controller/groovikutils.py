@@ -37,7 +37,8 @@ class CubeMode:
 	NORMAL = 0
 	CALIBRATION = 1
 	LIGHT_BOARD_CONFIGURATION = 2
-	CUBE_MODE_COUNT = 3 # make sure this is last
+	SCREENSAVER = 3
+	CUBE_MODE_COUNT = 4 # make sure this is last
 	
 #-------------------------------------------------------------------------------
 # Cube input types
