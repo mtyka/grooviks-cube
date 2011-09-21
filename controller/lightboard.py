@@ -109,6 +109,9 @@ class LightBoardTracker:
       except:
          try:
             print "Closing serial port due to exception during read";
+            print "Unexpected error [0]:", sys.exc_info()[0]
+            print "Unexpected error [1]:", sys.exc_info()[1]
+            print "Unexpected error [2]:", sys.exc_info()[1]
             ser.close();
          finally:
             this.ser = None;
