@@ -79,8 +79,8 @@ class Display:
 
             # only try to reconnect if we are not actively tracking all arduinos
             if (self.lm.countTracked() < 11):
-               print "Reconnecting to lightboard ";
-               print i;
+               print "Reconnecting to lightboard %d" % i;
+               
                #tracker.close();
                if (platform.system() == 'Darwin' ):
                    tracker.openSerial('/dev/tty.usbserial-A6008iGf');
