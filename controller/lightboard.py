@@ -286,7 +286,7 @@ class LightMapping:
       this.cTracked -= 1;
 
    def countTracked(this):
-      return cTracked;
+      return this.cTracked;
    
    def tracking(this, lbt):
       if (lbt.lastgood != None and this.boardMap[lbt.lastgood.guid].lbt != None):
