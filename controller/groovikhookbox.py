@@ -83,7 +83,7 @@ def compress_rgbfloat(datagram):
     datagram = ''
 
     for rgb in facet:
-        val = "%f" % rgb
+        val = "%f " % rgb
         datagram += val
 
     output = '"%s"' % datagram
