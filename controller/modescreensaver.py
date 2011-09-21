@@ -27,4 +27,4 @@ class ModeScreenSaver( ModeBase ):
 	def SelectNewState( self, grooviksCube, currentTime, currentColors, stateFinished ):
 		self.__Color = self.__Color + 1
 		self.__Color = self.__Color % len(groovikConfig.calibrationColors)
-		grooviksCube.QueueFade( 0.5, False, groovikConfig.calibrationColors[self.__Color] )
+		grooviksCube.QueueFade( 3, False, groovikConfig.calibrationColors[self.__Color] )

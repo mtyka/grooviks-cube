@@ -4,6 +4,7 @@
 // ####################################################################
 
 var max_slider = 1000;
+var current_mode;
 
 // safe way to log things on webkit and not blow up firefox
 function clog(msg) {
@@ -175,10 +176,13 @@ var calibrationFace = -1;
 
 function cube_got_shift_clicked_on(x,y)
 {
-    var facenum = whichFaceIsPointIn(x,y);
-	calibrationFace = facenum;   	
-    hookbox_conn.publish('colorcalib', [facenum] );
-    clog("facenum " + facenum + " is now being calibrated");
+    if ( current_mode == 1 ) {
+        var facenum = whichFaceIsPointIn(x,y);
+        calibrationFace = facenum;   	
+        hookbox_conn.publish('colorcalib', [facenum] );
+        $('div#facenum').html('Face number ' + facenum + ' is now being calibrated.');
+        clog("facenum " + facenum + " is now being calibrated");
+    }
 }
 
 function calibrate(face, red, green, blue) {
@@ -210,14 +214,23 @@ function changeSlider(rgb_floats){
 function set_cubemode(mode) {
     clog("Setting cube mode: " + mode);
     hookbox_conn.publish('cubemode', {'mode' : mode});
+    current_mode = mode;
 
     if (mode == 1)
     {
-	$("#calibration-sliders").show();
+        $("#calibration-sliders").show();
     }
     else
     {
     	$("#calibration-sliders").hide();	
+    }
+    if (mode == 2)
+    {
+        $("#blankpixel").show();
+    }
+    else
+    {
+    	$("#blankpixel").hide();	
     }
 }
 
