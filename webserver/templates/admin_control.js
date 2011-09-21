@@ -3,6 +3,7 @@
 // ######################## Control Logic #############################
 // ####################################################################
 
+var max_slider = 1000;
 
 // safe way to log things on webkit and not blow up firefox
 function clog(msg) {
@@ -28,7 +29,12 @@ function on_message_pushed( datagram ) {
      update_view();  // calls into the renderer code
 }
 
-
+function decompress_rgbfloat(rgb) { 
+    var output = [];
+    output = rgb.split(" ");
+    var rgb_floats = [ parseFloat(output[0]), parseFloat(output[1]), parseFloat(output[2])] ;
+    return rgb_floats;
+}
 // Converts a long hex string into an array of 54 RGB-float-triples
 function decompress_datagram(datagram) {
     //clog("decompressing...");
@@ -169,8 +175,10 @@ var calibrationFace = -1;
 
 function cube_got_shift_clicked_on(x,y)
 {
-     	var facenum = whichFaceIsPointIn(x,y);
-	calibrationFace = faceNum;   	
+    var facenum = whichFaceIsPointIn(x,y);
+	calibrationFace = facenum;   	
+    hookbox_conn.publish('colorcalib', [facenum] );
+    clog("facenum " + facenum + " is now being calibrated");
 }
 
 function calibrate(face, red, green, blue) {
@@ -190,7 +198,13 @@ function calibrateEvent()
 	var red = $( "#red" ).slider( "value" ),
 	green = $( "#green" ).slider( "value" ),
 	blue = $( "#blue" ).slider( "value" );
-	calibrate(calibrationFace ,red, green, blue);     	
+	calibrate(calibrationFace ,float(red)/max_slider, float(green)/max_slider, float(blue)/max_slider);     	
+}
+function changeSlider(rgb_floats){
+        clog("changing slider based on message" );
+        $( "#red" ).slider( "value", rgb_floats[0]*max_slider);
+        $( "#green" ).slider( "value", rgb_floats[1]*max_slider );
+        $( "#blue" ).slider( "value", rgb_floats[2]*max_slider );
 }
 
 function set_cubemode(mode) {
@@ -248,7 +262,8 @@ function establish_hookbox_connections() {
 	if( channelName == 'colorcalib') {
 	    calib_subscription = _subscription;
             calib_subscription.opPublish = function(frame) {
-		clog('Heard calibration message');
+                clog('Heard calibration message');
+                var rgb_floats = decompress_rgbfloat(frame.payload)
 	    };
 	}
     };
