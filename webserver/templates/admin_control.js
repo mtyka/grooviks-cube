@@ -198,7 +198,7 @@ function calibrateEvent()
 	var red = $( "#red" ).slider( "value" ),
 	green = $( "#green" ).slider( "value" ),
 	blue = $( "#blue" ).slider( "value" );
-	calibrate(calibrationFace ,float(red)/max_slider, float(green)/max_slider, float(blue)/max_slider);     	
+	calibrate(calibrationFace ,red/max_slider, green/max_slider, blue/max_slider);     	
 }
 function changeSlider(rgb_floats){
         clog("changing slider based on message" );
