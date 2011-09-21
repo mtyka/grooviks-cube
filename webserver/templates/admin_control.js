@@ -33,7 +33,7 @@ function on_message_pushed( datagram ) {
 function decompress_rgbfloat(rgb) { 
     var output = [];
     output = rgb.split(" ");
-    var rgb_floats = [ parseFloat(output[0]), parseFloat(output[1]), parseFloat(output[2])] ;
+    var rgb_floats = [ parseFloat(output[2]), parseFloat(output[1]), parseFloat(output[0])] ;
     return rgb_floats;
 }
 // Converts a long hex string into an array of 54 RGB-float-triples
@@ -187,7 +187,7 @@ function cube_got_shift_clicked_on(x,y)
 
 function calibrate(face, red, green, blue) {
 	clog("Calibrating face: " + face +" r: " + red + " g: " + green + " b: " + blue);
-	hookbox_conn.publish('colorcalib', [face, red, green, blue]);
+	hookbox_conn.publish('colorcalib', [face, blue, green, red]);
 }
 
 function calibrateEvent()
