@@ -28,22 +28,6 @@ if( isIE() ) {
 }
 
 </script>
-<style>
-	#red, #green, #blue {
-		float: left;
-		clear: left;
-		width: 300px;
-		margin: 15px;
-	}
-
-	#red .ui-slider-range { background: #ef2929; }
-	#red .ui-slider-handle { border-color: #ef2929; }
-	#green .ui-slider-range { background: #8ae234; }
-	#green .ui-slider-handle { border-color: #8ae234; }
-	#blue .ui-slider-range { background: #729fcf; }
-	#blue .ui-slider-handle { border-color: #729fcf; }
-	#demo-frame > div.demo { padding: 10px !important; };
-	</style>
 	<script>
 	function hexFromRGB(r, g, b) {
 		var hex = [
@@ -183,6 +167,7 @@ jQuery.fn.elementlocation = function() {
 {% include "render.js" %}
 
 $(document).ready(function(){
+    $("#screensaver").click(  function(){ set_cubemode(3); } );
     $("#pixelmapping").click(  function(){ set_cubemode(2); } );
     $("#colorcalibration").click(     function(){ set_cubemode(1); } );
     $("#normal").click(     function(){ set_cubemode(0); } );
@@ -206,6 +191,7 @@ $(document).ready(function(){
     }
 
     $("#calibration-sliders").hide();
+    $("#blankpixel").hide();
     set_cubemode(0);
 
 });
@@ -244,6 +230,28 @@ function animate_spin(delta_radians) {
 
 </script>   
 <style>
+	#red, #green, #blue {
+		width: 200px;
+		margin: 15px;
+	}
+
+	#red .ui-slider-range { background: #ef2929; }
+	#red .ui-slider-handle { border-color: #ef2929; }
+	#green .ui-slider-range { background: #8ae234; }
+	#green .ui-slider-handle { border-color: #8ae234; }
+	#blue .ui-slider-range { background: #729fcf; }
+	#blue .ui-slider-handle { border-color: #729fcf; }
+    #calibration-sliders {
+        position:relative;
+        top:-600px;
+    }
+    #facenum {
+        text-align:left;
+        position: absolute;
+        left:15px;
+        top:-30px;
+        font-size:12px;
+    }
     .debug {
         display:none;
     }
@@ -269,7 +277,7 @@ function animate_spin(delta_radians) {
 			margin-right: auto;
 			width: 1000px;
 			position: relative;
-			top: 30px;
+			top: 0px;
 		}
 		.bottomrow{
 			clear: both;
@@ -279,11 +287,16 @@ function animate_spin(delta_radians) {
 			position: relative;
 			width: 600px;
 		}
+        #blankpixel {
+            position:relative;
+            top: -550px;
+            left: -400px;
+        }
     .button {
  			margin-left:  4px;
 			margin-right:  4px;
 			z-index: 3;
-   }
+       }
 		.button.left{ float:left; }
 		.button.right{ float:right; }
 		.clear{ clear: both; }
@@ -292,7 +305,7 @@ function animate_spin(delta_radians) {
 			width: 750px;
 			height: 750px;
 			position: relative;
-			top: -75px;
+			top: -140px;
 			z-index:   -1;	
 		}
 
@@ -300,6 +313,13 @@ function animate_spin(delta_radians) {
 			position: relative;
 			top: -400px;
 		}
+        #screensaver {
+            width: 200px;
+            height: auto;
+        }
+        .bigbutton {
+            vertical-align:middle;
+        }
 
 </style>
 <!--
@@ -326,30 +346,32 @@ p
     <div id="container">
       {% block top %}
             <div class="toprow" >
+                <img class="bigbutton"   id="screensaver"      src="/static/animated_disco.gif"  alt="Screen Saver"  >
                 <img class="bigbutton"   id="pixelmapping"      src="/static/button_pixelmap.png"  alt="Pixel Mapping"  >
                 <img class="bigbutton"   id="colorcalibration"     src="/static/button_colorcalib.png" alt="Color Calibration" >
                 <img class="bigbutton"   id="normal"     src="/static/button_normalmode.png" alt="Normal Mode" >
-                <div class="clear"></div>
             </div>
 
       {% endblock %}
 
 			<div id="svgholder"></div>
 	
-       <canvas id="canvas" width=750 height=750></canvas>   
-			<div class="bottomrow" >
-				<img class="blankpixel"   id="blankpixel"  src="/static/blankpixel.png"      alt="blank"  >
-				<img class="button left"   id="buttonleft"  src="/static/button_left.png"      alt="Left"  >
-				<img class="button right"   id="buttonright" src="/static/button_right.png"     alt="Right" >
-				<div class="clear"></div>
-					    <div class="demo" id="calibration-sliders">
+           <canvas id="canvas" width=750 height=750></canvas>   
 
-      	        <div id="red"></div>
-	    	<div id="green"></div>
-	    	<div id="blue"></div>
 
-	    </div><!-- End demo -->
-			  <br>
+            <div class="bottomrow" >
+                <img class="button left"   id="buttonleft"  src="/static/button_left.png"      alt="Left"  >
+                <img class="button right"   id="buttonright" src="/static/button_right.png"     alt="Right" >
+            </div>
+            <div id="calibration-sliders">
+                <div id="facenum">No face being calibrated now.</div>
+                <div id="red"></div>
+                <div id="green"></div>
+                <div id="blue"></div>
+            </div>
+            <div id="pixelholder">
+                <img class="blankpixel"   id="blankpixel"  src="/static/blankpixel.png"      alt="blank"  >
+            </div>
         {% block bottom %}
         {% endblock %}
       </div>
