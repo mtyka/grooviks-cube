@@ -55,6 +55,7 @@ class StateRotation( StateBase ):
 		self.__dimFadeTime = 0.3
 			
 	def Start( self, currentTime, params, startingColors, faceColors, initialColorIndices ):
+		self.__step2Index = self.__step3Index = 0
 		self.__activeRotations = copy.deepcopy( params[0] )
 		if ( len(params) >= 2 ):
 			if ( params[1] >= 0 ):
@@ -82,7 +83,6 @@ class StateRotation( StateBase ):
 			self.__RotateTargetState( self.__rotdesc2step[ self.__activeRotations[i][0] ], self.__activeRotations[i][1] )
 		self.__step2Times = [ currentTime, currentTime + stepTime2, currentTime + self.activeRotationTime, currentTime + self.activeRotationTime ]
 		self.__step3Times = [ currentTime, currentTime + stepTime3, currentTime + stepTime3 * 2.0, currentTime + self.activeRotationTime, currentTime + self.activeRotationTime ]
-		self.__step2Index = self.__step3Index = 0
 		
 	def Update( self, currentTime ):
 		# Simulate to the next control point / current time, which ever comes first
