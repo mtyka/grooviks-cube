@@ -91,9 +91,8 @@ function playFaceClickSound(frame){
 }
 
 function playRotationSound(rotationStep){
-	clog(rotationStep);
-        if(rotationStep ){
-            var gearSound = soundManager.getSoundById('gear' + rotationStep );
+        if(rotationStep != 0){
+            var gearSound = soundManager.getSoundById('gear' + rotationStep);
 	    //soundManager.stopAll();
             gearSound.play();
         }
@@ -303,6 +302,12 @@ function establish_hookbox_connections() {
             rotation_subscription = _subscription;
             rotation_subscription.onPublish = function(frame) {
                 playRotationSound(frame.payload);
+            };
+        }
+        if( channelName == 'cubemode'){
+	    gamemode_subscription = _subscription;
+	    gamemode_subscription.onPublish = function(frame){
+                clog(frame);
             }
         }
     };
@@ -310,7 +315,7 @@ function establish_hookbox_connections() {
    // Subscribe to the pubsub channel with the colors
    hookbox_conn.subscribe("iframe");
    hookbox_conn.subscribe("faceclick");
-   hookbox_conn.subscribe("gamemode");
+   hookbox_conn.subscribe("cubemode");
    hookbox_conn.subscribe("rotationStep");
 }
 
