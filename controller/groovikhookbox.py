@@ -136,6 +136,23 @@ def push_message(message, channel):
     #page = resp.read()
     #print page
 
+def push_rotationStep_message( rotationStep):           
+    """Pushes a datagram out onto the hookbox channel           
+    """         
+                
+    # assume the hookbox server is on localhost:2974            
+    url = "http://127.0.0.1:2974/rest/publish"          
+        
+    values = { "secret" : "bakonv8",            
+               "channel_name" : "rotationStep",         
+               "payload" : []           
+             }          
+        
+    values["payload"] = rotationStep            
+    formdata = urllib.urlencode(values)         
+    req = urllib2.Request(url, formdata)                
+    resp = urllib2.urlopen(req)
+
 def push_color_calib_result(r,g,b):
     # assume the hookbox server is on localhost:2974    
     url = "http://127.0.0.1:2974/rest/publish"
@@ -167,6 +184,7 @@ def push_color_calib_result(r,g,b):
 
 class Cube():
     def __init__(self):
+        self.lastRotationStep = 0
 
         count = 25
         self.displayc = display.Display(count, "input_playa.py" )
@@ -264,18 +282,25 @@ class Cube():
 
             frameStartTime = time.time()
               
-            data = self.simulate()
+            data, rotationStep = self.simulate()
             # generate random colors for every cube face every 1.5 seconds
             # and publish them via the HTTP/REST api.
 
             frameLerpedColors = []
             self.simTime = self.simTime + TARGET_FRAMETIME;            
+
+            if rotationStep != self.lastRotationStep :          
+                self.lastRotationStep = rotationStep            
+                push_rotationStep_message(rotationStep)
+
             while ((self.simTime - time.time()) > (TARGET_FRAMETIME/3)):
                 # Here we will want to interpolate across the frames, or if there are none use current state.
                 frameLerpedColors = self.interpolateFrames( data, time.time()- frameStartTime, lastFrameLerpedColors );
                 time.sleep(0.02)
                 if ( len(frameLerpedColors) > 0 ):
                     push_datagram( frameLerpedColors );
+
+
             lastFrameLerpedColors = data[-1][1];
               
     def simulate(self):
@@ -283,7 +308,7 @@ class Cube():
           keyframes, resync, rotationStep = self.grooviksCube.Update( self.simTime );
           self.displayc.renderFrames( keyframes, resync )
         if keyframes:
-            return keyframes
+            return keyframes, rotationStep
 
 if __name__ == "__main__":
     cube = Cube()
