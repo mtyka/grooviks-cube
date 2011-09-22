@@ -332,7 +332,7 @@ class GrooviksCube:
          self.__initialColorIndices.append( -1 )
          
       # Skip 
-      self.__AppendState( [ CubeState.SWITCH_MODE, CubeMode.SCREENSAVER ] )
+      self.__AppendState( [ CubeState.SWITCH_MODE, CubeMode.NORMAL ] )
       
    def SetStartTime( self, currentTime ):
       self.__appStartTime = currentTime
