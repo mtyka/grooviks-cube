@@ -5,6 +5,7 @@ import xmlrpclib
 import threading
 import traceback
 import time
+from logme import logme
 
 debug = False
 log = False
@@ -225,7 +226,7 @@ if __name__ == "__main__":
    if (len(sys.argv) < 2):
       usage()
    if (sys.argv[1] == "client"):
-      print "Connecting 2 clients"
+      logme( "Connecting 2 clients" )
       #connect_cube_event_listener(TestCubeEventListener(), "0.0.0.0", 65005, "localhost", 64005)
       connect_cube_event_listener(TestCubeEventListener(), "10.0.0.2", 65001, "10.0.0.1", 64005)
       inp = raw_input("Hit return to stop listening.")

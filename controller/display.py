@@ -1,6 +1,7 @@
 import lightboard
 import time;
 import platform
+from logme import logme
 
 from glog import GLog;
 
@@ -26,18 +27,19 @@ class Display:
       self.lastLogged = 0;
       self.logger = GLog("power.log");
       self.dirty = True;
-      print "Display Init"
+      logme( "Display Init" )
       self.trackers = {}; # a hash to hold the lightBoardTrackers;
       self.cTrackers = cTrackers;
       self.inputFileName = fileName;
       for j in range(cTrackers):
          i = cTrackers - j - 1;
-         print "First try for"
-         print i;
+         logme( "First try for light board:", i )
          self.trackers[i] = lightboard.LightBoardTracker();
          if (platform.system() == 'Darwin' ):
+             logme( "Darwin System" )
              self.trackers[i].openSerial('/dev/tty.usbserial-A6008iGf');
          else:
+             logme( "Linux System" )
              self.trackers[i].openSerial(i);
          self.trackers[i].setLid(i);
        
@@ -47,7 +49,7 @@ class Display:
       # read in the file mapping facets to arduino IDs
       self.lm = lightboard.LightMapping();
       self.lm.initMapping(fileName);
-      print "Display init end"
+      logme( "Display init end" )
       
    def loop(self):
       log = False;
@@ -57,7 +59,7 @@ class Display:
          log = True;
          logLines = [];
 
-      #print "looping";
+      #logme( "looping" )
       #  Here we need to:
       #    Handle light arduinos
       for i in range(self.cTrackers):
@@ -73,13 +75,13 @@ class Display:
             # if we had been tracking this, and it had been mapped, and this is the first time we've failed to track it,
             # unmap it, note that we've done so.
             if (tracker.lastgood != None):
-               print "Dropping board %d because of non-responsiveness" % tracker.guid;
+               logme( "Dropping board %d because of non-responsiveness" % tracker.guid )
                self.lm.dropBoard(tracker);
                tracker.lastgood = None;
 
             # only try to reconnect if we are not actively tracking all arduinos
             if (self.lm.countTracked() < 11):
-               print "Reconnecting to lightboard %d" % i;
+               logme( "Reconnecting to lightboard %d" % i )
                
                #tracker.close();
                if (platform.system() == 'Darwin' ):
