@@ -4,8 +4,11 @@ import serial;
 import fileinput;
 import sys;
 import StringIO;
+import platform;
+from logme import logme
 
 SYNCVALUE = 0x69;
+
 
 # This class is internal. No reason for the outside world to ever know about it.
 class CheckSum:
@@ -60,21 +63,24 @@ class LightBoardTracker:
                return;
       try:
          this.triedopen = time.time();
-         #print "Asking to open "
-         #this.ser = serial.Serial(serialID, 9600, EIGHTBITS, PARITY_NONE, STOPBITS_TWO, None, xonxoff=0, rtscts=0, None, None, None);
-         this.ser = serial.Serial('/dev/ttyUSB%d' % serialID, baud, 8, 'N', 1, None, 0, 0, None, None);
-         # Use this on a MAC (apparently)
-				 #this.ser = serial.Serial('/dev/tty.usbserial-A6008iGf', 9600, 8, 'N', 1, None, 0, 0, None, None, None);
+         #logme( "Asking to open " )
          
-         print "Successfully opened serialID:"
-         print serialID;
-
-         #print "past that"
+         ## On Macs the serial devices are named differently. Here the user should just supply the entire name of the device
+         if (platform.system() == 'Darwin' ):
+              serial_device = serialID     
+         else:
+              serial_device = '/dev/ttyUSB%d' % serialID
+         
+         this.ser = serial.Serial(serial_device, baud, 8, 'N', 1, None, 0, 0, None, None);
+         
+         logme( "Successfully opened serialID:", serialID )
          this.isOpen = True;
       except (KeyboardInterrupt, SystemExit):
+         logme( "Error occured: (KeyboardInterrupt, SystemExit):" )
          raise
       except:
-         print "Unexpected error:", sys.exc_info()[1]
+         logme( "Unexpected error:", sys.exc_info()[1] )
+         print sys.exc_info()[1]
          this.isOpen = False;
          this.ser = None;
       finally:
@@ -96,22 +102,22 @@ class LightBoardTracker:
                   if (this.working.valid):
                      this.lastgood = this.working;
                      #if (ser.inWaiting() > 18):
-                     #print "Flushing";
+                     #logme( "Flushing" )
                      #ser.flushInput();
                      #this.working = LightBoardState();
                      #return;
                   else:
-                     print "Invalid message deserialized";
-                     print this.lid;
+                     logme( "Invalid message deserialized" )
+                     logme( this.lid )
                   this.working = LightBoardState();
       except (KeyboardInterrupt, SystemExit):
          raise
       except:
          try:
-            print "Closing serial port due to exception during read on port: %d" % this.portindex;
-            print "Unexpected error [0]:", sys.exc_info()[0]
-            print "Unexpected error [1]:", sys.exc_info()[1]
-            print "Unexpected error [2]:", sys.exc_info()[1]
+            logme( "Closing serial port due to exception during read on port: %d" % this.portindex )
+            logme( "Unexpected error [0]:", sys.exc_info()[0] )
+            logme( "Unexpected error [1]:", sys.exc_info()[1] )
+            logme( "Unexpected error [2]:", sys.exc_info()[1] )
             ser.close();
          finally:
             this.ser = None;
@@ -389,13 +395,13 @@ class LightMapping:
       
       #if len(resync) > 0:
       #   frames.insert( 0, [50, resync] );
-     # print "------------"
+     # logme( "------------" )
       for bmID in iter(this.boardMap):
          message = "";
          boardmap = this.boardMap[bmID];
          if (boardmap == None or boardmap.lbt == None or boardmap.lbt.ser == None):
             continue
-       #  print boardmap.pixels
+       #  logme( boardmap.pixels )
          
          now = time.time();
          startFrame = start;
@@ -438,16 +444,16 @@ class LightMapping:
             startFrame = endFrame;
 
          if (message != ""):
-            #print "Sending message for board: {0}, length: {1}".format(bmID, message.__len__());
+            #logme( "Sending message for board: {0}, length: {1}".format(bmID, message.__len__()) )
             try:
                preNetClock = time.clock()
                boardmap.lbt.ser.write(message);
                postNetClock = time.clock()
-               #print "  MT: " + str( preNetClock - frameClock ) + " NT: " + str( postNetClock - preNetClock ) + " FC: " + str( len( frames ) )
+               #logme( "  MT: " + str( preNetClock - frameClock ) + " NT: " + str( postNetClock - preNetClock ) + " FC: " + str( len( frames ) ) )
             except (KeyboardInterrupt, SystemExit):
                raise
             except:
-               print "Managing exception on board {0}".format(bmID);
+               logme( "Managing exception on board {0}".format(bmID) )
             finally:
                0
       
