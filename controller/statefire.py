@@ -54,6 +54,11 @@ class StateFire( StateBase ):
     print faceColors
     print initialColorIndices 
     print "-----------"
+    
+    duration = params[0]
+    self.__duration = duration
+    self.__starttime = currentTime
+    self.__colors = copy.deepcopy( startingColors )
 
     self.__heatmap = copy.deepcopy( cylindrical_map );
     for y in range( 0, 8):
@@ -67,41 +72,6 @@ class StateFire( StateBase ):
     for i in range(120, 256):
       self.__palette.append( [ (i-120)/136.0,1,1] )
 
-
-    duration = params[0]
-    strobeDuration = params[1]
-    self.__strobeInHSL = params[2]
-    
-    if ( len( params[3] ) == 3 ):
-      # Single color version
-      self.__strobeColor = copy.deepcopy( params[3] )
-      self.__singleExpColor = True
-    else:
-      # Specifying a pattern to strobe to in terms of the face colors
-      faceColorCount = len(faceColors)      
-      self.__strobeColor = []
-      for faceIndex in params[3]:
-        if ( faceIndex >= 0 and faceIndex < faceColorCount ):
-          self.__strobeColor.append( faceColors[ faceIndex ] )
-        else:
-          self.__strobeColor.append( [0, 0, 0] )
-      self.__singleExpColor = False
-    
-    # Can't go below 166 / 3, too much data for arduinos
-    # (need control points when dark + light, get one for each strobe)
-    strobeDuration = max( strobeDuration, TIMESTEP / 3.0 ) 
-    count = int( duration / strobeDuration )
-    self.__strobeTimes = []
-    self.__strobeFactors = []
-    self.__strobeControlPointCount = 2 * count + 1
-    strobeTime = currentTime;
-    strobeFactor = 1.0
-    for i in range( 0, self.__strobeControlPointCount ):
-      self.__strobeTimes.append( strobeTime )
-      self.__strobeFactors.append( strobeFactor )
-      strobeTime = strobeTime + strobeDuration
-      strobeFactor = 1.0 - strobeFactor  
-    self.__strobeIndex = 0
     self.__colors = copy.deepcopy( startingColors )
     self.__step = 0
 
@@ -115,6 +85,9 @@ class StateFire( StateBase ):
    # simTime = self.__ComputeNextSimTime( currentTime )
    # if ( self.__strobeIndex >= self.__strobeControlPointCount - 1 ):
    #   return  [ self.__colors, simTime, True ]
+    
+    if (currentTime - self.__starttime) > self.__duration:
+       return  [ self.__colors, (currentTime - self.__starttime), True ]
     
     output = [ [], currentTime, False ]
     i=0

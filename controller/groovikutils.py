@@ -28,6 +28,7 @@ class CubeState:
 	ROTATING = 7
 	SWITCH_MODE = 8
 	FIREMODE = 9	
+	TETRISMODE = 10
 
 #-------------------------------------------------------------------------------
 # Cube modes
