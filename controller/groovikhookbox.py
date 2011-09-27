@@ -223,10 +223,13 @@ class Cube():
                     self.grooviksCube.HandleInput( CubeInput.FACE_CLICK, face)
                     #self.grooviksCube.QueueEffect( "victory0" )
             elif rtjp_frame[2]['channel_name'] == 'gamemode':
-                self.logger.logLine( "GameMode: %s " % (rtjp_frame[2]['payload']) )
-                depth = rtjp_frame[2]['payload']['difficulty']
-                self.grooviksCube.ResetColors()
-                self.grooviksCube.Randomize(depth)
+                if self.grooviksCube.IsPositionActive(rtjp_frame[2]['payload']['position']):
+                    self.logger.logLine( "GameMode: %s " % (rtjp_frame[2]['payload']) )
+                    depth = rtjp_frame[2]['payload']['difficulty']
+                    self.grooviksCube.ResetColors()
+                    self.grooviksCube.Randomize(depth)
+                else:
+                    self.logger.logLine( "GameMode DECLINED: %s " % (rtjp_frame[2]['payload']) )
             elif rtjp_frame[2]['channel_name'] == 'cubemode':
                 self.logger.logLine( "CubeMode: %s " % (rtjp_frame[2]['payload']) )
                 mode = rtjp_frame[2]['payload']['mode']

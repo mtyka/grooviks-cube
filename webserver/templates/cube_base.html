@@ -129,9 +129,9 @@ jQuery.fn.elementlocation = function() {
 {% include "render.js" %}
 
 $(document).ready(function(){
-    $("#rookie").click(  function(){ reset_gamestate(1); } );
-    $("#student").click( function(){ reset_gamestate(3); } );
-    $("#master").click(  function(){ reset_gamestate(20); } );
+    $("#rookie").click(  function(){ reset_gamestate(position, 1); } );
+    $("#student").click( function(){ reset_gamestate(position, 3); } );
+    $("#master").click(  function(){ reset_gamestate(position, 7); } );
 
     if (!position) {
         $("#buttonleft").click( function(){ 

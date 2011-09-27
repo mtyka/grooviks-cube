@@ -260,9 +260,9 @@ function cube_got_clicked_on(x,y)
 	}
 }
 
-function reset_gamestate(difficulty) {
+function reset_gamestate(position, difficulty) {
     clog("Resetting gamestate: " + difficulty);
-    hookbox_conn.publish('gamemode', {'difficulty' : difficulty});
+    hookbox_conn.publish('gamemode', {'position' : position, 'difficulty' : difficulty});
 }
 
 

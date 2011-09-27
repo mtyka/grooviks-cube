@@ -30,6 +30,24 @@ class CubeState:
 	
 
 #-------------------------------------------------------------------------------
+# Game state:  These states define which clients are allowed to interact with
+# the cube game, and what actions they are allowed to take.
+#
+# See http://code.google.com/p/grooviks-cube/wiki/PacsciStateMachine#Global_State
+# for more information.
+#-------------------------------------------------------------------------------
+class GameState:
+	UNKNOWN = -1
+	UNBOUND = 0
+	SINGLE = 1
+	SINGLE_INVITE = 2
+	MULTIPLE = 3
+	MULTIPLE_RESTART = 4
+	VICTORY = 5
+	GLOBAL_GAME_STATE_COUNT = 6 # make sure this is last
+
+
+#-------------------------------------------------------------------------------
 # Cube modes
 #-------------------------------------------------------------------------------
 class CubeMode:
