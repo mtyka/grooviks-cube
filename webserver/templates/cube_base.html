@@ -271,12 +271,15 @@ p
 			<div id="svgholder"></div>
        <canvas id="canvas" width=750 height=750></canvas>   
 			<div class="bottomrow" >
+        <br>
+        <br>
+        <br>
+				{% block bottom %}
+        {% endblock %}
 				<img class="button left"   id="buttonleft"  src="/static/button_left.png"      alt="Left"  >
 				<img class="button right"   id="buttonright" src="/static/button_right.png"     alt="Right" >
 				<div class="clear"></div>
 			  <br>
-        {% block bottom %}
-        {% endblock %}
       </div>
 	
 
