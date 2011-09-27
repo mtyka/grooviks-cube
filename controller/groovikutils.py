@@ -27,7 +27,7 @@ class CubeState:
 	DELAY = 6
 	ROTATING = 7
 	SWITCH_MODE = 8
-	
+	FIREMODE = 9	
 
 #-------------------------------------------------------------------------------
 # Cube modes
