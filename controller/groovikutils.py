@@ -27,7 +27,7 @@ class CubeState:
 	DELAY = 6
 	ROTATING = 7
 	SWITCH_MODE = 8
-	
+	FIREMODE = 9	
 
 #-------------------------------------------------------------------------------
 # Game state:  These states define which clients are allowed to interact with
