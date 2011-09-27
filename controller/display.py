@@ -1,7 +1,7 @@
 import lightboard
 import time;
 import platform
-from logme import logme
+from logme import * 
 
 from glog import GLog;
 
@@ -71,7 +71,7 @@ class Display:
 
          #         Make sure "last" state matches our expected state
          # if we haven't heard from one in a "long time", then set it to faulted.
-         if (tracker.timesince() > 60 and tracker.timesincetried() > 30):
+         if (tracker.timesince() > 2 and tracker.timesincetried() > 2):
             # if we had been tracking this, and it had been mapped, and this is the first time we've failed to track it,
             # unmap it, note that we've done so.
             if (tracker.lastgood != None):

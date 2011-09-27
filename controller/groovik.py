@@ -27,7 +27,7 @@ from stateidlepulse import StateIdlePulse
 from staterotation import StateRotation
 from statespiralfade import StateSpiralFade
 from statestrobe import StateStrobe
-from stateexp import StateExp
+from statefire import StateFire
 from modenormal import ModeNormal
 from modecalibration import ModeCalibration
 from modelightboardconfiguration import ModeLightBoardConfiguration
@@ -307,7 +307,7 @@ class GrooviksCube:
       self.__idlePulseState = StateIdlePulse()
       self.__rotationState = StateRotation()
       self.__strobeState = StateStrobe()
-      self.__fireState = StateExp()
+      self.__fireState = StateFire()
       self.__fadeState = StateFade()
       self.__spiralFadeState = StateSpiralFade()
       self.__delayState = StateDelay()
