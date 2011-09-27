@@ -67,7 +67,7 @@ class Display:
          #         Decode all waiting pong messages
          tracker.read();      
          if (tracker.lastgood != None and log):
-            logLines.append("ID: {0:c}, PW1: {1:d}, PW2: {2:d}\n".format((tracker.lastgood.guid + ord('a') - 1), ord(tracker.lastgood.powermodule1), ord(tracker.lastgood.powermodule2)));
+            logLines.append(str(timestamp()) + " ID: {0:c}, PW1: {1:d}, PW2: {2:d}\n".format((tracker.lastgood.guid + ord('a') - 1), ord(tracker.lastgood.powermodule1), ord(tracker.lastgood.powermodule2)));
 
          #         Make sure "last" state matches our expected state
          # if we haven't heard from one in a "long time", then set it to faulted.
