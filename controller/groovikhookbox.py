@@ -186,7 +186,7 @@ class Cube():
     def __init__(self):
         self.lastRotationStep = 0
 
-        count = 25
+        count = 129;
         self.displayc = display.Display(count, "input_playa.py" )
         
         # connect to the hookbox client and receive commands
