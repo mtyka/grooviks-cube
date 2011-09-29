@@ -23,6 +23,31 @@ if( isIE() ) {
 
 </script>
 
+<script> 
+
+var time_of_inactivity_to_reload_page = 900
+var time_to_reload = time_of_inactivity_to_reload_page
+function beginrefresh(){
+	//document.title = time_to_reload  //just for debugging
+	if (time_to_reload<=1){
+		window.location.reload()
+	 	reset_timeout() 
+	}
+	
+	time_to_reload-=1
+	window.status=time_to_reload
+	setTimeout("beginrefresh()",1000) // call me again in 1000 ms
+}
+
+function reset_timeout(){
+	 time_to_reload = time_of_inactivity_to_reload_page
+}
+
+window.onload=beginrefresh
+window.onclick=reset_timeout
+</script>
+
+
 <script type="text/javascript"> 
     // load the hookbox library, or display an error
     var is_hookbox_loaded = false;
