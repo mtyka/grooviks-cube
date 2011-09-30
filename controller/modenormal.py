@@ -3,6 +3,7 @@
 # This mode represents the normal operation of the cube
 #
 #-------------------------------------------------------------------------------
+import random
 from groovikconfig import *
 from groovikutils import *
 from GScript import GScript
@@ -46,7 +47,7 @@ class ModeNormal( ModeBase ):
          if ( grooviksCube.GetCurrentState() == CubeState.ROTATING ):
             if ( self.__Solved( currentColors ) ):
                self.__normalModeState = ModeNormalState.VICTORY_DANCE
-               grooviksCube.QueueEffect( "victory0" )
+               grooviksCube.QueueEffect( "victory%d"%( random.randint(0,2)) )
                
       # We're done with the victory dance + randomization after we have no more queued states   
       elif ( self.__normalModeState == ModeNormalState.VICTORY_DANCE ):
