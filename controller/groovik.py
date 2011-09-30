@@ -55,7 +55,11 @@ class GrooviksCube:
       return self.__currentCubeState == CubeState.IDLE
    
    def IsPositionActive( self, position ):
-      """Return true if the requesting position is the active position or if in multiplayer mode"""
+      """
+          Return true if the requesting position is the active position.
+          If the cube is currently in multiplayer mode, all positions are
+          active.
+      """
       singlePlayer = lambda x: self.__currentActivePosition == x
       multiPlayer = lambda x: True
       unbound = lambda x: False
@@ -67,6 +71,15 @@ class GrooviksCube:
          GameState.MULTIPLE_RESTART : multiPlayer,
          GameState.VICTORY : unbound,
        }[self.__currentGameState](position)
+   
+   def SetActivePosition( self, position ):
+       self.__currentActivePosition = position
+   
+   def GetGameState( self ):
+       return self.__currentGameState
+   
+   def GetActivePostion( self ):
+       return self.__currentActivePosition
    
    def   GetCurrentState( self ):
       return self.__currentCubeState
