@@ -129,6 +129,13 @@ function on_message_pushed( datagram ) {
 }
 
 
+function on_game_state_change( newState ) {
+     game_state = newState
+     $('#game_state').val( game_state ) 
+     // TODO: possibly change client state
+}
+
+
 // Converts a long hex string into an array of 54 RGB-float-triples
 function decompress_datagram(datagram) {
     //clog("decompressing...");
@@ -299,6 +306,12 @@ function establish_hookbox_connections() {
                 clog('Heard about click on face ' + frame.payload);
             };  
         }
+        if( channelName == 'gameState' ) {
+        	gamestate_subscription = _subscription;
+            gamestate_subscription.onPublish = function(frame) {
+                on_game_state_change( frame.payload );
+            };  
+        }
         if( channelName == 'rotationStep' ) {
             rotation_subscription = _subscription;
             rotation_subscription.onPublish = function(frame) {
@@ -311,6 +324,7 @@ function establish_hookbox_connections() {
    hookbox_conn.subscribe("iframe");
    hookbox_conn.subscribe("faceclick");
    hookbox_conn.subscribe("gamemode");
+   hookbox_conn.subscribe("gameState");
    hookbox_conn.subscribe("rotationStep");
 }
 
