@@ -36,6 +36,46 @@ class LightBoardTracker:
       this.__timetried = time.time() - 2;
       this.lid = -1;
 
+   def str(this):
+      string_rep = "";
+      string_rep += str( this.guid)    
+      
+      string_rep += "( Working :" 
+      if( this.working != None ):
+          string_rep += str( this.working.guid          ) + " | " 
+          string_rep += str( this.working.powermodule1  ) + " | " 
+          string_rep += str( this.working.powermodule2  ) + " | " 
+          string_rep += str( this.working.pixels        ) + " | " 
+ #         string_rep += str( this.working.__readstate   ) + " | " 
+ #         string_rep += str( this.working.__reading     ) + " | " 
+          string_rep += str( this.working.valid         ) + " | " 
+          string_rep += str( this.working.complete      ) + " | " 
+ #         string_rep += str( this.working.__timestarted ) 
+      else:
+          string_rep +=  " ) "
+      
+      string_rep += "( Lastgood :" 
+      if( this.lastgood != None ):
+          string_rep += str( this.lastgood.guid          ) + " | " 
+          string_rep += str( this.lastgood.powermodule1  ) + " | " 
+          string_rep += str( this.lastgood.powermodule2  ) + " | " 
+          string_rep += str( this.lastgood.pixels        ) + " | " 
+ #         string_rep += str( this.lastgood.__readstate   ) + " | " 
+ #         string_rep += str( this.lastgood.__reading     ) + " | " 
+          string_rep += str( this.lastgood.valid         ) + " | " 
+          string_rep += str( this.lastgood.complete      ) + " | " 
+#          string_rep += str( this.lastgood.__timestarted ) 
+      else:
+          string_rep +=  " ) "
+
+      string_rep += str( this.isOpen )   + " | " 
+      string_rep += str( this.portindex )   + " | " 
+      string_rep += str( this.ser )         + " | " 
+      string_rep += str( this.triedopen )   + " | " 
+      string_rep += str( this.__timetried ) + " | " 
+      string_rep += str( this.lid )
+      return string_rep
+
    def setLid(this, lid):
       this.lid = lid;
       
@@ -78,9 +118,11 @@ class LightBoardTracker:
       except (KeyboardInterrupt, SystemExit):
          logme( "Error occured: (KeyboardInterrupt, SystemExit):" )
          raise
+      except IOError :  ## Device doesnt exist 
+         this.isOpen = False;
+         this.ser = None;
       except:
-         logme( "Unexpected error:", sys.exc_info()[1] )
-         print sys.exc_info()[1]
+         logme( "Unexpected error:", sys.exc_info()[1], sys.exc_info()[1], sys.exc_info()[2] )
          this.isOpen = False;
          this.ser = None;
       finally:
@@ -117,7 +159,7 @@ class LightBoardTracker:
             logme( "Closing serial port due to exception during read on port: %d" % this.portindex )
             logme( "Unexpected error [0]:", sys.exc_info()[0] )
             logme( "Unexpected error [1]:", sys.exc_info()[1] )
-            logme( "Unexpected error [2]:", sys.exc_info()[1] )
+            logme( "Unexpected error [2]:", sys.exc_info()[2] )
             ser.close();
          finally:
             this.ser = None;

@@ -50,7 +50,13 @@ class Display:
       self.lm = lightboard.LightMapping();
       self.lm.initMapping(fileName);
       logme( "Display init end" )
+   
+   def print_trackers_to_log(self):
+      for i in range(self.cTrackers):
+         if self.trackers[i].ser != None:
+            logme( "Tracker[%d]: "%i + self.trackers[i].str() );
       
+
    def loop(self):
       log = False;
       now = time.time();
@@ -59,9 +65,16 @@ class Display:
          log = True;
          logLines = [];
 
-      #logme( "looping" )
+      disconnection_at_the_start = False
+      if log or self.lm.countTracked() < 11:
+        disconnection_at_the_start = True
+        logme( "Start of loop: Trackers: %d ------------------------------------------------------------------------------ "%self.cTrackers )
+        logme( "self.lm.countTracked(): %d"%(self.lm.countTracked()))
+        self.print_trackers_to_log()
+
       #  Here we need to:
       #    Handle light arduinos
+
       for i in range(self.cTrackers):
          tracker = self.trackers[i];
          #         Decode all waiting pong messages
@@ -81,7 +94,7 @@ class Display:
 
             # only try to reconnect if we are not actively tracking all arduinos
             if (self.lm.countTracked() < 11):
-               logme( "Reconnecting to lightboard %d" % i )
+               #logme( "Reconnecting to lightboard %d" % i )
                
                #tracker.close();
                if (platform.system() == 'Darwin' ):
@@ -99,6 +112,13 @@ class Display:
          if (tracker.lastgood != None and not self.lm.tracking(tracker)):
             #update our mapping as appropriate
             self.lm.addBoard(tracker);
+      
+      
+      if disconnection_at_the_start:
+        logme( "End of loop: Trackers: %d ------------------------------------------------------------------------------ "%self.cTrackers )
+        logme( "self.lm.countTracked(): %d"%(self.lm.countTracked()))
+        self.print_trackers_to_log()
+
       if log:
          self.logger.logLines(logLines);
          log = False;
