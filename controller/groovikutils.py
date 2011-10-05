@@ -13,6 +13,22 @@
 import sys
 import math
 
+class Enum(set):
+    '''Checked enumerations, from http://stackoverflow.com/questions/36932/whats-the-best-way-to-implement-an-enum-in-python'''
+    
+    def __init__(self, initStr):
+    	'''Build an enum from a string containing all of the states'''
+    	set.__init__(self, initStr.split())
+    
+    def __getattr__(self, name):
+    	'''
+    	Treat any attribute lookup for a name in the init list as an 
+    	enumeration constant, and anything else as an error
+    	'''
+        if name in self:
+            return name
+        raise AttributeError
+
 #-------------------------------------------------------------------------------
 # Cube states
 #-------------------------------------------------------------------------------
@@ -29,6 +45,15 @@ class CubeState:
 	SWITCH_MODE = 8
 	FIREMODE = 9	
 	TETRISMODE = 10
+
+#-------------------------------------------------------------------------------
+# Game state:  These states define which clients are allowed to interact with
+# the cube game, and what actions they are allowed to take.
+#
+# See http://code.google.com/p/grooviks-cube/wiki/PacsciStateMachine#Global_State
+# for more information.
+#-------------------------------------------------------------------------------
+GameState = Enum('UNKNOWN UNBOUND SINGLE SINGLE_INVITE MULTIPLE MULTIPLE_RESTART VICTORY')
 
 #-------------------------------------------------------------------------------
 # Cube modes

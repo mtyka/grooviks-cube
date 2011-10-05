@@ -2,10 +2,12 @@
 
 {% block top %}
 			<div class="toprow" >
-				<img class="bigbutton"   id="rookie"      src="/static/button_rookie.png"  alt="Rookie"  ondragstart="return false" onselectstart="return false"  >
-				<img class="bigbutton"   id="student"     src="/static/button_student.png" alt="Student" ondragstart="return false" onselectstart="return false" >
-				<img class="bigbutton"   id="master"      src="/static/button_master.png"  alt="Master"  ondragstart="return false" onselectstart="return false" >
+				<img class="bigbutton"   id="rookie"      src="/static/button_rookie.png"  alt="Rookie"  >
+				<img class="bigbutton"   id="student"     src="/static/button_student.png" alt="Student" >
+				<img class="bigbutton"   id="master"      src="/static/button_master.png"  alt="Master"  >
 				<div class="clear"></div>
+	            <input id="game_state" class="debug" type="text" value="<default>" >
+	            <input id="active_position" class="debug" type="text" value="<default>" >
 			</div>
 {% endblock %}
 

@@ -55,7 +55,34 @@ class GrooviksCube:
    def IsIdle( self ):
       return self.__currentCubeState == CubeState.IDLE
    
-   def   GetCurrentState( self ):
+   def IsPositionActive( self, position ):
+      """
+          Return true if the requesting position is the active position.
+          If the cube is currently in multiplayer mode, all positions are
+          active.
+      """
+      singlePlayer = lambda x: self.__currentActivePosition == x
+      multiPlayer = lambda x: True
+      unbound = lambda x: False
+      return {
+         GameState.UNBOUND : unbound,
+         GameState.SINGLE : singlePlayer,
+         GameState.SINGLE_INVITE : singlePlayer,
+         GameState.MULTIPLE : multiPlayer,
+         GameState.MULTIPLE_RESTART : multiPlayer,
+         GameState.VICTORY : unbound,
+       }[self.__currentGameState](position)
+   
+   def SetActivePosition( self, position ):
+       self.__currentActivePosition = position
+   
+   def GetGameState( self ):
+       return self.__currentGameState
+   
+   def GetActivePostion( self ):
+       return self.__currentActivePosition
+   
+   def GetCurrentState( self ):
       return self.__currentCubeState
    
    def GetCurrentMode( self ):
@@ -324,6 +351,10 @@ class GrooviksCube:
       self.__currentCubeMode = CubeMode.UNKNOWN
       self.__event_manager = CubeEventManager(0)
       self.__logger = logger
+      
+      # Initialize the game mode
+      self.__currentGameState = GameState.MULTIPLE
+      self.__currentActivePosition = None
       
       # Start all colors black; we always fade into our mode switches.
       self.__colors = []
