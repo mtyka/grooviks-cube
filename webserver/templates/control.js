@@ -129,6 +129,14 @@ function on_message_pushed( datagram ) {
 }
 
 
+function on_game_state_change(newState, activePosition) {
+//     game_state = newState
+     $('#game_state').val( newState )
+     $('#active_position').val( activePosition )
+     // TODO: possibly change client state
+}
+
+
 // Converts a long hex string into an array of 54 RGB-float-triples
 function decompress_datagram(datagram) {
     //clog("decompressing...");
@@ -260,9 +268,9 @@ function cube_got_clicked_on(x,y)
 	}
 }
 
-function reset_gamestate(difficulty) {
+function reset_gamestate(position, difficulty) {
     clog("Resetting gamestate: " + difficulty);
-    hookbox_conn.publish('gamemode', {'difficulty' : difficulty});
+    hookbox_conn.publish('gamemode', {'position' : position, 'difficulty' : difficulty});
 }
 
 
@@ -299,6 +307,12 @@ function establish_hookbox_connections() {
                 clog('Heard about click on face ' + frame.payload);
             };  
         }
+        if( channelName == 'gameState' ) {
+        	gamestate_subscription = _subscription;
+            gamestate_subscription.onPublish = function(frame) {
+                on_game_state_change(frame.payload["gamestate"], frame.payload["active_position"]);
+            };  
+        }
         if( channelName == 'rotationStep' ) {
             rotation_subscription = _subscription;
             rotation_subscription.onPublish = function(frame) {
@@ -311,6 +325,7 @@ function establish_hookbox_connections() {
    hookbox_conn.subscribe("iframe");
    hookbox_conn.subscribe("faceclick");
    hookbox_conn.subscribe("gamemode");
+   hookbox_conn.subscribe("gameState");
    hookbox_conn.subscribe("rotationStep");
 }
 

@@ -41,6 +41,7 @@ import urllib, urllib2
 import display
 import serial
 import lightboard
+import json
 
 import groovik
 import hbclient
@@ -98,6 +99,14 @@ def too_long_since_last_datagram():
     how_long_ago = datetime.datetime.now() - last_datagram_sent_timestamp
     threshhold = datetime.timedelta(0,3) # seconds
     return how_long_ago > threshhold
+
+
+def push_game_state( game_state, active_position ):
+    if active_position == None:
+        active_position = 0
+
+    gs_dict = { 'gamestate':game_state, 'active_position':active_position.__str__()  }
+    push_message( json.dumps(gs_dict), 'gameState' )
 
 
 def push_datagram(datagram):
@@ -211,28 +220,40 @@ class Cube():
 
     def process_commands(self, rtjp_frame):
         
-        if rtjp_frame[1] == "PUBLISH":
-            if rtjp_frame[2]['channel_name'] == 'faceclick':
-                rot_command = rtjp_frame[2]['payload'][1:]
-                face = rtjp_frame[2]['payload'][0]
+        action, params = rtjp_frame[1:3]
+        
+        if action == "PUBLISH":
+            channel, payload = params['channel_name'], params['payload']
+        
+            if channel == 'faceclick':
+                face, rot_command = payload[0], payload[1:]
                 #print rot_command
                 with cube_lock:
                     # callbacks for both rotation and pixel click
-					# better way of doing this?
+                    # better way of doing this?
                     self.grooviksCube.HandleInput( CubeInput.ROTATION, [rot_command])
                     self.grooviksCube.HandleInput( CubeInput.FACE_CLICK, face)
                     #self.grooviksCube.QueueEffect( "victory0" )
-            elif rtjp_frame[2]['channel_name'] == 'gamemode':
-                self.logger.logLine( "GameMode: %s " % (rtjp_frame[2]['payload']) )
-                depth = rtjp_frame[2]['payload']['difficulty']
-                self.grooviksCube.ResetColors()
-                self.grooviksCube.Randomize(depth)
-            elif rtjp_frame[2]['channel_name'] == 'cubemode':
-                self.logger.logLine( "CubeMode: %s " % (rtjp_frame[2]['payload']) )
-                mode = rtjp_frame[2]['payload']['mode']
+            elif channel == 'clientcommand':
+                '''This channel is used for sending commands to change the game state'''
+                position, command = payload['position'], payload['command']
+                # TODO
+                
+            elif channel == 'gamemode':
+                position, difficulty = payload['position'], payload['difficulty']
+                self.logger.logLine( "GameMode: %s " % (payload) )
+                self.grooviksCube.SetActivePosition(position)
+                if self.grooviksCube.IsPositionActive(position):
+                    self.grooviksCube.ResetColors()
+                    self.grooviksCube.Randomize(difficulty)
+                else:
+                    self.logger.logLine( "Skipping setting game mode from position %d" % (position) )
+            elif channel == 'cubemode':
+                mode = payload['mode']
+                self.logger.logLine( "CubeMode: %s " % (payload) )
                 if( self.grooviksCube.GetCurrentMode() != mode):
                     self.grooviksCube.QueueModeChange(mode)
-            elif rtjp_frame[2]['channel_name'] == 'colorcalib':
+            elif channel == 'colorcalib':
                 command = rtjp_frame[2]['payload']
                 print command
                 if ( len(command) == 1 ):
@@ -288,6 +309,8 @@ class Cube():
 
             frameLerpedColors = []
             self.simTime = self.simTime + TARGET_FRAMETIME;            
+
+            push_game_state(self.grooviksCube.GetGameState(), self.grooviksCube.GetActivePostion())
 
             if rotationStep != self.lastRotationStep :          
                 self.lastRotationStep = rotationStep            
