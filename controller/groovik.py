@@ -82,7 +82,7 @@ class GrooviksCube:
    def GetActivePostion( self ):
        return self.__currentActivePosition
    
-   def   GetCurrentState( self ):
+   def GetCurrentState( self ):
       return self.__currentCubeState
    
    def GetCurrentMode( self ):

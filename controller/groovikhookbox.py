@@ -41,6 +41,7 @@ import urllib, urllib2
 import display
 import serial
 import lightboard
+import json
 
 import groovik
 import hbclient
@@ -103,7 +104,9 @@ def too_long_since_last_datagram():
 def push_game_state( game_state, active_position ):
     if active_position == None:
         active_position = 0
-    push_message( '"%s-%s"' % (game_state, active_position), "gameState" )
+    
+    gs_dict = { 'gamestate':game_state, 'active_position':active_position }
+    push_message( json.dumps(gs_dict), 'gameState' )
 
 
 def push_datagram(datagram):
