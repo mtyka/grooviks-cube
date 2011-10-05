@@ -309,7 +309,7 @@ function establish_hookbox_connections() {
         if( channelName == 'gameState' ) {
         	gamestate_subscription = _subscription;
             gamestate_subscription.onPublish = function(frame) {
-                on_game_state_change( frame.payload );
+                on_game_state_change( frame.payload["gamestate"] );
             };  
         }
         if( channelName == 'rotationStep' ) {
