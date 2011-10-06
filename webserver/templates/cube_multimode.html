@@ -230,19 +230,29 @@ function flyin_menu_bg(){
 			opacity:0.6
 		},{ duration: 1000 }
 		);
+
+		$("#button_restart").animate( {
+			opacity:0.0
+		},{ duration: 1000 }
+		);
+
 }
 
 function flyout_menu_bg(){
 		$("#levelmenu_bgb").animate( {
-			opacity:-2.0
+			opacity:-1.0
 		},{ duration: 1000 }
 		);
 		$("#levelmenu_bgt").animate( {
-			opacity:-2.0
+			opacity:-1.0
 		},{ duration: 1000 }
 		);
 		$("#levelmenu_bg").animate( {
-			opacity:-2.0
+			opacity:-1.0
+		},{ duration: 1000 }
+		);
+		$("#button_restart").animate( {
+			opacity:1.0
 		},{ duration: 1000 }
 		);
 }
@@ -277,11 +287,15 @@ function flyout_levelmenu() {
 		},{ duration: 1000 }
 		);
 }
-		
-	$(document).ready(function() {
+	
+function home_screen(){
 		flyin_modemenu();        
 		flyin_menu_bg();        
-	});
+}
+
+$(document).ready(function() {
+  home_screen();
+});
 
 </script>
 
@@ -372,12 +386,24 @@ function flyout_levelmenu() {
 			margin-top: -160px;
 			z-index: 6	
 		}
+		.button_restart {
+			position: fixed;
+			bottom: 100px;
+			right: 100px;
+			z-index: 3;
+    }
+		.button_quit {
+			position: fixed;
+			bottom: 100px;
+			left: 100px;
+			z-index: 3;
+    }
 		
 		.button {
 			position: fixed;
 			bottom: 35%;
 			z-index: 3;
-   }
+    }
 		.button.left{
 		  left: 20%;
 		  float:left; 
@@ -430,7 +456,7 @@ p
       {% block top %}
       {% endblock %}
 			<div id="svgholder">
-       <canvas id="canvas" width=1300 height=1300></canvas>   
+       <canvas id="canvas" width=1100 height=1100></canvas>   
 			
 			</div>
 			<div class="bottomrow" >
@@ -442,6 +468,9 @@ p
 				<div class="clear"></div>
 			  <br>
       </div>
+
+			<img class="button_restart" id="button_restart" src="/static/restart.png" alt="Restart"  ondragstart="return false" onselectstart="return false" >
+			<img class="button_quit"    id="button_quit   " src="/static/quit.png"    alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="home_screen()" >
 
 			<img id="levelmenu_bgt" src="/static/line.png"  class="topborder" height=6 width=2000>
 			<div id="levelmenu_bg"class="levelmenu_bg" >
@@ -470,13 +499,10 @@ p
 			</div>
 
 			<div class="footer" >
-				{% block bottom %}
-        {% endblock %}
-      </div>
-
-			
-
-
+			<font size=-1>
+     	<center>Groovik's Cube by GroovLabs<br>www.groovik.com</center> 
+			</font>
+			</div>
 
        <div id="cube_status">Waiting for controller...</div>
 
