@@ -154,9 +154,11 @@ jQuery.fn.elementlocation = function() {
 {% include "render.js" %}
 
 $(document).ready(function(){
-    $("#rookie").click(  function(){ reset_gamestate(1); } );
-    $("#student").click( function(){ reset_gamestate(3); } );
-    $("#master").click(  function(){ reset_gamestate(20); } );
+    $("#easy").click(    function(){ reset_gamestate(2);flyout_levelmenu(); flyout_menu_bg(); }   );
+    $("#medium").click(  function(){ reset_gamestate(3);flyout_levelmenu(); flyout_menu_bg(); } );
+    $("#hard").click(    function(){ reset_gamestate(4);flyout_levelmenu(); flyout_menu_bg(); } );
+    $("#master").click(  function(){ reset_gamestate(5);flyout_levelmenu(); flyout_menu_bg(); } );
+    $("#full").click(    function(){ reset_gamestate(20);flyout_levelmenu(); flyout_menu_bg(); } );
 
     if (!position) {
         $("#buttonleft").click( function(){ 
@@ -214,7 +216,9 @@ function animate_spin(delta_radians) {
 <script>
 
 function flyin_menu_bg(){
+		
 		$("#levelmenu_bg").css("opacity", "-2.0"); 
+		$("#levelmenu_bg").css("left", "0"); 
 		$("#levelmenu_bgb").css("opacity", "-2.0"); 
 		$("#levelmenu_bgt").css("opacity", "-2.0"); 
 		
@@ -249,7 +253,8 @@ function flyout_menu_bg(){
 		);
 		$("#levelmenu_bg").animate( {
 			opacity:-1.0
-		},{ duration: 1000 }
+		},{ duration: 1000,
+		    complete: function(){   $("#levelmenu_bg").css("left", "-100%") }   }
 		);
 		$("#button_restart").animate( {
 			opacity:1.0
@@ -299,6 +304,13 @@ $(document).ready(function() {
 
 </script>
 
+
+
+<script>
+
+
+
+</script>
 
 
 <style>
@@ -373,6 +385,7 @@ $(document).ready(function() {
 			filter:alpha(opacity=60); /* For IE8 and earlier */
 			width: 100%;
 		  height: 400px;
+			left:-100%;
 			z-index: 5	
 		}
 		.levelmenu{
@@ -384,7 +397,7 @@ $(document).ready(function() {
 			top: 50%;
 			margin-left: -400px;
 			margin-top: -160px;
-			z-index: 6	
+			z-index: 8	
 		}
 		.button_restart {
 			position: fixed;
@@ -418,7 +431,7 @@ $(document).ready(function() {
 			width: 1100px;
 			height: 1100px;
 			position: fixed;
-			top: 50%;
+			top: 45%;
 			left: 50%;
 			margin-top: -550px;
 			margin-left: -550px;
@@ -485,7 +498,7 @@ p
 					</center>
 			</div>
 			
-			<div id="levelmenu" class="levelmenu" onclick="flyout_levelmenu(); flyout_menu_bg() " >
+			<div id="levelmenu" class="levelmenu"  >
          <h2> Select difficulty: </h2>
 					<center>
 					<img id="easy"    src="/static/easy.png"   ondragstart="return false" onselectstart="return false" >
