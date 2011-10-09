@@ -34,6 +34,7 @@ from modecalibration import ModeCalibration
 from modelightboardconfiguration import ModeLightBoardConfiguration
 from modescreensaver import ModeScreenSaver
 from groovikconfig import *
+from groovikclient import GrooviksClient
 
    
    
@@ -123,7 +124,11 @@ class GrooviksCube:
        return client.HandleCommand( command )
    
    def GetClient(self, position):
-       raise "Not implemented; should map from position to client state machine instance"
+       if position in self.__clientlist:
+           return self.__clientlist[position]
+       else:
+           self.LogEvent( "Client " + position + " requested but does not exist!" )
+
    
    #-----------------------------------------------------------------------------
    # This method will queue a game mode change. mode is member of the CubeMode enum.
@@ -367,6 +372,12 @@ class GrooviksCube:
       # Initialize the game mode
       self.__currentGameState = GameState.MULTIPLE
       self.__currentActivePosition = None
+
+      # Initialize the three GroovikClients
+      self.__clientdict = {}
+      for i in range(1,4):
+          self.__clientdict[i] = GrooviksClient()
+
       
       # Start all colors black; we always fade into our mode switches.
       self.__colors = []
