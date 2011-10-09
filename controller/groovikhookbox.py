@@ -225,27 +225,24 @@ class Cube():
         
         if action == "PUBLISH":
             channel, payload = params['channel_name'], params['payload']
-        
-            if channel == 'faceclick':
-                face, rot_command = payload[0], payload[1:]
-                #print rot_command
-                with cube_lock:
-                    # callbacks for both rotation and pixel click
-                    # better way of doing this?
-                    self.grooviksCube.HandleInput( CubeInput.ROTATION, [rot_command])
-                    self.grooviksCube.HandleInput( CubeInput.FACE_CLICK, face)
-                    #self.grooviksCube.QueueEffect( "victory0" )
-            elif channel == 'clientcommand':
-                '''This channel is used for sending commands to change the game state'''
-                position = payload.pop('position', None)
-                command = payload.pop('command', None)
-                if( position == None or command == None ):
-                    self.logger.logLine( "Client command missing position or command" )
-                else:
+
+            try:
+                if channel == 'faceclick':
+                    face, rot_command = payload[0], payload[1:]
+                    #print rot_command
+                    with cube_lock:
+                        # callbacks for both rotation and pixel click
+                        # better way of doing this?
+                        self.grooviksCube.HandleInput( CubeInput.ROTATION, [rot_command])
+                        self.grooviksCube.HandleInput( CubeInput.FACE_CLICK, face)
+                        #self.grooviksCube.QueueEffect( "victory0" )
+                elif channel == 'clientcommand':
+                    '''This channel is used for sending commands to change the game state'''
+                    position = payload.pop('position')
+                    command = payload.pop('command')
                     self.grooviksCube.HandleClientCommand(position, command, payload)
 
-            elif channel == 'gamemode':
-                if( payload.has_key('position') and payload.has_key('difficulty')):
+                elif channel == 'gamemode':
                     position, difficulty = payload['position'], payload['difficulty']
                     self.logger.logLine( "GameMode: %s " % (payload) )
                     self.grooviksCube.SetActivePosition(position)
@@ -254,24 +251,26 @@ class Cube():
                         self.grooviksCube.Randomize(difficulty)
                     else:
                         self.logger.logLine( "Skipping setting game mode from position %d" % (position) )
-                else:
-                    self.logger.logLine( "Gamemode channel sent message without both position and difficulty" )
 
-            elif channel == 'cubemode':
-                mode = payload['mode']
-                self.logger.logLine( "CubeMode: %s " % (payload) )
-                if( self.grooviksCube.GetCurrentMode() != mode):
-                    self.grooviksCube.QueueModeChange(mode)
-            elif channel == 'colorcalib':
-                command = rtjp_frame[2]['payload']
-                print command
-                if ( len(command) == 1 ):
-                    push_message( compress_rgbfloat(self.displayc.lm.getPixelOffset(command[0])), "colorcalibrx")
-                    return
-                with cube_lock:
-                    self.logger.logLine( "Color calibration: Pixel, (R G B) = %s " % (command) )
-                    self.grooviksCube.HandleInput( CubeInput.COLOR_CAL,command)
-    
+                elif channel == 'cubemode':
+                    mode = payload['mode']
+                    self.logger.logLine( "CubeMode: %s " % (payload) )
+                    if( self.grooviksCube.GetCurrentMode() != mode):
+                        self.grooviksCube.QueueModeChange(mode)
+                elif channel == 'colorcalib':
+                    command = rtjp_frame[2]['payload']
+                    print command
+                    if ( len(command) == 1 ):
+                        push_message( compress_rgbfloat(self.displayc.lm.getPixelOffset(command[0])), "colorcalibrx")
+                        return
+                    with cube_lock:
+                        self.logger.logLine( "Color calibration: Pixel, (R G B) = %s " % (command) )
+                        self.grooviksCube.HandleInput( CubeInput.COLOR_CAL,command)
+
+            except KeyError: 
+                #TODO: actually parse the error and log it
+                pass
+
     def interpolateFrames( this, data, passedTime, dataLast ):
         if not data:
             return dataLast;
