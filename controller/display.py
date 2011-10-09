@@ -4,6 +4,7 @@ import platform
 from logme import * 
 
 from glog import GLog;
+from groovikutils import dev_mode
 
 # parameters
 #    cTrackers -- The total search space for serial ports.  We'll start w/ 0, and go to this number in our scan.
@@ -58,6 +59,8 @@ class Display:
       
 
    def loop(self):
+      if dev_mode:
+          return
       log = False;
       now = time.time();
       if ((now - self.lastLogged) > self.logInterval):
@@ -97,10 +100,7 @@ class Display:
                #logme( "Reconnecting to lightboard %d" % i )
                
                #tracker.close();
-               if (platform.system() == 'Darwin' ):
-                   tracker.openSerial('/dev/tty.usbserial-A6008iGf');
-               else:
-                   tracker.openSerial(i);
+               tracker.openSerial(i);
                tracker.triednow();
             
          if (tracker.lastgood != None and tracker.guid != tracker.lastgood.guid):
