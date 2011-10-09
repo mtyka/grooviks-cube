@@ -1,0 +1,8 @@
+syntax: glob
+*.pyc
+*.swp
+*.sql3
+moves.log
+local_*
+.git
+.orig
