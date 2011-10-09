@@ -240,14 +240,18 @@ class Cube():
                 position, command = payload['position'], payload['command']
                 self.grooviksCube.HandleClientCommand(position, command)
             elif channel == 'gamemode':
-                position, difficulty = payload['position'], payload['difficulty']
-                self.logger.logLine( "GameMode: %s " % (payload) )
-                self.grooviksCube.SetActivePosition(position)
-                if self.grooviksCube.IsPositionActive(position):
-                    self.grooviksCube.ResetColors()
-                    self.grooviksCube.Randomize(difficulty)
+                if( payload.has_key('position') and payload.has_key('difficulty')):
+                    position, difficulty = payload['position'], payload['difficulty']
+                    self.logger.logLine( "GameMode: %s " % (payload) )
+                    self.grooviksCube.SetActivePosition(position)
+                    if self.grooviksCube.IsPositionActive(position):
+                        self.grooviksCube.ResetColors()
+                        self.grooviksCube.Randomize(difficulty)
+                    else:
+                        self.logger.logLine( "Skipping setting game mode from position %d" % (position) )
                 else:
-                    self.logger.logLine( "Skipping setting game mode from position %d" % (position) )
+                    self.logger.logLine( "Gamemode channel sent message without both position and difficulty" )
+
             elif channel == 'cubemode':
                 mode = payload['mode']
                 self.logger.logLine( "CubeMode: %s " % (payload) )
