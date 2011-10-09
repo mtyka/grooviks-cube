@@ -376,7 +376,7 @@ class GrooviksCube:
       # Initialize the three GroovikClients
       self.__clientdict = {}
       for i in range(1,4):
-          self.__clientdict[i] = GrooviksClient()
+          self.__clientdict[i] = GrooviksClient( self, i )
 
       
       # Start all colors black; we always fade into our mode switches.

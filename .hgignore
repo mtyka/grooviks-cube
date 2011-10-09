@@ -5,4 +5,4 @@ syntax: glob
 *.log
 local_*
 .git
-.orig
+*.orig

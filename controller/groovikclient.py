@@ -1,9 +1,16 @@
 
 class GrooviksClient:
+
+    def __init__( self, cube, id ):
+        self.__cube = cube
+        self.__id = id
     
     def GetCube(self):
-        raise "Not implemented; just a reference back to the GroovixCube that owns this client"
+        return self.__cube
     
+    def GetID(self):
+        return self.__id
+
     def GetState(self):
         raise "Not implemented; return the current ClientState"
     
