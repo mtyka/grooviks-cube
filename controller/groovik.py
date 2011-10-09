@@ -125,9 +125,6 @@ class GrooviksCube:
    def GetClient(self, position):
        raise "Not implemented; should map from position to client state machine instance"
    
-   def GetGameState(self):
-       raise "Not implemented; should return current GameState"
-   
    #-----------------------------------------------------------------------------
    # This method will queue a game mode change. mode is member of the CubeMode enum.
    #-----------------------------------------------------------------------------
