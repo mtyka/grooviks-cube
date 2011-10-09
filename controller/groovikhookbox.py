@@ -193,6 +193,7 @@ def push_color_calib_result(r,g,b):
 
 class Cube():
     def __init__(self):
+
         self.lastRotationStep = 0
 
         count = 257;
