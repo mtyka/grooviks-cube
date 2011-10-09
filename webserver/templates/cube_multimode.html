@@ -154,20 +154,20 @@ jQuery.fn.elementlocation = function() {
 {% include "render.js" %}
 
 $(document).ready(function(){
-    $("#easy").click(    function(){ reset_gamestate(2);flyout_levelmenu(); flyout_menu_bg(); }   );
-    $("#medium").click(  function(){ reset_gamestate(3);flyout_levelmenu(); flyout_menu_bg(); } );
-    $("#hard").click(    function(){ reset_gamestate(4);flyout_levelmenu(); flyout_menu_bg(); } );
-    $("#master").click(  function(){ reset_gamestate(5);flyout_levelmenu(); flyout_menu_bg(); } );
-    $("#full").click(    function(){ reset_gamestate(20);flyout_levelmenu(); flyout_menu_bg(); } );
+    $("#easy").click(    function(){ reset_gamestate(position, 2);flyout_levelmenu(); flyout_menu_bg(); }   );
+    $("#medium").click(  function(){ reset_gamestate(position, 3);flyout_levelmenu(); flyout_menu_bg(); } );
+    $("#hard").click(    function(){ reset_gamestate(position, 4);flyout_levelmenu(); flyout_menu_bg(); } );
+    $("#master").click(  function(){ reset_gamestate(position, 5);flyout_levelmenu(); flyout_menu_bg(); } );
+    $("#full").click(    function(){ reset_gamestate(position, 20);flyout_levelmenu(); flyout_menu_bg(); } );
 
-    if (!position) {
+    //if (!position) {
         $("#buttonleft").click( function(){ 
            animate_spin( -Math.PI*2/3 );
         });
         $("#buttonright").click( function(){ 
            animate_spin( Math.PI*2/3 );
         });
-    } else {
+   /* } else {
         $("#buttonleft, #buttonright").css('visibility', 'hidden');
 
         // using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
@@ -175,7 +175,7 @@ $(document).ready(function(){
         clog('start azi: ' + start_azimuth);
         $("#slide_azi").val(  start_azimuth );
         rotate_view(); 
-    }
+    }*/
 
 });
 

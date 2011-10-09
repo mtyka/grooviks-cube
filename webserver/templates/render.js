@@ -293,11 +293,11 @@ function buildQuadList( ctx, viewProj, viewProjViewport ) {
 function shouldDrawArrow( faceNum )
 {
     // If we're in single player mode, verify that this arrow is intended for this player
-    if (position)
+   /* if (position)
     {
 	if (arrowRotation[faceNum][2] != position)
 	    return false;
-    }
+    }*/
 
     // Verify that this is a facet that deserves an arrow in any condition
     return (arrowRotation[faceNum][0] != 0);
