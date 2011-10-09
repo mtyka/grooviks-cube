@@ -237,8 +237,7 @@ class Cube():
             elif channel == 'clientcommand':
                 '''This channel is used for sending commands to change the game state'''
                 position, command = payload['position'], payload['command']
-                # TODO
-                
+                self.grooviksCube.HandleClientCommand(position, command)
             elif channel == 'gamemode':
                 position, difficulty = payload['position'], payload['difficulty']
                 self.logger.logLine( "GameMode: %s " % (payload) )

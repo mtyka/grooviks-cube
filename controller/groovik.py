@@ -114,6 +114,21 @@ class GrooviksCube:
          self.__currentMode.HandleInput( self, self.display, cubeInputType, params )
    
    #-----------------------------------------------------------------------------
+   # This method will take some client command to change the game state and 
+   # process it according to the current state of that client and that of the 
+   # cube.
+   #-----------------------------------------------------------------------------
+   def HandleClientCommand( self, position, command ):
+       client = self.GetClient( position )
+       return client.HandleCommand( command )
+   
+   def GetClient(self, position):
+       raise "Not implemented; should map from position to client state machine instance"
+   
+   def GetGameState(self):
+       raise "Not implemented; should return current GameState"
+   
+   #-----------------------------------------------------------------------------
    # This method will queue a game mode change. mode is member of the CubeMode enum.
    #-----------------------------------------------------------------------------
    def QueueModeChange( self, mode ):

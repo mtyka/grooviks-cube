@@ -53,6 +53,10 @@ class CubeState:
 # See http://code.google.com/p/grooviks-cube/wiki/PacsciStateMachine#Global_State
 # for more information.
 #-------------------------------------------------------------------------------
+ClientState = Enum('UNKNOWN IDLE HOME HOME_RESTART SINGLE SINGLE_RESTRICTED DIFFICULTY MULTIPLE MULTIPLE_DIFFICULTY VICTORY LOCAL LOCAL_DIFFICULTY LOCAL_VICTORY')
+
+ClientCommand = Enum('WAKE QUIT START_1P START_3P JOIN_3P RESTART DIFF_1 DIFF_2 DIFF_3 DIFF_4 DIFF_5')
+
 GameState = Enum('UNKNOWN UNBOUND SINGLE SINGLE_INVITE MULTIPLE MULTIPLE_RESTART VICTORY')
 
 #-------------------------------------------------------------------------------
