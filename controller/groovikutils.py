@@ -13,6 +13,9 @@
 import sys
 import math
 
+# Set devel mode or not
+dev_mode = 1
+
 class Enum(set):
     '''Checked enumerations, from http://stackoverflow.com/questions/36932/whats-the-best-way-to-implement-an-enum-in-python'''
     
