@@ -296,6 +296,9 @@ function flyout_levelmenu() {
 function home_screen(){
 		flyin_modemenu();        
 		flyin_menu_bg();        
+        clog("setting client state to home-restart");
+        hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
+
 }
 
 $(document).ready(function() {
