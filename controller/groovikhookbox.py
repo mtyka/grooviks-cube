@@ -238,8 +238,9 @@ class Cube():
                         #self.grooviksCube.QueueEffect( "victory0" )
                 elif channel == 'clientcommand':
                     '''This channel is used for sending commands to change the game state'''
-                    position = payload.pop('position')
+                    position = int(payload.pop('position'))
                     command = payload.pop('command')
+                    self.logger.logLine( "Received command '%s' from client at position %d with arguments %s" % (command, position, payload) )
                     self.grooviksCube.HandleClientCommand(position, command, payload)
 
                 elif channel == 'gamemode':

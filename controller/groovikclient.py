@@ -1,10 +1,18 @@
 
+from groovikutils import *
+
 class GrooviksClient:
 
-    def __init__( self, cube, id ):
+    def __init__( self, cube, id, logger ):
         self.__cube = cube
         self.__id = id
+        self.__state = ClientState.IDLE
+        self.__logger = logger
     
+    def LogEvent( self, str ):
+        if ( self.__logger != None ):
+            self.__logger.logLine( str )
+
     def GetCube(self):
         return self.__cube
     
@@ -12,62 +20,19 @@ class GrooviksClient:
         return self.__id
 
     def GetState(self):
-        raise "Not implemented; return the current ClientState"
+        return self.__state
     
-    def HandleCommand(self, command):
-        '''Dispatch to the appropriate handler method for the command'''
-        try:
-            { 
-             ClientCommand.WAKE : HandleCommandWake, 
-             ClientCommand.QUIT : HandleCommandQuit,
-             ClientCommand.START_1P : HandleCommandStart1P,
-             ClientCommand.START_3P : HandleCommandStart3P,
-             }[command]()
-        except KeyError:
-            # TODO: log the failure
-            pass
-
-    def HandleCommandWake( self ):
-        self.HandleForState({ ClientState.IDLE : WakeFromIdle })
-
-    def HandleCommandQuit( self ):
-        self.HandleForState({
-                            ClientState.HOME :              QuitFromHome,
-                            ClientState.HOME_RESTART :      QuitFromHome,
-                            ClientState.SINGLE :            QuitFromSingle,
-                            ClientState.SINGLE_RESTRICTED : QuitFromSingle,
-                            ClientState.MULTIPLE :          QuitFromMultiple,
-                             })
-        
-    def HandleCommandRestart(self):
-        self.HandleForState({
-                            ClientState.SINGLE :            RestartFromSingle,
-                            ClientState.MULTIPLE :          RestartFromMultiple,
-                             })
-        
-    def HandleCommandStart1P(self):
-        self.HandleForState({
-                            ClientState.HOME :              Start1P,
-                            ClientState.HOME_RESTART :      Start1P,
-                            })
-
-    def HandleCommandStart3P(self):
-        self.HandleForState({
-                            ClientState.HOME :              Start3P,
-                            ClientState.HOME_RESTART :      Start3P,
-                            })
-
-    def HandleForState( self, actionMap ):
+    def HandleCommand(self, command, parameters):
         '''
         Choose the appropriate action for the command, based on the current
         client state.  If there is no mapping for the current state, the 
         command is treated as invalid and ignored.
         '''
+        actionMap = GrooviksClient.COMMAND_MAP[command]
         try:
-            actionMap[self.GetState()]()
+            actionMap[self.GetState()](self, parameters)
         except KeyError:
-            # TODO: log some interesting message
-            pass
+            self.LogEvent("Cannot execute command <TODO> in state %s" % (self.GetState()))
 
     #--------------------------------------------------------------
     # Actions
@@ -143,4 +108,42 @@ class GrooviksClient:
             # TODO: start local play
             pass  
         
+    def Scramble(self, parameters):
+        difficulty = parameters['difficulty']
+        gameState = self.GetCube().GetGameState()
+        newState = {
+                    ClientState.DIFFICULTY :          ClientState.SINGLE_RESTRICTED,
+                    ClientState.MULTIPLE_DIFFICULTY : ClientState.MULTIPLE,
+                    }[self.GetState()]
+        self.SetState(newState)
+        self.GetCube().Randomize(difficulty)
+
+    COMMAND_MAP = {
+        ClientCommand.WAKE : {
+            ClientState.IDLE :              WakeFromIdle,
+        },
+        ClientCommand.QUIT : {
+            ClientState.HOME :              QuitFromHome,
+            ClientState.HOME_RESTART :      QuitFromHome,
+            ClientState.SINGLE :            QuitFromSingle,
+            ClientState.SINGLE_RESTRICTED : QuitFromSingle,
+            ClientState.MULTIPLE :          QuitFromMultiple,
+        },
+        ClientCommand.START_1P : {
+            ClientState.HOME :              Start1P,
+            ClientState.HOME_RESTART :      Start1P,
+        },
+        ClientCommand.START_3P : {
+            ClientState.HOME :              Start3P,
+            ClientState.HOME_RESTART :      Start3P,
+        },
+        ClientCommand.RESTART : {
+            ClientState.SINGLE :            RestartFromSingle,
+            ClientState.MULTIPLE :          RestartFromMultiple,
+        },
+        ClientCommand.SELECT_DIFFICULTY : {
+            ClientState.DIFFICULTY :        Scramble,
+            ClientState.MULTIPLE_DIFFICULTY : Scramble,
+        },
+    }
 
