@@ -124,8 +124,8 @@ class GrooviksCube:
        return client.HandleCommand( command )
    
    def GetClient(self, position):
-       if position in self.__clientlist:
-           return self.__clientlist[position]
+       if position in self.__clientdict:
+           return self.__clientdict[position]
        else:
            self.LogEvent( "Client " + position + " requested but does not exist!" )
 
