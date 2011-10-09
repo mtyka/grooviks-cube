@@ -119,9 +119,9 @@ class GrooviksCube:
    # process it according to the current state of that client and that of the 
    # cube.
    #-----------------------------------------------------------------------------
-   def HandleClientCommand( self, position, command ):
+   def HandleClientCommand( self, position, command, parameters ):
        client = self.GetClient( position )
-       return client.HandleCommand( command )
+       return client.HandleCommand( command, parameters )
    
    def GetClient(self, position):
        if position in self.__clientdict:
@@ -261,8 +261,9 @@ class GrooviksCube:
             self.__colors.append( [0.0, 0.0, 0.0] )
       self.__ClearRotationQueue( )
 
-
    def Randomize( self, depth ):
+      # TODO: only allow this command when the game state is not UNBOUND or VICTORY
+      self.ResetColors()
       self.__normalMode.Randomize(self, depth)
 
    #-----------------------------------------------------------------------------
@@ -376,7 +377,7 @@ class GrooviksCube:
       # Initialize the three GroovikClients
       self.__clientdict = {}
       for i in range(1,4):
-          self.__clientdict[i] = GrooviksClient( self, i )
+          self.__clientdict[i] = GrooviksClient( self, i, self.__logger )
 
       
       # Start all colors black; we always fade into our mode switches.
