@@ -128,6 +128,11 @@ class GrooviksCube:
        else:
            self.LogEvent( "Client " + position + " requested but does not exist!" )
 
+   def SinglePlayerStarts( self, client ):
+       '''Enter single player mode, setting the given client as the active position'''
+       self.__currentActivePosition = client.GetPosition()
+       # TODO: verify that the current cube state is UNBOUND
+       self.__currentGameState = GameState.SINGLE
    
    #-----------------------------------------------------------------------------
    # This method will queue a game mode change. mode is member of the CubeMode enum.
