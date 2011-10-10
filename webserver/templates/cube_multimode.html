@@ -159,28 +159,20 @@ jQuery.fn.elementlocation = function() {
 {% include "render.js" %}
 
 $(document).ready(function(){
-<<<<<<< local
-    $("#easy").click(    function(){ reset_gamestate(2);   clear_screen();} );
-    $("#medium").click(  function(){ reset_gamestate(3);   clear_screen();} );
-    $("#hard").click(    function(){ reset_gamestate(4);   clear_screen();} );
-    $("#master").click(  function(){ reset_gamestate(5);   clear_screen();} );
-    $("#full").click(    function(){ reset_gamestate(20);  clear_screen();} );
-=======
     $("#easy").click(    function(){ reset_gamestate(position, 2);flyout_levelmenu(); flyout_menu_bg(); }   );
     $("#medium").click(  function(){ reset_gamestate(position, 3);flyout_levelmenu(); flyout_menu_bg(); } );
     $("#hard").click(    function(){ reset_gamestate(position, 4);flyout_levelmenu(); flyout_menu_bg(); } );
     $("#master").click(  function(){ reset_gamestate(position, 5);flyout_levelmenu(); flyout_menu_bg(); } );
     $("#full").click(    function(){ reset_gamestate(position, 20);flyout_levelmenu(); flyout_menu_bg(); } );
->>>>>>> other
 
-    //if (!position) {
-        $("#buttonleft").click( function(){ 
-           animate_spin( -Math.PI*2/3 );
-        });
-        $("#buttonright").click( function(){ 
-           animate_spin( Math.PI*2/3 );
-        });
-   /* } else {
+//    //if (!position) {
+//        $("#buttonleft").click( function(){ 
+//           animate_spin( -Math.PI*2/3 );
+//        });
+//        $("#buttonright").click( function(){ 
+//           animate_spin( Math.PI*2/3 );
+//        });
+//    } else {
         $("#buttonleft, #buttonright").css('visibility', 'hidden');
 
         // using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
@@ -188,7 +180,7 @@ $(document).ready(function(){
         clog('start azi: ' + start_azimuth);
         $("#slide_azi").val(  start_azimuth );
         rotate_view(); 
-    }*/
+//    }
 
 });
 
@@ -413,17 +405,8 @@ function flyin_joinmenu() {
 		},{ duration: 1000 }
 		);
 }
-<<<<<<< local
-=======
 	
-function home_screen(){
-		flyin_modemenu();        
-		flyin_menu_bg();        
-        clog("setting client state to home-restart");
-        hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
->>>>>>> other
 
-<<<<<<< local
 function flyout_joinmenu() {
 		$("#joinmenu").animate( {
 		  left: "125%"	
@@ -431,8 +414,6 @@ function flyout_joinmenu() {
 		    complete: function(){ $("#joinmenu").css("left", "-25%");  } 
 		}
 		);
-=======
->>>>>>> other
 }
 
 
@@ -463,6 +444,9 @@ function goto_idle_screen(){
 		flyin_idlemenu();
 
 		interrupt_ok = true;
+
+		clog("setting client state to home-restart");
+		hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
 }
 
 function goto_mode_screen(){
