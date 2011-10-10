@@ -446,7 +446,7 @@ function goto_idle_screen(){
 		interrupt_ok = true;
 
 		clog("setting client state to home-restart");
-		hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
+		hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
 }
 
 function goto_mode_screen(){
@@ -456,6 +456,7 @@ function goto_mode_screen(){
 		flyin_modemenu();
 
 		interrupt_ok = true;
+		hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
 }
 
 function goto_level_screen(){
@@ -507,6 +508,7 @@ function clear_screen(){
 
 function clicked_alone(){
 	goto_level_screen()
+    hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'START1P' } );
 
 }
 
@@ -514,7 +516,7 @@ function clicked_alone(){
 
 function clicked_3player(){
 	goto_level_screen()
-
+    hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'START3P' } );
 }
 
 
@@ -527,6 +529,8 @@ function clicked_ignore(){
 
 function clicked_join(){
 	clear_screen()
+    //not implemented yet
+    //hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'JOIN3P' } );
 }
 
 
