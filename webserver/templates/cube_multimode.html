@@ -162,8 +162,10 @@ function set_initial_position(){
         // using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
         var start_azimuth = parseInt([ -Math.PI*2/3.1, 0, Math.PI*2/3.1 ][position-1] * 100);
         clog('start azi: ' + start_azimuth);
-        $("#slide_azi").val(  start_azimuth );
-        rotate_view(); 
+        //$("#slide_azi").val(  start_azimuth );
+        //rotate_view(); 
+
+			animate_absolute_spin( start_azimuth ) 
 }
 
 $(document).ready(function(){
@@ -191,6 +193,34 @@ $(document).ready(function(){
 
 
 var locked_buttons=false;
+
+function animate_absolute_spin(radians) {
+		// lock the buttons
+		if(locked_buttons) return;
+		locked_buttons = true;
+
+		// do the boogie 
+		var azimuth = $("#slide_azi").val()*1.0; // convert from string to number. javascript sucks
+		azimuth = azimuth % (100*Math.PI*2);  // Re-center
+		$("#slide_azi").attr("animate_val", azimuth); // prep temporary animation variable
+		
+		azimuth = radians 
+		//console.log(azimuth);
+		$("#slide_azi").animate( { 
+			animate_val: azimuth 
+		},{ duration: 2000, 
+		    complete: function(){
+					locked_buttons = false;
+				},
+				step: function() {  
+					console.log($("#slide_azi").attr("animate_val") ); 
+					$("#slide_azi").val( $("#slide_azi").attr("animate_val") );
+					rotate_view(); 
+		    }     
+      }
+		);
+}
+
 
 function animate_spin(delta_radians) {
 		// lock the buttons
@@ -228,7 +258,10 @@ function start_spin( start_spin ){
 			is_spinning = true;	
 	  }
 
-		if( !is_spinning ) return;
+		if( !is_spinning ){
+			set_initial_position();
+			return;
+		}
 
 		var azimuth = $("#slide_azi").val()*1.0; // convert from string to number. javascript sucks
 		azimuth += 1 ;
@@ -241,7 +274,7 @@ function start_spin( start_spin ){
 
 function stop_spin(){
 		is_spinning = false;
-		set_initial_position();
+		//set_initial_position();
 }
 
 
@@ -296,6 +329,7 @@ var interrupt_ok=true;
 // 5 = waiting menu
 
 function flyin_menu_bg(){
+		ignore_clicks=true;
 		
 		$("#levelmenu_bg").css("opacity", "-2.0"); 
 		$("#levelmenu_bg").css("left", "0"); 
@@ -529,6 +563,7 @@ function clear_screen(){
 		remove_menu()
 		if( menustate != 0 ) flyout_menu_bg();        
     menustate=0
+		ignore_clicks=false;
 		stop_spin()
 }
 
@@ -769,8 +804,9 @@ p
 			<img id="levelmenu_bgb" src="/static/line.png"  class="bottomborder" height=6 width=2000 >
 
 			<div id="idlemenu" class="levelmenu" onclick="goto_mode_screen()" >
+				<br><br><br><br><br><br>
 				<center>
-         	  <h2> Touch screen to start playing!</h2>
+         	  <h1> Touch screen to start playing!</h1>
 				</center>
 			</div>
 			
