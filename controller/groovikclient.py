@@ -22,6 +22,9 @@ class GrooviksClient:
     def GetState(self):
         return self.__state
     
+    def GetPosition(self):
+        return self.__id
+    
     def SetState(self, newState):
         self.__state = newState
         # TODO: something cause the new state to be published?
