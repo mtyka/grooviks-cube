@@ -158,12 +158,20 @@ jQuery.fn.elementlocation = function() {
 {% include "vector.js" %}
 {% include "render.js" %}
 
+function set_initial_position(){
+        // using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
+        var start_azimuth = parseInt([ -Math.PI*2/3.1, 0, Math.PI*2/3.1 ][position-1] * 100);
+        clog('start azi: ' + start_azimuth);
+        $("#slide_azi").val(  start_azimuth );
+        rotate_view(); 
+}
+
 $(document).ready(function(){
-    $("#easy").click(    function(){ reset_gamestate(position, 2);flyout_levelmenu(); flyout_menu_bg(); }   );
-    $("#medium").click(  function(){ reset_gamestate(position, 3);flyout_levelmenu(); flyout_menu_bg(); } );
-    $("#hard").click(    function(){ reset_gamestate(position, 4);flyout_levelmenu(); flyout_menu_bg(); } );
-    $("#master").click(  function(){ reset_gamestate(position, 5);flyout_levelmenu(); flyout_menu_bg(); } );
-    $("#full").click(    function(){ reset_gamestate(position, 20);flyout_levelmenu(); flyout_menu_bg(); } );
+    $("#easy").click(    function(){ reset_gamestate(position, 2); clear_screen(); }   );
+    $("#medium").click(  function(){ reset_gamestate(position, 3); clear_screen(); } );
+    $("#hard").click(    function(){ reset_gamestate(position, 4); clear_screen(); } );
+    $("#master").click(  function(){ reset_gamestate(position, 5); clear_screen(); } );
+    $("#full").click(    function(){ reset_gamestate(position, 20);clear_screen(); } );
 
 //    //if (!position) {
 //        $("#buttonleft").click( function(){ 
@@ -175,12 +183,9 @@ $(document).ready(function(){
 //    } else {
         $("#buttonleft, #buttonright").css('visibility', 'hidden');
 
-        // using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
-        var start_azimuth = parseInt([ -Math.PI*2/3.1, 0, Math.PI*2/3.1 ][position-1] * 100);
-        clog('start azi: ' + start_azimuth);
-        $("#slide_azi").val(  start_azimuth );
-        rotate_view(); 
 //    }
+
+		set_initial_position();
 
 });
 
@@ -216,15 +221,28 @@ function animate_spin(delta_radians) {
 
 
 var is_spinning = false;
-function continous_spin( start_spin ){
-	  if( start_spin ) is_spinning = true;	
-		setTimeout("continous_spin( false )",10 ) // call me again in 1000 ms
-		//azimuth = azimuth % (100*Math.PI*2);  // Re-center
-		//$("#slide_azi").attr("animate_val", azimuth); // prep temporary animation variable
-		//azimuth += delta_radians*100;
+function start_spin( start_spin ){
+		if( start_spin ){
+			if( is_spinning ) return; // cube is already spinning - dont start another thread.
+			// otherwise set the state variable and go!
+			is_spinning = true;	
+	  }
+
+		if( !is_spinning ) return;
+
+		var azimuth = $("#slide_azi").val()*1.0; // convert from string to number. javascript sucks
+		azimuth += 1 ;
+		azimuth = azimuth % (100*Math.PI*2);  // Re-center
+		clog(azimuth);
+		$("#slide_azi").val( azimuth  ); 
+		rotate_view();
+		setTimeout("start_spin( false )",25 ) 
 }
 
-
+function stop_spin(){
+		is_spinning = false;
+		set_initial_position();
+}
 
 
 </script>   
@@ -438,6 +456,7 @@ function flyout_waitingmenu() {
 
 
 function goto_idle_screen(){
+   	if( menustate == 1 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();        
    	menustate = 1 
@@ -450,6 +469,7 @@ function goto_idle_screen(){
 }
 
 function goto_mode_screen(){
+   	if( menustate == 2 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();        
    	menustate = 2 
@@ -460,6 +480,7 @@ function goto_mode_screen(){
 }
 
 function goto_level_screen(){
+   	if( menustate == 3 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();        
    	menustate = 3 
@@ -467,6 +488,7 @@ function goto_level_screen(){
 }
 
 function goto_timeout_screen(){
+   	if( menustate == 4 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();        
    	menustate = 4 
@@ -474,6 +496,7 @@ function goto_timeout_screen(){
 }
 
 function goto_join_screen(){
+   	if( menustate == 5 ) return;
 		if( interrupt_ok ){
 			remove_menu();
 			if( menustate == 0 ) flyin_menu_bg();        
@@ -483,10 +506,13 @@ function goto_join_screen(){
 }
 
 function goto_waiting_screen(){
+   	if( menustate == 6 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();        
    	menustate = 6 
 		flyin_waitingmenu();
+		
+		start_spin( true );
 }
 
 
@@ -503,6 +529,7 @@ function clear_screen(){
 		remove_menu()
 		if( menustate != 0 ) flyout_menu_bg();        
     menustate=0
+		stop_spin()
 }
 
 
