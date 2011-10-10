@@ -42,10 +42,9 @@ class GrooviksClient:
         newState = {
                     GameState.UNBOUND :             ClientState.HOME,
                     GameState.SINGLE :              ClientState.HOME,
-                    GameState.SINGLE_INVITE :       ClientState.MULTIPLE,
-                    GameState.MULTIPLE :            ClientState.MULTIPLE,
-                    GameState.MULTIPLE_RESTART :    ClientState.MULTIPLE,
-                    GameState.VICTORY :             ClientState.VICTORY,
+                    GameState.SINGLE_INVITE :       ClientState.MULT,
+                    GameState.MULTIPLE :            ClientState.MULT,
+                    GameState.VICTORY :             ClientState.VICT,
                     }[self.GetCube().GetState()]
         self.SetState(newState)
 
@@ -61,7 +60,7 @@ class GrooviksClient:
         self.GetCube().MutiplePlayerExits(self)
         
     def RestartFromSingle(self):
-        self.SetState(ClientState.DIFFICULTY)
+        raise "Not implemented"
         
     def RestartFromMultiple(self):
         # SINGLE_INVITE:
@@ -86,12 +85,11 @@ class GrooviksClient:
         gameState = self.GetCube().GetGameState()
         if gameState == GameState.UNBOUND:
             newState = {
-                        ClientState.HOME :          ClientState.SINGLE,
-                        ClientState.HOME_RESTART :  ClientState.DIFFICULTY,
+                        ClientState.HOME :          ClientState.SING,
                         }[self.GetState()]
             self.SetState(newState)
             self.GetCube().SinglePlayerStarts(self)
-        elif gameState == GameState.SINGLE:
+        elif gameState == GameState.SING:
             # TODO: start local play
             pass  
 
@@ -99,23 +97,16 @@ class GrooviksClient:
         gameState = self.GetCube().GetGameState()
         if gameState == GameState.UNBOUND:
             newState = {
-                        ClientState.HOME :          ClientState.MULTIPLE,
-                        ClientState.HOME_RESTART :  ClientState.MULTIPLE_DIFFICULTY,
+                        ClientState.HOME :          ClientState.MULT,
                         }[self.GetState()]
             self.SetState(newState)
             self.GetCube().SinglePlayerStarts(self)
-        elif gameState == GameState.SINGLE:
+        elif gameState == GameState.SING:
             # TODO: start local play
             pass  
         
     def Scramble(self, parameters):
         difficulty = parameters['difficulty']
-        gameState = self.GetCube().GetGameState()
-        newState = {
-                    ClientState.DIFFICULTY :          ClientState.SINGLE_RESTRICTED,
-                    ClientState.MULTIPLE_DIFFICULTY : ClientState.MULTIPLE,
-                    }[self.GetState()]
-        self.SetState(newState)
         self.GetCube().Randomize(difficulty)
 
     COMMAND_MAP = {
@@ -124,26 +115,18 @@ class GrooviksClient:
         },
         ClientCommand.QUIT : {
             ClientState.HOME :              QuitFromHome,
-            ClientState.HOME_RESTART :      QuitFromHome,
-            ClientState.SINGLE :            QuitFromSingle,
-            ClientState.SINGLE_RESTRICTED : QuitFromSingle,
-            ClientState.MULTIPLE :          QuitFromMultiple,
+            ClientState.SING :            QuitFromSingle,
+            ClientState.MULT :          QuitFromMultiple,
         },
         ClientCommand.START_1P : {
             ClientState.HOME :              Start1P,
-            ClientState.HOME_RESTART :      Start1P,
         },
         ClientCommand.START_3P : {
             ClientState.HOME :              Start3P,
-            ClientState.HOME_RESTART :      Start3P,
-        },
-        ClientCommand.RESTART : {
-            ClientState.SINGLE :            RestartFromSingle,
-            ClientState.MULTIPLE :          RestartFromMultiple,
         },
         ClientCommand.SELECT_DIFFICULTY : {
-            ClientState.DIFFICULTY :        Scramble,
-            ClientState.MULTIPLE_DIFFICULTY : Scramble,
+            ClientState.SING_RESTRICTED :        Scramble,
+            ClientState.MULT :                 Scramble,
         },
     }
 

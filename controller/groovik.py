@@ -70,7 +70,6 @@ class GrooviksCube:
          GameState.SINGLE : singlePlayer,
          GameState.SINGLE_INVITE : singlePlayer,
          GameState.MULTIPLE : multiPlayer,
-         GameState.MULTIPLE_RESTART : multiPlayer,
          GameState.VICTORY : unbound,
        }[self.__currentGameState](position)
    
