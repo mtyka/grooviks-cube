@@ -91,11 +91,14 @@ class GrooviksClient:
             newState = {
                         ClientState.HOME :          ClientState.SING,
                         }[self.GetState()]
+            self.LogEvent("Starting single player mode")
             self.SetState(newState)
             self.GetCube().SinglePlayerStarts(self)
-        elif gameState == GameState.SING:
+        elif gameState == GameState.SINGLE:
             # TODO: start local play
-            pass  
+            self.LogEvent("Request to begin single player mode in game state SINGLE")
+        else:
+            self.LogEvent("Request to begin single player mode in game state %s" % (gameState))
 
     def Start3P(self, parameters):
         gameState = self.GetCube().GetGameState()
@@ -105,7 +108,7 @@ class GrooviksClient:
                         }[self.GetState()]
             self.SetState(newState)
             self.GetCube().SinglePlayerStarts(self)
-        elif gameState == GameState.SING:
+        elif gameState == GameState.SINGLE:
             # TODO: start local play
             pass  
         
