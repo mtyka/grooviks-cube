@@ -125,7 +125,7 @@ class GrooviksClient:
             ClientState.HOME :              Start3P,
         },
         ClientCommand.SELECT_DIFFICULTY : {
-            ClientState.SING_RESTRICTED :        Scramble,
+            ClientState.SING :        Scramble,
             ClientState.MULT :                 Scramble,
         },
     }
