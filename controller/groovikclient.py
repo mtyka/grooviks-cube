@@ -22,6 +22,10 @@ class GrooviksClient:
     def GetState(self):
         return self.__state
     
+    def SetState(self, newState):
+        self.__state = newState
+        # TODO: something cause the new state to be published?
+    
     def HandleCommand(self, command, parameters):
         '''
         Choose the appropriate action for the command, based on the current
@@ -38,31 +42,31 @@ class GrooviksClient:
     # Actions
     #--------------------------------------------------------------
 
-    def WakeFromIdle( self ):
+    def WakeFromIdle(self, parameters):
         newState = {
                     GameState.UNBOUND :             ClientState.HOME,
                     GameState.SINGLE :              ClientState.HOME,
                     GameState.SINGLE_INVITE :       ClientState.MULT,
                     GameState.MULTIPLE :            ClientState.MULT,
                     GameState.VICTORY :             ClientState.VICT,
-                    }[self.GetCube().GetState()]
+                    }[self.GetCube().GetGameState()]
         self.SetState(newState)
 
-    def QuitFromHome(self):
+    def QuitFromHome(self, parameters):
         self.SetState(ClientState.IDLE)
 
-    def QuitFromSingle(self):
+    def QuitFromSingle(self, parameters):
         self.SetState(ClientState.IDLE)
         self.GetCube().SinglePlayerExits()
         
-    def QuitFromMultiple(self):
+    def QuitFromMultiple(self, parameters):
         self.SetState(ClientState.IDLE)
         self.GetCube().MutiplePlayerExits(self)
         
-    def RestartFromSingle(self):
+    def RestartFromSingle(self, parameters):
         raise "Not implemented"
         
-    def RestartFromMultiple(self):
+    def RestartFromMultiple(self, parameters):
         # SINGLE_INVITE:
         #   If the third player is idle:
         #     clientState <= HOME
@@ -81,7 +85,7 @@ class GrooviksClient:
         raise "Not implemented"     
         
     # TODO: it looks like Start1P and Start3P should probably be factored
-    def Start1P(self):
+    def Start1P(self, parameters):
         gameState = self.GetCube().GetGameState()
         if gameState == GameState.UNBOUND:
             newState = {
@@ -93,7 +97,7 @@ class GrooviksClient:
             # TODO: start local play
             pass  
 
-    def Start3P(self):
+    def Start3P(self, parameters):
         gameState = self.GetCube().GetGameState()
         if gameState == GameState.UNBOUND:
             newState = {
