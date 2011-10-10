@@ -25,10 +25,12 @@ if( isIE() ) {
 
 <script> 
 
+
+
 var time_of_inactivity_to_reload_page = 900
 var time_to_reload = time_of_inactivity_to_reload_page
 function beginrefresh(){
-	//document.title = time_to_reload  //just for debugging
+	document.title = time_to_reload  //just for debugging
 	if (time_to_reload<=1){
 		window.location.reload()
 	 	reset_timeout() 
@@ -43,8 +45,7 @@ function reset_timeout(){
 	 time_to_reload = time_of_inactivity_to_reload_page
 }
 
-window.onload=beginrefresh
-window.onclick="reset_timeout(); " 
+//window.onload=beginrefresh
 </script>
 
 
@@ -161,7 +162,7 @@ jQuery.fn.elementlocation = function() {
 function set_initial_position(){
         // using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
         var start_azimuth = parseInt([ -Math.PI*2/3.1, 0, Math.PI*2/3.1 ][position-1] * 100);
-        clog('start azi: ' + start_azimuth);
+        //clog('start azi: ' + start_azimuth);
         //$("#slide_azi").val(  start_azimuth );
         //rotate_view(); 
 
@@ -266,7 +267,7 @@ function start_spin( start_spin ){
 		var azimuth = $("#slide_azi").val()*1.0; // convert from string to number. javascript sucks
 		azimuth += 1 ;
 		azimuth = azimuth % (100*Math.PI*2);  // Re-center
-		clog(azimuth);
+		//clog(azimuth);
 		$("#slide_azi").val( azimuth  ); 
 		rotate_view();
 		setTimeout("start_spin( false )",25 ) 
@@ -382,6 +383,12 @@ function flyin_idlemenu() {
 		  left: "50%",	
 		},{ duration: 1000 }
 		);
+
+		$("#button_quit").animate( {
+			opacity:0.0
+		},{ duration: 1000 }
+		);
+
 }
 
 function flyout_idlemenu() {
@@ -390,6 +397,10 @@ function flyout_idlemenu() {
 		},{ duration: 1000,
 		    complete: function(){ $("#idlemenu").css("left", "-25%");  } 
 		  }
+		);
+		$("#button_quit").animate( {
+			opacity:1.0
+		},{ duration: 1000 }
 		);
 
 }
@@ -500,6 +511,7 @@ function goto_idle_screen(){
 
 		clog("setting client state to home-restart");
 		hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
+		start_spin( true );
 }
 
 function goto_mode_screen(){
@@ -511,6 +523,7 @@ function goto_mode_screen(){
 
 		interrupt_ok = true;
 		hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
+		start_spin( true );
 }
 
 function goto_level_screen(){
@@ -519,6 +532,7 @@ function goto_level_screen(){
 		if( menustate == 0 ) flyin_menu_bg();        
    	menustate = 3 
 		flyin_levelmenu();        
+		start_spin( true );
 }
 
 function goto_timeout_screen(){
@@ -527,6 +541,7 @@ function goto_timeout_screen(){
 		if( menustate == 0 ) flyin_menu_bg();        
    	menustate = 4 
 		flyin_timeoutmenu();        
+		start_spin( true );
 }
 
 function goto_join_screen(){
@@ -537,6 +552,7 @@ function goto_join_screen(){
 			menustate = 5 
 			flyin_joinmenu();  
 		}
+		start_spin( true );
 }
 
 function goto_waiting_screen(){
@@ -592,17 +608,30 @@ function clicked_ignore(){
 function clicked_join(){
 	clear_screen()
     //not implemented yet
-    //hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'JOIN_3P' } );
+    hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'JOIN_3P' } );
 }
 
 
 
+function window_click(){
+	clog("WTF?");
+	reset_timeout();
+	// touch screen to begin!
+	//if( menustate == 1 ){
+	//	goto_mode_screen();
+	//}
+}
+
+</script>
 
 
+
+<script>
 
 
 $(document).ready(function() {
   goto_idle_screen();
+	$("body").click( window_click );
 });
 
 </script>
@@ -714,12 +743,14 @@ $(document).ready(function() {
 		}
 		.button_restart {
 			position: fixed;
+			opacity:0.0;
 			bottom: 100px;
 			right: 100px;
 			z-index: 3;
     }
 		.button_quit {
 			position: fixed;
+			opacity:0.0;
 			bottom: 100px;
 			left: 100px;
 			z-index: 3;
@@ -796,7 +827,7 @@ p
       </div>
 
 			<img class="button_restart" id="button_restart" src="/static/restart.png" alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_waiting_screen()" >
-			<img class="button_quit"    id="button_quit   " src="/static/quit.png"    alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_idle_screen()"    >
+			<img class="button_quit"    id="button_quit" src="/static/quit.png"    alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_idle_screen()"    >
 
 			<img id="levelmenu_bgt" src="/static/line.png"  class="topborder" height=6 width=2000>
 			<div id="levelmenu_bg"class="levelmenu_bg" >
