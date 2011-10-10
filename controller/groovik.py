@@ -370,7 +370,7 @@ class GrooviksCube:
       self.__logger = logger
       
       # Initialize the game mode
-      self.__currentGameState = GameState.MULTIPLE
+      self.__currentGameState = GameState.UNBOUND
       self.__currentActivePosition = None
 
       # Initialize the three GroovikClients
