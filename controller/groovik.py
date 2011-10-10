@@ -134,6 +134,11 @@ class GrooviksCube:
        # TODO: verify that the current cube state is UNBOUND
        self.__currentGameState = GameState.SINGLE
    
+   def SinglePlayerExits( self ):
+       self.__currentGameState = GameState.UNBOUND
+       # TODO: if there are players queued up, or a pending multiplayer game,
+       # promote to the main cube
+   
    #-----------------------------------------------------------------------------
    # This method will queue a game mode change. mode is member of the CubeMode enum.
    #-----------------------------------------------------------------------------
