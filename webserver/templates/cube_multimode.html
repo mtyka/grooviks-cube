@@ -535,7 +535,7 @@ function clear_screen(){
 
 function clicked_alone(){
 	goto_level_screen()
-    hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'START1P' } );
+    hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'START_1P' } );
 
 }
 
@@ -543,7 +543,7 @@ function clicked_alone(){
 
 function clicked_3player(){
 	goto_level_screen()
-    hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'START3P' } );
+    hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'START_3P' } );
 }
 
 
@@ -557,7 +557,7 @@ function clicked_ignore(){
 function clicked_join(){
 	clear_screen()
     //not implemented yet
-    //hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'JOIN3P' } );
+    //hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'JOIN_3P' } );
 }
 
 
