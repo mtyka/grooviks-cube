@@ -44,8 +44,13 @@ function reset_timeout(){
 }
 
 window.onload=beginrefresh
-window.onclick="reset_timeout(); flyin_levelmenu(); flyin_menu_bg(); " 
+window.onclick="reset_timeout(); " 
 </script>
+
+
+
+
+
 
 
 <script type="text/javascript"> 
@@ -154,11 +159,19 @@ jQuery.fn.elementlocation = function() {
 {% include "render.js" %}
 
 $(document).ready(function(){
+<<<<<<< local
+    $("#easy").click(    function(){ reset_gamestate(2);   clear_screen();} );
+    $("#medium").click(  function(){ reset_gamestate(3);   clear_screen();} );
+    $("#hard").click(    function(){ reset_gamestate(4);   clear_screen();} );
+    $("#master").click(  function(){ reset_gamestate(5);   clear_screen();} );
+    $("#full").click(    function(){ reset_gamestate(20);  clear_screen();} );
+=======
     $("#easy").click(    function(){ reset_gamestate(position, 2);flyout_levelmenu(); flyout_menu_bg(); }   );
     $("#medium").click(  function(){ reset_gamestate(position, 3);flyout_levelmenu(); flyout_menu_bg(); } );
     $("#hard").click(    function(){ reset_gamestate(position, 4);flyout_levelmenu(); flyout_menu_bg(); } );
     $("#master").click(  function(){ reset_gamestate(position, 5);flyout_levelmenu(); flyout_menu_bg(); } );
     $("#full").click(    function(){ reset_gamestate(position, 20);flyout_levelmenu(); flyout_menu_bg(); } );
+>>>>>>> other
 
     //if (!position) {
         $("#buttonleft").click( function(){ 
@@ -210,10 +223,67 @@ function animate_spin(delta_radians) {
 }
 
 
+var is_spinning = false;
+function continous_spin( start_spin ){
+	  if( start_spin ) is_spinning = true;	
+		setTimeout("continous_spin( false )",10 ) // call me again in 1000 ms
+		//azimuth = azimuth % (100*Math.PI*2);  // Re-center
+		//$("#slide_azi").attr("animate_val", azimuth); // prep temporary animation variable
+		//azimuth += delta_radians*100;
+}
+
+
+
 
 </script>   
 
+
+
 <script>
+
+var timeout_length = 10 
+var timeout_state = -1; // off by default 
+function update_timeout( reset ){
+	if( reset ){
+		timeout_state = timeout_length;
+	}
+	if( timeout_state == 0 ){
+		// TIMEOUT OCCURED!
+		// RESET GAMESTATE
+		goto_idle_screen();
+	} 
+	if( timeout_state < 0 ) return;
+
+	$("#timeout_display").html( timeout_state );
+	timeout_state-=1
+	
+	if( timeout_state >= 0 ){ 
+		setTimeout("update_timeout( false )",1000) // call me again in 1000 ms
+	}
+}
+
+function clicked_continue(){
+	timeout_state = -1; // quit timeout
+	clear_screen(); 
+}
+
+
+</script>
+
+
+
+
+<script>
+
+
+var menustate=0;
+var interrupt_ok=true;
+// 0 = no menu
+// 1 = mode menu
+// 2 = level menu
+// 3 = timeout menu
+// 4 = join    menu
+// 5 = waiting menu
 
 function flyin_menu_bg(){
 		
@@ -262,6 +332,24 @@ function flyout_menu_bg(){
 		);
 }
 
+function flyin_idlemenu() {
+		$("#idlemenu").css("left", "-25%"); 
+		$("#idlemenu").animate( {
+		  left: "50%",	
+		},{ duration: 1000 }
+		);
+}
+
+function flyout_idlemenu() {
+		$("#idlemenu").animate( {
+		  left: "125%"	
+		},{ duration: 1000,
+		    complete: function(){ $("#idlemenu").css("left", "-25%");  } 
+		  }
+		);
+
+}
+
 function flyin_modemenu() {
 		$("#modemenu").css("left", "-25%"); 
 		$("#modemenu").animate( {
@@ -273,7 +361,9 @@ function flyin_modemenu() {
 function flyout_modemenu() {
 		$("#modemenu").animate( {
 		  left: "125%"	
-		},{ duration: 1000 }
+		},{ duration: 1000,
+		    complete: function(){ $("#modemenu").css("left", "-25%");  } 
+		  }
 		);
 
 }
@@ -289,20 +379,180 @@ function flyin_levelmenu() {
 function flyout_levelmenu() {
 		$("#levelmenu").animate( {
 		  left: "125%"	
+		},{ duration: 1000, 
+		    complete: function(){ $("#levelmenu").css("left", "-25%");  } 
+		}
+		);
+}
+
+
+function flyin_timeoutmenu() {
+		$("#timeoutmenu").css("left", "-25%"); 
+		$("#timeoutmenu").animate( {
+		  left: "50%",	
+		},{ duration: 1000 }
+		);
+		// start the timeout!
+		update_timeout( true );
+}
+
+function flyout_timeoutmenu() {
+		$("#timeoutmenu").animate( {
+		  left: "125%"	
+		},{ duration: 1000 }
+		);
+    // also turn off timer
+	  timeout_state = -1; // 
+}
+
+
+function flyin_joinmenu() {
+		$("#joinmenu").css("left", "-25%"); 
+		$("#joinmenu").animate( {
+		  left: "50%",	
 		},{ duration: 1000 }
 		);
 }
+<<<<<<< local
+=======
 	
 function home_screen(){
 		flyin_modemenu();        
 		flyin_menu_bg();        
         clog("setting client state to home-restart");
         hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
+>>>>>>> other
+
+<<<<<<< local
+function flyout_joinmenu() {
+		$("#joinmenu").animate( {
+		  left: "125%"	
+		},{ duration: 1000, 
+		    complete: function(){ $("#joinmenu").css("left", "-25%");  } 
+		}
+		);
+=======
+>>>>>>> other
+}
+
+
+
+function flyin_waitingmenu() {
+		$("#waitingmenu").css("left", "-25%"); 
+		$("#waitingmenu").animate( {
+		  left: "50%",	
+		},{ duration: 1000 }
+		);
+}
+
+function flyout_waitingmenu() {
+		$("#waitingmenu").animate( {
+		  left: "125%"	
+		},{ duration: 1000, 
+		    complete: function(){ $("#waitingmenu").css("left", "-25%");  } 
+		}
+		);
+}
+
+
+
+function goto_idle_screen(){
+		remove_menu();
+		if( menustate == 0 ) flyin_menu_bg();        
+   	menustate = 1 
+		flyin_idlemenu();
+
+		interrupt_ok = true;
+}
+
+function goto_mode_screen(){
+		remove_menu();
+		if( menustate == 0 ) flyin_menu_bg();        
+   	menustate = 2 
+		flyin_modemenu();
+
+		interrupt_ok = true;
+}
+
+function goto_level_screen(){
+		remove_menu();
+		if( menustate == 0 ) flyin_menu_bg();        
+   	menustate = 3 
+		flyin_levelmenu();        
+}
+
+function goto_timeout_screen(){
+		remove_menu();
+		if( menustate == 0 ) flyin_menu_bg();        
+   	menustate = 4 
+		flyin_timeoutmenu();        
+}
+
+function goto_join_screen(){
+		if( interrupt_ok ){
+			remove_menu();
+			if( menustate == 0 ) flyin_menu_bg();        
+			menustate = 5 
+			flyin_joinmenu();  
+		}
+}
+
+function goto_waiting_screen(){
+		remove_menu();
+		if( menustate == 0 ) flyin_menu_bg();        
+   	menustate = 6 
+		flyin_waitingmenu();
+}
+
+
+function remove_menu(){
+		if( menustate == 1 ) flyout_idlemenu();        
+		if( menustate == 2 ) flyout_modemenu();        
+		if( menustate == 3 ) flyout_levelmenu();        
+		if( menustate == 4 ) flyout_timeoutmenu();        
+		if( menustate == 5 ) flyout_joinmenu();        
+		if( menustate == 6 ) flyout_waitingmenu();        
+}
+
+function clear_screen(){
+		remove_menu()
+		if( menustate != 0 ) flyout_menu_bg();        
+    menustate=0
+}
+
+
+function clicked_alone(){
+	goto_level_screen()
 
 }
 
+
+
+function clicked_3player(){
+	goto_level_screen()
+
+}
+
+
+
+function clicked_ignore(){
+	interrupt_ok = false;
+	clear_screen()
+}
+
+
+function clicked_join(){
+	clear_screen()
+}
+
+
+
+
+
+
+
 $(document).ready(function() {
-  home_screen();
+  goto_idle_screen();
 });
 
 </script>
@@ -390,6 +640,16 @@ $(document).ready(function() {
 		  height: 400px;
 			left:-100%;
 			z-index: 5	
+		}
+		.joinmenu{
+			clear: both;
+			position: fixed;
+			width: 300px;
+		  height: 400px;
+			right: 125%;
+			top:  50px; 
+			margin-left: -150px;
+			z-index: 8	
 		}
 		.levelmenu{
 			clear: both;
@@ -485,19 +745,25 @@ p
 			  <br>
       </div>
 
-			<img class="button_restart" id="button_restart" src="/static/restart.png" alt="Restart"  ondragstart="return false" onselectstart="return false" >
-			<img class="button_quit"    id="button_quit   " src="/static/quit.png"    alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="home_screen()" >
+			<img class="button_restart" id="button_restart" src="/static/restart.png" alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_waiting_screen()" >
+			<img class="button_quit"    id="button_quit   " src="/static/quit.png"    alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_idle_screen()"    >
 
 			<img id="levelmenu_bgt" src="/static/line.png"  class="topborder" height=6 width=2000>
 			<div id="levelmenu_bg"class="levelmenu_bg" >
 			</div>
 			<img id="levelmenu_bgb" src="/static/line.png"  class="bottomborder" height=6 width=2000 >
 
-			<div id="modemenu" class="levelmenu" onclick="flyout_modemenu(); flyin_levelmenu() " >
+			<div id="idlemenu" class="levelmenu" onclick="goto_mode_screen()" >
+				<center>
+         	  <h2> Touch screen to start playing!</h2>
+				</center>
+			</div>
+			
+			<div id="modemenu" class="levelmenu"  >
          <h2> Select game mode: </h2>
 					<center>
-					<img id="single"  src="/static/alone.png"   ondragstart="return false" onselectstart="return false" >
-					<img id="multi"   src="/static/3player.png" ondragstart="return false" onselectstart="return false" >
+					<img id="single"  src="/static/alone.png"   ondragstart="return false" onselectstart="return false" onclick="clicked_alone() "   >
+					<img id="multi"   src="/static/3player.png" ondragstart="return false" onselectstart="return false" onclick="clicked_3player() "   >
 					</center>
 			</div>
 			
@@ -513,6 +779,35 @@ p
 					<img id="full"    src="/static/full.png" ondragstart="return false" onselectstart="return false" >
 					</center>
 			</div>
+
+			<div id="timeoutmenu" class="levelmenu"> 
+         <h2> Timeout! Press continue to return to game: </h2>
+				 <h1 id="timeout_display">50</h1>
+					<center>
+					<img id="continue"  src="/static/continue.png"   ondragstart="return false" onselectstart="return false"  onclick="clicked_continue();" >
+					</center>
+			</div>
+
+			<div id="joinmenu" class="levelmenu" >
+         <br>
+				 <h2> Player X wants to play a 3-player game: </h2>
+				 <br>
+				 <img id="ignorebutton"    src="/static/ignore.png"   ondragstart="return false" onselectstart="return false" onclick="clicked_ignore()" >
+				 &nbsp;&nbsp;&nbsp;&nbsp;
+				 <img id="joinbutton"    src="/static/join.png"       ondragstart="return false" onselectstart="return false" onclick="clicked_join()" >
+			</div>
+			
+			<div id="waitingmenu" class="levelmenu" >
+         <center>
+				 <br>
+				 <br>
+				 <br>
+				 <h2> Another player is currently playing Groovik's cube.  </h2>
+				 <h2> Please wait - you will be connected to the next available cube.  </h2>
+				 <br>
+				 </center>
+			</div>
+
 
 			<div class="footer" >
 			<font size=-1>
