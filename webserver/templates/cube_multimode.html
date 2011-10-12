@@ -48,11 +48,10 @@ function reset_timeout(){
 
 
 $(window).click( function() {
-	clog("WTF?");
 	reset_timeout();
 	//touch screen to begin!
 	if( menustate == 1 ){
-		goto_mode_screen();
+		clicked_wake();
 	}
 } )
 //window.onload=beginrefresh
@@ -309,7 +308,7 @@ function update_timeout( reset ){
 	if( timeout_state == 0 ){
 		// TIMEOUT OCCURED!
 		// RESET GAMESTATE
-		goto_idle_screen();
+		clicked_quit();
 	} 
 	if( timeout_state < 0 ) return;
 
@@ -518,7 +517,6 @@ function goto_idle_screen(){
 		interrupt_ok = true;
 
 		clog("setting client state to home-restart");
-		hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
 		start_spin( true );
 }
 
@@ -531,7 +529,6 @@ function goto_mode_screen(){
 		flyin_modemenu();
 
 		interrupt_ok = true;
-		hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
 		start_spin( true );
 }
 
@@ -597,32 +594,41 @@ function clear_screen(){
 }
 
 
-function clicked_alone(){
-	goto_level_screen()
-    hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'START_1P' } );
 
+
+function clicked_quit(){
+		clog("ClientSent: QUIT ");
+		hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
 }
 
+function clicked_wake(){
+		clog("ClientSent: WAKE ");
+		hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
+}
 
+function clicked_alone(){
+	  goto_level_screen()
+		clog("ClientSent: START_1P");
+    hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'START_1P' } );
+}
 
 function clicked_3player(){
-	goto_level_screen()
+	  goto_level_screen()
+		clog("ClientSent: START_3P");
     hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'START_3P' } );
 }
 
-
-
 function clicked_ignore(){
-	interrupt_ok = false;
-	clear_screen()
+	  interrupt_ok = false;
+	  clear_screen()
 }
 
-
 function clicked_join(){
-	clear_screen()
+	  clear_screen()
     //not implemented yet
     hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'JOIN_3P' } );
 }
+
 
 
 
@@ -831,15 +837,15 @@ p
 			  <br>
       </div>
 
-			<img class="button_restart" id="button_restart" src="/static/restart.png" alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_waiting_screen()" >
-			<img class="button_quit"    id="button_quit" src="/static/quit.png"    alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_mode_screen()"    >
+			<!-- <img class="button_restart" id="button_restart" src="/static/restart.png" alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_waiting_screen()" > -->
+			<img class="button_quit"    id="button_quit" src="/static/quit.png"    alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="clicked_quit()"    >
 
 			<img id="levelmenu_bgt" src="/static/line.png"  class="topborder" height=6 width=2000>
 			<div id="levelmenu_bg"class="levelmenu_bg" >
 			</div>
 			<img id="levelmenu_bgb" src="/static/line.png"  class="bottomborder" height=6 width=2000 >
 
-			<div id="idlemenu" class="levelmenu" onclick="goto_mode_screen()" >
+			<div id="idlemenu" class="levelmenu" onclick="clicked_quit()" >
 				<br><br><br><br><br><br>
 				<center>
          	  <h1> Touch screen to start playing!</h1>

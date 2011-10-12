@@ -6,15 +6,12 @@
 
 
 
-ClientStates = {
-  IDLE : 0,
-	HOME : 1,
-	SING : 2,
-	MULT : 3,
-	VICT : 4
-}
 
-var client_state = ClientStates.IDLE;
+var client_state = "IDLE";
+var game_state = "UNBOUND";
+var active_position = 0;
+
+
 var ignore_clicks = false;
 var locked_buttons=false;
 var menustate = 0;
@@ -158,7 +155,33 @@ function on_game_state_change(newState, activePosition, clientstate) {
 //     game_state = newState
      $('#game_state').val( newState )
      $('#active_position').val( activePosition )
-     client_state = clientstate[position];
+     
+		 new_client_state = clientstate[position];
+
+		 clog("Server: " + new_client_state ); 
+		 // is there a change in client state ? 
+		 if ( new_client_state != client_state ){
+			 client_state = new_client_state;
+			 if ( client_state == "IDLE" ){
+				 goto_idle_screen();
+			 } else
+			 if ( client_state == "HOME" ){
+				 goto_mode_screen();
+			 } else
+			 if ( client_state == "SING" ){
+				 clear_screen();
+			 } else
+			 if ( client_state == "MULT" ){
+				 clear_screen();
+			 } else
+			 if ( client_state == "VICT" ){
+				 clear_screen();
+			 }else{
+				 clog("Unknown client_state:" + client_state );
+			 }
+		}
+
+
 }
 
 
