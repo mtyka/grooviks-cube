@@ -60,7 +60,7 @@ class GrooviksClient:
                     GameState.SINGLE :              ClientState.HOME,
                     GameState.SINGLE_INVITE :       ClientState.MULT,
                     GameState.MULTIPLE :            ClientState.MULT,
-                    GameState.VICTORY :             ClientState.VICT,
+                    GameState.VICTORY :             ClientState.HOME,
                     }[self.GetCube().GetGameState()]
         self.SetState(newState)
 
@@ -69,7 +69,7 @@ class GrooviksClient:
 
     def QuitFromSingle(self, parameters):
         self.SetState(ClientState.IDLE)
-        self.GetCube().SinglePlayerExits()
+        self.GetCube().SinglePlayerExits(self)
         
     def QuitFromMultiple(self, parameters):
         self.SetState(ClientState.IDLE)

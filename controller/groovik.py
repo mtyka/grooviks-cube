@@ -141,6 +141,7 @@ class GrooviksCube:
        '''Enter single player mode, setting the given client as the active position'''
        newState = {
            GameState.UNBOUND : GameState.SINGLE,
+           GameState.VICTORY : GameState.VICTORY,
        }[self.GetGameState()]
        self.ChangeGameState( newState ) 
        self.__currentActivePosition = client.GetPosition()
@@ -150,6 +151,7 @@ class GrooviksCube:
        newState = {
            GameState.UNBOUND : GameState.MULTIPLE,
            GameState.SINGLE : GameState.SINGLE_INVITE,
+           GameState.VICTORY : GameState.VICTORY,
        }[self.GetGameState()]
        self.ChangeGameState( newState ) 
    
