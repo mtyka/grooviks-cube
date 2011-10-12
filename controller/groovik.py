@@ -143,11 +143,15 @@ class GrooviksCube:
 
    def SinglePlayerStarts( self, client ):
        '''Enter single player mode, setting the given client as the active position'''
-       self.ChangeGameState({
-           GameState.UNBOUND : GameState.SINGLE,
-           GameState.VICTORY : GameState.VICTORY,
-       })
-       self.SetActivePosition(client.GetPosition()) 
+       if self.GetGameState() == GameState.UNBOUND:
+           self.ChangeGameState({ GameState.UNBOUND : GameState.SINGLE })
+           self.SetActivePosition(client.GetPosition())
+       elif self.GetGameState() in [GameState.SINGLE, GameState.VICTORY]:
+           self.QueueSinglePlayer(client)      
+   
+   def QueueSinglePlayer( self, client ):
+       '''Record a request by a non-active position to play in single-player mode'''
+       self.__queuedSinglePlayerRequests[client.GetPosition()] = None 
    
    def MultiplePlayerStarts( self ):
        self.ChangeGameState({
@@ -166,13 +170,17 @@ class GrooviksCube:
    
    def SinglePlayerExits( self, client ):
        if not self.IsPositionActive( client.GetPosition() ):
-           self.LogEvent("Unexpected call to SinglePlayerExits by position %d (active position is %d)" % (client.GetPosition(), self.GetActivePosition()))
+           # is this possible?
+           del self.__queuedSinglePlayerRequests[client.GetPosition()]
            return
        self.ChangeGameState({
            GameState.SINGLE : GameState.UNBOUND,
            GameState.SINGLE_INVITE : GameState.MULTIPLE,
            GameState.VICTORY : GameState.VICTORY,
        })
+       if len(self.__queuedSinglePlayerRequests) > 0:
+           # TODO
+           pass
    
    def MultiplePlayerExits( self ):
        activePlayersRemain = False
@@ -316,6 +324,7 @@ class GrooviksCube:
    def Randomize( self, client, depth ):
       if not self.IsPositionActive(client.GetPosition()):
           # only randomize if the cube is bound to the requesting client
+          self.__queuedSinglePlayerRequests[client.GetPosition()] = depth
           return
       if self.GetGameState() in [GameState.UNBOUND, GameState.VICTORY]:
           # ignore if the cube isn't bound to an active game
@@ -431,6 +440,7 @@ class GrooviksCube:
       self.__gameStateLock = threading.RLock() 
       self.__currentGameState = GameState.UNBOUND
       self.__currentActivePosition = None
+      self.__queuedSinglePlayerRequests = {}
 
       # Initialize the three GroovikClients
       self.__clientdict = {}
