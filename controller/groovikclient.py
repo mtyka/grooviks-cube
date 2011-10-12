@@ -105,9 +105,13 @@ class GrooviksClient:
         self.SetState(ClientState.MULT)
         self.GetCube().MultiplePlayerStarts()
         
+    def Join3P(self, parameters):
+        self.SetState(ClientState.MULT)
+        self.GetCube().SinglePlayerJoins(self)
+
     def Scramble(self, parameters):
         difficulty = parameters['difficulty']
-        self.GetCube().Randomize(difficulty)
+        self.GetCube().Randomize(self, difficulty)
 
     COMMAND_MAP = {
         ClientCommand.WAKE : {
@@ -123,6 +127,9 @@ class GrooviksClient:
         },
         ClientCommand.START_3P : {
             ClientState.HOME :              Start3P,
+        },
+        ClientCommand.JOIN_3P : {
+            ClientState.SING :              Join3P,
         },
         ClientCommand.SELECT_DIFFICULTY : {
             ClientState.SING :        Scramble,
