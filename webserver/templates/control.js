@@ -3,6 +3,31 @@
 // ####################################################################
 {% include "soundmanager2-nodebug-jsmin.js" %}
 
+
+
+
+ClientStates = {
+  IDLE : 0,
+	HOME : 1,
+	SING : 2,
+	MULT : 3,
+	VICT : 4
+}
+
+var client_state = ClientStates.IDLE;
+var ignore_clicks = false;
+var locked_buttons=false;
+var menustate = 0;
+var interrupt_ok=true;
+// 0 = no menu
+// 1 = mode menu
+// 2 = level menu
+// 3 = timeout menu
+// 4 = join    menu
+// 5 = waiting menu
+
+
+
 soundManager.url = 'static';
 //soundManager.preferFlash = false;
 soundManager.useHTML5Audio = false;
@@ -204,7 +229,9 @@ function update_view() {
    frames_rendered ++;
 }
 
-var ignore_clicks = false;
+
+
+
 
 function set_ignore_clicks( value ){
 	ignore_clicks = value;
