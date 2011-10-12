@@ -156,7 +156,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
      $('#game_state').val( newState )
      $('#active_position').val( activePosition )
      
-		 new_client_state = clientstate[position];
+		 new_client_state = clientstate[position-1];
 
 		 clog("Server: NewState:" + new_client_state + "OldState: " + client_state ); 
 		 // is there a change in client state ? 
@@ -181,6 +181,40 @@ function on_game_state_change(newState, activePosition, clientstate) {
 			 }
 		}
 
+
+		new_game_state = newState;
+
+		clog("Server: NewGameState:" + new_game_state + "OldGameState: " + game_state ); 
+		if ( new_game_state != game_state ){
+			game_state = new_game_state;
+			 if ( client_state == "IDLE" ) { }
+			 if ( client_state == "HOME" ){
+			 } else
+			 if ( client_state == "SING" ){
+				 if( game_state == "SINGLE_INVITE" ){
+           goto_join_screen();
+				 } else
+				 if( game_state == "SINGLE" ){
+           clear_screen();
+				 } else
+				 if( game_state == "VICTORY" ){
+           clear_screen();
+				 }
+			 } else {
+			 if ( client_state == "MULT" ){
+				 if( game_state == "SINGLE_INVITE" ){
+           goto_waiting_screen();
+				 } else
+				 if( game_state == "MULTIPLE" ){
+           clear_screen();
+				 } else
+				 if( game_state == "VICTORY" ){
+           clear_screen();
+				 }
+			 } 
+			}
+
+		}
 
 }
 
