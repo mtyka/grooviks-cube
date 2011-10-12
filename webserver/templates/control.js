@@ -142,14 +142,27 @@ function on_message_pushed( datagram ) {
 
      //clog("Got message published");
      //clog( datagram );
-     current_cube_colors = decompress_datagram( datagram );
-     if( previous_datagram != datagram ) {
-        reset_arrow_timer();
-        previous_datagram = datagram;
+     if (( client_state != "MULT" && client_state != "SING") || grey == 0 ) {
+         current_cube_colors = decompress_datagram( datagram );
+         if( previous_datagram != datagram ) {
+            reset_arrow_timer();
+            previous_datagram = datagram;
+         }
+         update_view();  // calls into the renderer code
      }
      update_view();  // calls into the renderer code
 }
 
+
+function set_grey() {
+    if( grey == 0) {
+        return;
+    }
+    for(var i=0; i<54; i++ ) {
+        current_cube_colors[i] = [0.5,0.5,0.5];
+    }
+    update_view();
+}
 
 function on_game_state_change(newState, activePosition, clientstate) {
 //     game_state = newState
