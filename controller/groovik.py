@@ -81,6 +81,9 @@ class GrooviksCube:
    def GetGameState( self ):
        return self.__currentGameState
    
+   def SetGameState( self, newState ):
+       self.__currentGameState = newState
+   
    def GetActivePosition( self ):
        return self.__currentActivePosition
    
@@ -134,29 +137,34 @@ class GrooviksCube:
    def GetAllClients(self):
        return self.__clientdict.values()
 
-   def ChangeGameState( self, game_state ):
-       self.__currentGameState = game_state
+   def ChangeGameState( self, gameStateMap ):
+       newState = gameStateMap[self.GetGameState()]
+       self.SetGameState(newState)
 
    def SinglePlayerStarts( self, client ):
        '''Enter single player mode, setting the given client as the active position'''
-       newState = {
+       self.ChangeGameState({
            GameState.UNBOUND : GameState.SINGLE,
            GameState.VICTORY : GameState.VICTORY,
-       }[self.GetGameState()]
-       self.ChangeGameState( newState )
+       })
        self.SetActivePosition(client.GetPosition()) 
    
    def MultiplePlayerStarts( self ):
-       newState = {
+       self.ChangeGameState({
            GameState.UNBOUND : GameState.MULTIPLE,
            GameState.SINGLE : GameState.SINGLE_INVITE,
            GameState.VICTORY : GameState.VICTORY,
-       }[self.GetGameState()]
-       self.ChangeGameState( newState ) 
+       })
    
    def SinglePlayerExits( self, client ):
-       if self.IsPositionActive( client.GetPosition() ):
-           self.ChangeGameState( GameState.UNBOUND ) 
+       if not self.IsPositionActive( client.GetPosition() ):
+           self.LogEvent("Unexpected call to SinglePlayerExits by position %d (active position is %d)" % (client.GetPosition(), self.GetActivePosition()))
+           return
+       self.ChangeGameState({
+           GameState.SINGLE : GameState.UNBOUND,
+           GameState.SINGLE_INVITE : GameState.MULTIPLE,
+           GameState.VICTORY : GameState.VICTORY,
+       })
    
    def MultiplePlayerExits( self ):
        activePlayersRemain = False
