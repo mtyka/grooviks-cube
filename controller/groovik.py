@@ -15,7 +15,9 @@ import math
 import random
 import copy
 import time 
+import json
 
+from hbclient import *
 from GScript import GScriptLibrary
 from GScript import GScript
 from event_manager import CubeEventManager
@@ -79,7 +81,7 @@ class GrooviksCube:
    def GetGameState( self ):
        return self.__currentGameState
    
-   def GetActivePostion( self ):
+   def GetActivePosition( self ):
        return self.__currentActivePosition
    
    def GetCurrentState( self ):
@@ -128,23 +130,33 @@ class GrooviksCube:
        else:
            self.LogEvent( "Client " + position + " requested but does not exist!" )
 
+   def ChangeGameState( self, game_state ):
+       self.__currentGameState = game_state
+       active_position = self.GetActivePosition()
+       if active_position == None:
+           active_position = 0
+
+       gs_dict = { 'gamestate':game_state, 'active_position':active_position.__str__()  }
+       push_message( json.dumps(gs_dict), 'gameState' )
+
    def SinglePlayerStarts( self, client ):
        '''Enter single player mode, setting the given client as the active position'''
        newState = {
            GameState.UNBOUND : GameState.SINGLE,
        }[self.GetGameState()]
-       self.__currentGameState = newState
+       self.ChangeGameState( newState ) 
        self.__currentActivePosition = client.GetPosition()
+       # TODO: verify that the current cube state is UNBOUND
    
    def MultiplePlayerStarts( self ):
        newState = {
            GameState.UNBOUND : GameState.MULTIPLE,
            GameState.SINGLE : GameState.SINGLE_INVITE,
        }[self.GetGameState()]
-       self.__currentGameState = newState
+       self.ChangeGameState( newState ) 
    
    def SinglePlayerExits( self ):
-       self.__currentGameState = GameState.UNBOUND
+       self.ChangeGameState( GameState.UNBOUND ) 
        # TODO: if there are players queued up, or a pending multiplayer game,
        # promote to the main cube
    

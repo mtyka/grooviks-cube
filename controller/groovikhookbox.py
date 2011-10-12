@@ -44,7 +44,7 @@ import lightboard
 import json
 
 import groovik
-import hbclient
+from hbclient import *
 from glog import GLog
 from groovikutils import *
 from groovikconfig import *
@@ -101,14 +101,6 @@ def too_long_since_last_datagram():
     return how_long_ago > threshhold
 
 
-def push_game_state( game_state, active_position ):
-    if active_position == None:
-        active_position = 0
-
-    gs_dict = { 'gamestate':game_state, 'active_position':active_position.__str__()  }
-    push_message( json.dumps(gs_dict), 'gameState' )
-
-
 def push_datagram(datagram):
     global last_datagram_sent
     global last_datagram_sent_timestamp
@@ -122,74 +114,6 @@ def push_datagram(datagram):
     last_datagram_sent_timestamp = datetime.datetime.now()
     push_message( compress_datagram(datagram), "iframe")
 
-
-def push_message(message, channel):
-    """Pushes a message out onto a hookbox channel
-    """
-
-
-    # assume the hookbox server is on localhost:2974    
-    url = "http://127.0.0.1:2974/rest/publish"
-
-    values = { "secret" : "bakonv8",
-               "channel_name" : channel,
-               "payload" : message
-             }
-
-    formdata = urllib.urlencode(values)
-    req = urllib2.Request(url, formdata)
-    resp = urllib2.urlopen(req)
-
-    # the hookbox response can be useful for debugging,
-    # but i'm commenting it out.
-    #page = resp.read()
-    #print page
-
-def push_rotationStep_message( rotationStep):           
-    """Pushes a datagram out onto the hookbox channel           
-    """         
-                
-    # assume the hookbox server is on localhost:2974            
-    url = "http://127.0.0.1:2974/rest/publish"          
-        
-    values = { "secret" : "bakonv8",            
-               "channel_name" : "rotationStep",         
-               "payload" : []           
-             }          
-        
-    values["payload"] = rotationStep            
-    formdata = urllib.urlencode(values)         
-    req = urllib2.Request(url, formdata)                
-    resp = urllib2.urlopen(req)
-
-def push_color_calib_result(r,g,b):
-    # assume the hookbox server is on localhost:2974    
-    url = "http://127.0.0.1:2974/rest/publish"
-
-    values = { "secret" : "bakonv8",
-               "channel_name" : "colorcalib",
-               "payload" : []
-             }
-
-    datagram = ''
-
-    floatval = "%f " % (r)
-    datagram += floatval
-    
-    floatval = "%f " % (g)
-    datagram += floatval
-
-    floatval = "%f" % (b)
-    datagram += floatval
-    
-    output = '"%s"' % datagram
-    #print "sending %s" % output
-
-    values["payload"] = output;
-    formdata = urllib.urlencode(values)
-    req = urllib2.Request(url, formdata)
-    resp = urllib2.urlopen(req)    
-    
 
 class Cube():
     def __init__(self):
@@ -214,7 +138,7 @@ class Cube():
         # simulate one frame so we have a valid state to render on first frame
         # self.simulate()
 
-        client = hbclient.HookClient(self.process_commands)
+        client = HookClient(self.process_commands)
         client_thread = threading.Thread(target = client.run)
         client_thread.setDaemon(True)
         client_thread.start()
@@ -319,11 +243,9 @@ class Cube():
             frameLerpedColors = []
             self.simTime = self.simTime + TARGET_FRAMETIME;            
 
-            push_game_state(self.grooviksCube.GetGameState(), self.grooviksCube.GetActivePostion())
-
             if rotationStep != self.lastRotationStep :          
                 self.lastRotationStep = rotationStep            
-                push_rotationStep_message(rotationStep)
+                push_message(rotationStep, "rotationStep")
 
             while ((self.simTime - time.time()) > (TARGET_FRAMETIME/3)):
                 # Here we will want to interpolate across the frames, or if there are none use current state.
