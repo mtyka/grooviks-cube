@@ -114,6 +114,19 @@ def push_datagram(datagram):
     last_datagram_sent_timestamp = datetime.datetime.now()
     push_message( compress_datagram(datagram), "iframe")
 
+def push_game_client_state( cube ):
+    active_position = cube.GetActivePosition()
+    if active_position == None:
+        active_position = 0
+
+    game_state = cube.GetGameState()
+    clients = cube.GetAllClients()
+    client_state = []
+    for client in clients:
+        client_state.append( client.GetState() )
+
+    gs_dict = { 'gamestate':game_state, 'clientstate':client_state, 'active_position':active_position.__str__()  }
+    push_message( json.dumps(gs_dict), 'gameState' )
 
 class Cube():
     def __init__(self):
@@ -166,6 +179,7 @@ class Cube():
                     command = payload.pop('command')
                     self.logger.logLine( "Received command '%s' from client at position %d with arguments %s" % (command, position, payload) )
                     self.grooviksCube.HandleClientCommand(position, command, payload)
+                    push_game_client_state(self.grooviksCube)
 
                 elif channel == 'gamemode':
                     position, difficulty = payload['position'], payload['difficulty']

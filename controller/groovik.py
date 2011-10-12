@@ -130,14 +130,11 @@ class GrooviksCube:
        else:
            self.LogEvent( "Client " + position + " requested but does not exist!" )
 
+   def GetAllClients(self):
+       return self.__clientdict.values()
+
    def ChangeGameState( self, game_state ):
        self.__currentGameState = game_state
-       active_position = self.GetActivePosition()
-       if active_position == None:
-           active_position = 0
-
-       gs_dict = { 'gamestate':game_state, 'active_position':active_position.__str__()  }
-       push_message( json.dumps(gs_dict), 'gameState' )
 
    def SinglePlayerStarts( self, client ):
        '''Enter single player mode, setting the given client as the active position'''

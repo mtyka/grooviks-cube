@@ -154,11 +154,11 @@ function on_message_pushed( datagram ) {
 }
 
 
-function on_game_state_change(newState, activePosition) {
+function on_game_state_change(newState, activePosition, clientstate) {
 //     game_state = newState
      $('#game_state').val( newState )
      $('#active_position').val( activePosition )
-     // TODO: possibly change client state
+     client_state = clientstate[position];
 }
 
 
@@ -337,7 +337,7 @@ function establish_hookbox_connections() {
         if( channelName == 'gameState' ) {
         	gamestate_subscription = _subscription;
             gamestate_subscription.onPublish = function(frame) {
-                on_game_state_change(frame.payload["gamestate"], frame.payload["active_position"]);
+                on_game_state_change(frame.payload["gamestate"], frame.payload["active_position"], frame.payload["clientstate"]);
             };  
         }
         if( channelName == 'rotationStep' ) {

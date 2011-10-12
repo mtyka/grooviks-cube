@@ -1,4 +1,5 @@
 
+from hbclient import *
 from groovikutils import *
 import groovik
 
@@ -28,7 +29,6 @@ class GrooviksClient:
     
     def SetState(self, newState):
         self.__state = newState
-        # TODO: something cause the new state to be published?
     
     def HandleCommand(self, command, parameters):
         '''
