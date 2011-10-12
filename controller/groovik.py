@@ -143,9 +143,8 @@ class GrooviksCube:
            GameState.UNBOUND : GameState.SINGLE,
            GameState.VICTORY : GameState.VICTORY,
        }[self.GetGameState()]
-       self.ChangeGameState( newState ) 
-       self.__currentActivePosition = client.GetPosition()
-       # TODO: verify that the current cube state is UNBOUND
+       self.ChangeGameState( newState )
+       self.SetActivePosition(client.GetPosition()) 
    
    def MultiplePlayerStarts( self ):
        newState = {
@@ -155,10 +154,9 @@ class GrooviksCube:
        }[self.GetGameState()]
        self.ChangeGameState( newState ) 
    
-   def SinglePlayerExits( self ):
-       self.ChangeGameState( GameState.UNBOUND ) 
-       # TODO: if there are players queued up, or a pending multiplayer game,
-       # promote to the main cube
+   def SinglePlayerExits( self, client ):
+       if self.IsPositionActive( client.GetPosition() ):
+           self.ChangeGameState( GameState.UNBOUND ) 
    
    def MultiplePlayerExits( self ):
        activePlayersRemain = False
