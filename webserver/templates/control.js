@@ -142,7 +142,7 @@ function on_message_pushed( datagram ) {
 
      //clog("Got message published");
      //clog( datagram );
-     if ( client_state != "MULT" && client_state != "SING" ) {
+     if (( client_state != "MULT" && client_state != "SING") || grey == 0 ) {
          current_cube_colors = decompress_datagram( datagram );
          if( previous_datagram != datagram ) {
             reset_arrow_timer();
@@ -154,6 +154,9 @@ function on_message_pushed( datagram ) {
 
 
 function set_grey() {
+    if( grey == 0) {
+        return;
+    }
     for(var i=0; i<54; i++ ) {
         current_cube_colors[i] = [0.5,0.5,0.5];
     }
