@@ -45,7 +45,18 @@ function reset_timeout(){
 	 time_to_reload = time_of_inactivity_to_reload_page
 }
 
+
+
+$(window).click( function() {
+	clog("WTF?");
+	reset_timeout();
+	//touch screen to begin!
+	if( menustate == 1 ){
+		goto_mode_screen();
+	}
+} )
 //window.onload=beginrefresh
+
 </script>
 
 
@@ -193,12 +204,12 @@ $(document).ready(function(){
 });
 
 
-var locked_buttons=false;
 
 function animate_absolute_spin(radians) {
 		// lock the buttons
 		if(locked_buttons) return;
 		locked_buttons = true;
+    ignore_clicks = true;
 
 		// do the boogie 
 		var azimuth = $("#slide_azi").val()*1.0; // convert from string to number. javascript sucks
@@ -212,6 +223,7 @@ function animate_absolute_spin(radians) {
 		},{ duration: 2000, 
 		    complete: function(){
 					locked_buttons = false;
+					ignore_clicks = false;
 				},
 				step: function() {  
 					console.log($("#slide_azi").attr("animate_val") ); 
@@ -227,6 +239,7 @@ function animate_spin(delta_radians) {
 		// lock the buttons
 		if(locked_buttons) return;
 		locked_buttons = true;
+		ignore_clicks = true;
 		
 
 		// do the boogie 
@@ -240,6 +253,7 @@ function animate_spin(delta_radians) {
 		},{ duration: 2000, 
 		    complete: function(){
 					locked_buttons = false;
+					ignore_clicks = false;
 				},
 				step: function() {  
 					//console.log($("#slide_azi").attr("animate_val") ); 
@@ -264,6 +278,7 @@ function start_spin( start_spin ){
 			return;
 		}
 
+		
 		var azimuth = $("#slide_azi").val()*1.0; // convert from string to number. javascript sucks
 		azimuth += 1 ;
 		azimuth = azimuth % (100*Math.PI*2);  // Re-center
@@ -320,14 +335,6 @@ function clicked_continue(){
 <script>
 
 
-var menustate=0;
-var interrupt_ok=true;
-// 0 = no menu
-// 1 = mode menu
-// 2 = level menu
-// 3 = timeout menu
-// 4 = join    menu
-// 5 = waiting menu
 
 function flyin_menu_bg(){
 		ignore_clicks=true;
@@ -501,6 +508,7 @@ function flyout_waitingmenu() {
 
 
 function goto_idle_screen(){
+    ignore_clicks = true;
    	if( menustate == 1 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();        
@@ -515,6 +523,7 @@ function goto_idle_screen(){
 }
 
 function goto_mode_screen(){
+    ignore_clicks = true;
    	if( menustate == 2 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();        
@@ -527,6 +536,7 @@ function goto_mode_screen(){
 }
 
 function goto_level_screen(){
+    ignore_clicks = true;
    	if( menustate == 3 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();        
@@ -536,6 +546,7 @@ function goto_level_screen(){
 }
 
 function goto_timeout_screen(){
+    ignore_clicks = true;
    	if( menustate == 4 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();        
@@ -545,6 +556,7 @@ function goto_timeout_screen(){
 }
 
 function goto_join_screen(){
+    ignore_clicks = true;
    	if( menustate == 5 ) return;
 		if( interrupt_ok ){
 			remove_menu();
@@ -556,6 +568,7 @@ function goto_join_screen(){
 }
 
 function goto_waiting_screen(){
+    ignore_clicks = true;
    	if( menustate == 6 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();        
@@ -613,14 +626,7 @@ function clicked_join(){
 
 
 
-function window_click(){
-	clog("WTF?");
-	reset_timeout();
-	// touch screen to begin!
-	//if( menustate == 1 ){
-	//	goto_mode_screen();
-	//}
-}
+
 
 </script>
 
@@ -631,7 +637,6 @@ function window_click(){
 
 $(document).ready(function() {
   goto_idle_screen();
-	$("body").click( window_click );
 });
 
 </script>
@@ -827,7 +832,7 @@ p
       </div>
 
 			<img class="button_restart" id="button_restart" src="/static/restart.png" alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_waiting_screen()" >
-			<img class="button_quit"    id="button_quit" src="/static/quit.png"    alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_idle_screen()"    >
+			<img class="button_quit"    id="button_quit" src="/static/quit.png"    alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_mode_screen()"    >
 
 			<img id="levelmenu_bgt" src="/static/line.png"  class="topborder" height=6 width=2000>
 			<div id="levelmenu_bg"class="levelmenu_bg" >
@@ -887,6 +892,8 @@ p
 				 <h2> Another player is currently playing Groovik's cube.  </h2>
 				 <h2> Please wait - you will be connected to the next available cube.  </h2>
 				 <br>
+				 <br>
+				 <img src="/static/waiting.gif">
 				 </center>
 			</div>
 
