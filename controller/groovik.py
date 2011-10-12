@@ -155,6 +155,14 @@ class GrooviksCube:
            GameState.SINGLE : GameState.SINGLE_INVITE,
            GameState.VICTORY : GameState.VICTORY,
        })
+       
+   def SinglePlayerJoins( self, client ):
+       if not self.IsPositionActive( client.GetPosition() ):
+           self.LogEvent("Unexpected call to SinglePlayerJoing by position %d (active position is %d)" % (client.GetPosition(), self.GetActivePosition()))
+           return
+       self.ChangeGameState({
+           GameState.SINGLE_INVITE : GameState.MULTIPLE,
+       })
    
    def SinglePlayerExits( self, client ):
        if not self.IsPositionActive( client.GetPosition() ):
@@ -305,8 +313,13 @@ class GrooviksCube:
             self.__colors.append( [0.0, 0.0, 0.0] )
       self.__ClearRotationQueue( )
 
-   def Randomize( self, depth ):
-      # TODO: only allow this command when the game state is not UNBOUND or VICTORY
+   def Randomize( self, client, depth ):
+      if not self.IsPositionActive(client.GetPosition()):
+          # only randomize if the cube is bound to the requesting client
+          return
+      if self.GetGameState() in [GameState.UNBOUND, GameState.VICTORY]:
+          # ignore if the cube isn't bound to an active game
+          return
       self.ResetColors()
       self.__normalMode.Randomize(self, depth)
 
