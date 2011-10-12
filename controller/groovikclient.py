@@ -44,8 +44,7 @@ class GrooviksClient:
     #--------------------------------------------------------------
     # Actions
     #--------------------------------------------------------------
-
-    def WakeFromIdle(self, parameters):
+    def WakeFromIdle( self, parameters ):
         newState = {
                     GameState.UNBOUND :             ClientState.HOME,
                     GameState.SINGLE :              ClientState.HOME,
