@@ -209,6 +209,9 @@ class Cube():
             except KeyError: 
                 #TODO: actually parse the error and log it
                 pass
+            except Exception, msg:
+                self.logger.logLine("Swallowed exception '%s' raised during command handling in hookbox while handling command on %s " % (msg, channel))
+                
 
     def interpolateFrames( this, data, passedTime, dataLast ):
         if not data:
