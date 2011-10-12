@@ -297,7 +297,7 @@ function shouldDrawArrow( faceNum )
 		  return false;
 		}
 
-		if ( client_state == ClientStates.MULT )  
+		if ( client_state == "MULT" )  
     {
 			if (arrowRotation[faceNum][2] != position)
 					return false;
