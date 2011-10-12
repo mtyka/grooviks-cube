@@ -1,5 +1,6 @@
 
 from groovikutils import *
+import groovik
 
 class GrooviksClient:
 
@@ -37,9 +38,18 @@ class GrooviksClient:
         '''
         actionMap = GrooviksClient.COMMAND_MAP[command]
         try:
-            actionMap[self.GetState()](self, parameters)
+            action = actionMap[self.GetState()]
         except KeyError:
-            self.LogEvent("Cannot execute command <TODO> in state %s" % (self.GetState()))
+            self.LogEvent("Cannot execute command %s in state %s" % (command, self.GetState()))
+            return
+            
+        self.LogEvent("Exceuting command %s in client state %s; game state is %s" % (command, self.GetState(), self.GetCube().GetGameState()))
+        try:
+            action(self, parameters)
+            self.LogEvent("Command complete.  New client state is %s; game state is %s" % (self.GetState(), self.GetCube().GetGameState()))
+        except Exception as e:
+            self.LogEvent("Command %s failed: %s" % (command, e.args))
+            raise e
 
     #--------------------------------------------------------------
     # Actions
@@ -63,7 +73,7 @@ class GrooviksClient:
         
     def QuitFromMultiple(self, parameters):
         self.SetState(ClientState.IDLE)
-        self.GetCube().MutiplePlayerExits(self)
+        self.GetCube().MultiplePlayerExits()
         
     def RestartFromSingle(self, parameters):
         raise "Not implemented"
@@ -88,31 +98,12 @@ class GrooviksClient:
         
     # TODO: it looks like Start1P and Start3P should probably be factored
     def Start1P(self, parameters):
-        gameState = self.GetCube().GetGameState()
-        if gameState == GameState.UNBOUND:
-            newState = {
-                        ClientState.HOME :          ClientState.SING,
-                        }[self.GetState()]
-            self.LogEvent("Starting single player mode")
-            self.SetState(newState)
-            self.GetCube().SinglePlayerStarts(self)
-        elif gameState == GameState.SINGLE:
-            # TODO: start local play
-            self.LogEvent("Request to begin single player mode in game state SINGLE")
-        else:
-            self.LogEvent("Request to begin single player mode in game state %s" % (gameState))
+        self.SetState(ClientState.SING)
+        self.GetCube().SinglePlayerStarts(self)
 
     def Start3P(self, parameters):
-        gameState = self.GetCube().GetGameState()
-        if gameState == GameState.UNBOUND:
-            newState = {
-                        ClientState.HOME :          ClientState.MULT,
-                        }[self.GetState()]
-            self.SetState(newState)
-            self.GetCube().SinglePlayerStarts(self)
-        elif gameState == GameState.SINGLE:
-            # TODO: start local play
-            pass  
+        self.SetState(ClientState.MULT)
+        self.GetCube().MultiplePlayerStarts()
         
     def Scramble(self, parameters):
         difficulty = parameters['difficulty']

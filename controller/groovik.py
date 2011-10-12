@@ -130,14 +130,31 @@ class GrooviksCube:
 
    def SinglePlayerStarts( self, client ):
        '''Enter single player mode, setting the given client as the active position'''
+       newState = {
+           GameState.UNBOUND : GameState.SINGLE,
+       }[self.GetGameState()]
+       self.__currentGameState = newState
        self.__currentActivePosition = client.GetPosition()
-       # TODO: verify that the current cube state is UNBOUND
-       self.__currentGameState = GameState.SINGLE
+   
+   def MultiplePlayerStarts( self ):
+       newState = {
+           GameState.UNBOUND : GameState.MULTIPLE,
+           GameState.SINGLE : GameState.SINGLE_INVITE,
+       }[self.GetGameState()]
+       self.__currentGameState = newState
    
    def SinglePlayerExits( self ):
        self.__currentGameState = GameState.UNBOUND
        # TODO: if there are players queued up, or a pending multiplayer game,
        # promote to the main cube
+   
+   def MultiplePlayerExits( self ):
+       activePlayersRemain = False
+       for client in self.__clientdict.values():
+           if client.GetState() != ClientState.IDLE:
+                activePlayersRemain = True
+       if not activePlayersRemain:
+           self.__currentGameState = GameState.UNBOUND
    
    #-----------------------------------------------------------------------------
    # This method will queue a game mode change. mode is member of the CubeMode enum.
