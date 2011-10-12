@@ -179,12 +179,21 @@ function set_initial_position(){
 			animate_absolute_spin( start_azimuth ) 
 }
 
+var selected_game_mode = "START_3P"
+
+function select_difficulty( difficulty ){
+	clog("ClientSentGameMode: " + selected_game_mode );
+	hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
+  reset_gamestate(position, difficulty ); 
+}
+
+
 $(document).ready(function(){
-    $("#easy").click(    function(){ reset_gamestate(position, 2); clear_screen(); }   );
-    $("#medium").click(  function(){ reset_gamestate(position, 3); clear_screen(); } );
-    $("#hard").click(    function(){ reset_gamestate(position, 4); clear_screen(); } );
-    $("#master").click(  function(){ reset_gamestate(position, 5); clear_screen(); } );
-    $("#full").click(    function(){ reset_gamestate(position, 20);clear_screen(); } );
+    $("#easy").click(   function() { select_difficulty(2);  } );
+    $("#medium").click( function() { select_difficulty(3);  } );
+    $("#hard").click(   function() { select_difficulty(4);  } );
+    $("#master").click( function() { select_difficulty(5);  } );
+    $("#full").click(   function() { select_difficulty(20); } );
 
 //    //if (!position) {
 //        $("#buttonleft").click( function(){ 
@@ -225,7 +234,7 @@ function animate_absolute_spin(radians) {
 					ignore_clicks = false;
 				},
 				step: function() {  
-					console.log($("#slide_azi").attr("animate_val") ); 
+					//console.log($("#slide_azi").attr("animate_val") ); 
 					$("#slide_azi").val( $("#slide_azi").attr("animate_val") );
 					rotate_view(); 
 		    }     
@@ -607,15 +616,13 @@ function clicked_wake(){
 }
 
 function clicked_alone(){
-	  goto_level_screen()
-		clog("ClientSent: START_1P");
-    hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'START_1P' } );
+	  selected_game_mode = "START_1P";
+		goto_level_screen( )
 }
 
 function clicked_3player(){
-	  goto_level_screen()
-		clog("ClientSent: START_3P");
-    hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'START_3P' } );
+	  selected_game_mode = "START_3P";
+	  goto_level_screen( )
 }
 
 function clicked_ignore(){
