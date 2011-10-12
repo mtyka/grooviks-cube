@@ -158,7 +158,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
      
 		 new_client_state = clientstate[position];
 
-		 clog("Server: " + new_client_state ); 
+		 clog("Server: NewState:" + new_client_state + "OldState: " + client_state ); 
 		 // is there a change in client state ? 
 		 if ( new_client_state != client_state ){
 			 client_state = new_client_state;
