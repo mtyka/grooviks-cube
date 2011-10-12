@@ -111,7 +111,6 @@ class GrooviksClient:
             self.SetState(newState)
             self.GetCube().SinglePlayerStarts(self)
         elif gameState == GameState.SINGLE:
-            # TODO: start local play
             pass  
         
     def Scramble(self, parameters):
