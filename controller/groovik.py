@@ -16,6 +16,7 @@ import random
 import copy
 import time 
 import json
+import threading
 
 from hbclient import *
 from GScript import GScriptLibrary
@@ -37,7 +38,6 @@ from modelightboardconfiguration import ModeLightBoardConfiguration
 from modescreensaver import ModeScreenSaver
 from groovikconfig import *
 from groovikclient import GrooviksClient
-
    
    
 #-------------------------------------------------------------------------------
@@ -121,8 +121,9 @@ class GrooviksCube:
    # cube.
    #-----------------------------------------------------------------------------
    def HandleClientCommand( self, position, command, parameters ):
-       client = self.GetClient( position )
-       return client.HandleCommand( command, parameters )
+       with self.__gameStateLock:
+           client = self.GetClient( position )
+           return client.HandleCommand( command, parameters )
    
    def GetClient(self, position):
        if position in self.__clientdict:
@@ -406,6 +407,7 @@ class GrooviksCube:
       self.__logger = logger
       
       # Initialize the game mode
+      self.__gameStateLock = threading.RLock() 
       self.__currentGameState = GameState.UNBOUND
       self.__currentActivePosition = None
 
