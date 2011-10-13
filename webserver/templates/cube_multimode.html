@@ -276,6 +276,10 @@ function animate_spin(delta_radians) {
 
 var is_spinning = false;
 function start_spin( start_spin ){
+		
+		// dont spin if there's no menu.
+		if( menustate == 0 ) return;
+
 		if( start_spin ){
 			if( is_spinning ) return; // cube is already spinning - dont start another thread.
 			// otherwise set the state variable and go!
@@ -346,8 +350,10 @@ function clicked_continue(){
 
 
 function flyin_menu_bg(){
+		// background is in place - thus ignore clicks on canvas
 		ignore_clicks=true;
 		
+		// animate all the opacities and positions to bring in the background of the menu
 		$("#levelmenu_bg").css("opacity", "-2.0"); 
 		$("#levelmenu_bg").css("left", "0"); 
 		$("#levelmenu_bgb").css("opacity", "-2.0"); 
@@ -497,6 +503,24 @@ function flyout_joinmenu() {
 
 
 
+function flyin_queuedmenu() {
+		$("#queuedmenu").css("left", "-25%"); 
+		$("#queuedmenu").animate( {
+		  left: "50%",	
+		},{ duration: 1000 }
+		);
+}
+
+function flyout_queuedmenu() {
+		$("#queuedmenu").animate( {
+		  left: "125%"	
+		},{ duration: 1000, 
+		    complete: function(){ $("#queuedmenu").css("left", "-25%");  } 
+		}
+		);
+}
+
+
 function flyin_waitingmenu() {
 		$("#waitingmenu").css("left", "-25%"); 
 		$("#waitingmenu").animate( {
@@ -513,7 +537,6 @@ function flyout_waitingmenu() {
 		}
 		);
 }
-
 
 
 function goto_idle_screen(){
@@ -574,14 +597,24 @@ function goto_join_screen(){
 		start_spin( true );
 }
 
-function goto_waiting_screen(){
+function goto_queued_screen(){
     ignore_clicks = true;
    	if( menustate == 6 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();        
    	menustate = 6 
-		flyin_waitingmenu();
+		flyin_queuedmenu();
 		
+		start_spin( true );
+}
+
+function goto_waiting_screen(){
+    ignore_clicks = true;
+   	if( menustate == 7 ) return;
+		remove_menu();
+		if( menustate == 0 ) flyin_menu_bg();        
+   	menustate = 7 
+		flyin_waitingmenu();
 		start_spin( true );
 }
 
@@ -592,7 +625,8 @@ function remove_menu(){
 		if( menustate == 3 ) flyout_levelmenu();        
 		if( menustate == 4 ) flyout_timeoutmenu();        
 		if( menustate == 5 ) flyout_joinmenu();        
-		if( menustate == 6 ) flyout_waitingmenu();        
+		if( menustate == 6 ) flyout_queuedmenu();        
+		if( menustate == 7 ) flyout_waitingmenu();        
 }
 
 function clear_screen(){
@@ -601,6 +635,7 @@ function clear_screen(){
     menustate=0
 		ignore_clicks=false;
 		stop_spin()
+		set_initial_position();
 }
 
 
@@ -651,6 +686,8 @@ function clicked_join(){
 
 $(document).ready(function() {
   goto_idle_screen();
+  
+	document.title = "Cube P:" + position 
 });
 
 </script>
@@ -845,7 +882,7 @@ p
 			  <br>
       </div>
 
-			<!-- <img class="button_restart" id="button_restart" src="/static/restart.png" alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_waiting_screen()" > -->
+			<!-- <img class="button_restart" id="button_restart" src="/static/restart.png" alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_queued_screen()" > -->
 			<img class="button_quit"    id="button_quit" src="/static/quit.png"    alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="clicked_quit()"    >
 
 			<img id="levelmenu_bgt" src="/static/line.png"  class="topborder" height=6 width=2000>
@@ -898,13 +935,26 @@ p
 				 <img id="joinbutton"    src="/static/join.png"       ondragstart="return false" onselectstart="return false" onclick="clicked_join()" >
 			</div>
 			
-			<div id="waitingmenu" class="levelmenu" >
+			<div id="queuedmenu" class="levelmenu" >
          <center>
 				 <br>
 				 <br>
 				 <br>
 				 <h2> Another player is currently playing Groovik's cube.  </h2>
 				 <h2> Please wait - you will be connected to the next available cube.  </h2>
+				 <br>
+				 <br>
+				 <img src="/static/waiting.gif">
+				 </center>
+			</div>
+
+			
+			<div id="waitingmenu" class="levelmenu" >
+         <center>
+				 <br>
+				 <br>
+				 <br>
+				 <h1> Waiting for other players to join the game!  </h1>
 				 <br>
 				 <br>
 				 <img src="/static/waiting.gif">
