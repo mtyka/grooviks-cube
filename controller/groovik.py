@@ -26,12 +26,16 @@ from groovikutils import *
 from statedelay import StateDelay
 from statefade import StateFade
 from stateidle import StateIdle
+
+
 from stateidlepulse import StateIdlePulse
 from staterotation import StateRotation
 from statespiralfade import StateSpiralFade
 from statestrobe import StateStrobe
 from statefire import StateFire
 from statetetris import StateTetris
+
+from movelibrary import MoveLibrary     ## This provides services on determining how many moves from solved a state is
 from modenormal import ModeNormal
 from modecalibration import ModeCalibration
 from modelightboardconfiguration import ModeLightBoardConfiguration
@@ -117,7 +121,14 @@ class GrooviksCube:
          self.QueueModeChange( params )
       else:
          self.__currentMode.HandleInput( self, self.display, cubeInputType, params )
-   
+  
+
+   def DetermineMovesFromSolved( self, curtime ):
+      print "Figuring out how many moves from solved"
+      output = self.__currentState.Update( curtime )
+      return self.__movelibrary.AnalysePosition( output[0] )
+	
+
    #-----------------------------------------------------------------------------
    # This method will take some client command to change the game state and 
    # process it according to the current state of that client and that of the 
@@ -143,11 +154,15 @@ class GrooviksCube:
 
    def SinglePlayerStarts( self, client ):
        '''Enter single player mode, setting the given client as the active position'''
-       self.ChangeGameState({
-           GameState.UNBOUND : GameState.SINGLE,
-           GameState.VICTORY : GameState.VICTORY,
-       })
-       self.SetActivePosition(client.GetPosition()) 
+       if self.GetGameState() == GameState.UNBOUND:
+           self.ChangeGameState({ GameState.UNBOUND : GameState.SINGLE })
+           self.SetActivePosition(client.GetPosition())
+       elif self.GetGameState() in [GameState.SINGLE, GameState.VICTORY]:
+           self.QueueSinglePlayer(client)      
+   
+   def QueueSinglePlayer( self, client ):
+       '''Record a request by a non-active position to play in single-player mode'''
+       self.__queuedSinglePlayerRequests[client.GetPosition()] = None 
    
    def MultiplePlayerStarts( self ):
        self.ChangeGameState({
@@ -166,13 +181,17 @@ class GrooviksCube:
    
    def SinglePlayerExits( self, client ):
        if not self.IsPositionActive( client.GetPosition() ):
-           self.LogEvent("Unexpected call to SinglePlayerExits by position %d (active position is %d)" % (client.GetPosition(), self.GetActivePosition()))
+           # is this possible?
+           del self.__queuedSinglePlayerRequests[client.GetPosition()]
            return
        self.ChangeGameState({
            GameState.SINGLE : GameState.UNBOUND,
            GameState.SINGLE_INVITE : GameState.MULTIPLE,
            GameState.VICTORY : GameState.VICTORY,
        })
+       if len(self.__queuedSinglePlayerRequests) > 0:
+           # TODO
+           pass
    
    def MultiplePlayerExits( self ):
        activePlayersRemain = False
@@ -203,6 +222,11 @@ class GrooviksCube:
    def QueueIdlePulse( self, duration ):
       if ( self.__CanQueueState( CubeState.IDLEPULSE ) ):
          self.__AppendState( [ CubeState.IDLEPULSE, duration ] )
+   
+	 # This state will pulse toward black and back to the current color over the specified duration (a float)
+   def QueueMoveLibrary( self, duration ):
+      if ( self.__CanQueueState( CubeState.MOVELIBRARY ) ):
+         self.__AppendState( [ CubeState.MOVELIBRARY, duration ] )
       
    # This state will fade the cube to the specified colors
    # duration is a float indicating the time of the fade
@@ -284,6 +308,9 @@ class GrooviksCube:
       else:
          for r in rotations:
             self.__event_manager.invalid_move(r[0]/6)
+      
+      self.QueueMoveLibrary( 0.01 ); 
+			
       return True
       
    #-----------------------------------------------------------------------------   
@@ -316,6 +343,7 @@ class GrooviksCube:
    def Randomize( self, client, depth ):
       if not self.IsPositionActive(client.GetPosition()):
           # only randomize if the cube is bound to the requesting client
+          self.__queuedSinglePlayerRequests[client.GetPosition()] = depth
           return
       if self.GetGameState() in [GameState.UNBOUND, GameState.VICTORY]:
           # ignore if the cube isn't bound to an active game
@@ -415,7 +443,10 @@ class GrooviksCube:
       self.__fadeState = StateFade()
       self.__spiralFadeState = StateSpiralFade()
       self.__delayState = StateDelay()
-      
+    
+			## hard coded for now
+      self.__movelibrary = MoveLibrary( "states" ) 
+
       # create all modes
       self.__normalMode = ModeNormal()
       self.__calibrationMode = ModeCalibration()
@@ -431,6 +462,7 @@ class GrooviksCube:
       self.__gameStateLock = threading.RLock() 
       self.__currentGameState = GameState.UNBOUND
       self.__currentActivePosition = None
+      self.__queuedSinglePlayerRequests = {}
 
       # Initialize the three GroovikClients
       self.__clientdict = {}
@@ -517,6 +549,8 @@ class GrooviksCube:
          self.__currentState = self.__idlePulseState
       elif ( self.__currentCubeState == CubeState.IDLE ):
          self.__currentState = self.__idleState
+      elif ( self.__currentCubeState == CubeState.MOVELIBRARY ):
+         self.__currentState = self.__movelibrary
       elif ( self.__currentCubeState == CubeState.STROBE ):
          self.__currentState = self.__strobeState
       elif ( self.__currentCubeState == CubeState.FIREMODE ):

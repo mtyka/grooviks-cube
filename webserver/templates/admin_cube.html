@@ -13,7 +13,7 @@
 
 	<link rel="stylesheet" href="static/jquery-ui.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="static/ui.theme.css" type="text/css" media="all" />
-	<script src="static/jquery.bgiframe-2.1.2.js" type="text/javascript"></script>
+	<!-- <script src="static/jquery.bgiframe-2.1.2.js" type="text/javascript"></script> -->
 	
 
 
@@ -162,6 +162,7 @@ jQuery.fn.elementlocation = function() {
   return ( {x:curleft, y:curtop} );
 };
 
+var client_state = "IDLE"
 {% include "admin_control.js" %}
 {% include "vector.js" %}
 {% include "admin_render.js" %}

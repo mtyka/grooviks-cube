@@ -27,22 +27,59 @@ if( isIE() ) {
 
 
 
-var time_of_inactivity_to_reload_page = 900
-var time_to_reload = time_of_inactivity_to_reload_page
-function beginrefresh(){
-	document.title = time_to_reload  //just for debugging
-	if (time_to_reload<=1){
-		window.location.reload()
-	 	reset_timeout() 
-	}
+var last_moves_from_solved = 0
+var moves_from_solved = 0
+
+var next_flash_moves_display;
+
+function flash_moves_display(){
+	clog( "next_flash_moves_display()" );
+	$("#movestext").css("opacity", "0.0"); 
 	
-	time_to_reload-=1
-	window.status=time_to_reload
-	setTimeout("beginrefresh()",1000) // call me again in 1000 ms
+	if( moves_from_solved == 0 ) return;
+	if( moves_from_solved > 5 ) return;
+	if( (moves_from_solved > last_moves_from_solved) && 
+	    ( moves_from_solved >  -1 ) &&
+			( last_moves_from_solved > -1 )
+	){
+		if( moves_from_solved == 1 ) $("#movestext").html("Hey! It was so pristine - now you've messed it up!" );
+		if( moves_from_solved == 2 ) $("#movestext").html("Looks like that was wrong. You're now " + moves_from_solved + " moves away from solved!");	
+		if( moves_from_solved == 3 ) $("#movestext").html("Colder..");
+		if( moves_from_solved == 4 ) $("#movestext").html("Ok, you're just making it worse");
+		if( moves_from_solved == 5 ) $("#movestext").html("Believe it or not - You're now " + moves_from_solved + " moves from solved!");	
+	}
+	else if ( moves_from_solved == last_moves_from_solved ){
+		$("#movestext").html("You're just " + moves_from_solved + " moves from solved!"); 
+	}else{
+		if( moves_from_solved == 1 ) $("#movestext").html("Just 1 more move !" );
+		if( moves_from_solved == 2 ) $("#movestext").html("So close! Just " + moves_from_solved + " moves from solved!");	
+		if( moves_from_solved == 3 ) $("#movestext").html("Only " + moves_from_solved + " moves from solved!");	
+		if( moves_from_solved == 4 ) $("#movestext").html("Ok, you're getting close now - you're " + moves_from_solved + " moves from solved!");	
+		if( moves_from_solved == 5 ) $("#movestext").html("Believe it or not - You're merely " + moves_from_solved + " moves from solved!");	
+	}
+
+	last_moves_from_solved = moves_from_solved;
+
+	$("#movestext").animate( {
+		opacity:1.0
+	},{ duration: 1000 }
+	);
+	setTimeout( "remove_moves_display()", 3000 )
+}
+
+function remove_moves_display(){
+	$("#movestext").animate( {
+		opacity:0.0
+	},{ duration: 1000,
+	    complete: function() { $("#movestext").html(""); } }
+	);
+	
 }
 
 function reset_timeout(){
-	 time_to_reload = time_of_inactivity_to_reload_page
+	clog( "Clear TImeout" );
+	clearTimeout( next_flash_moves_display )
+	$("#movestext").html("");	
 }
 
 
@@ -54,7 +91,6 @@ $(window).click( function() {
 		clicked_wake();
 	}
 } )
-//window.onload=beginrefresh
 
 </script>
 
@@ -183,6 +219,11 @@ function set_initial_position(){
 var selected_game_mode = "START_3P"
 
 function select_difficulty( difficulty ){
+
+	last_moves_from_solved = difficulty
+	moves_from_solved = difficulty
+	next_flash_moves_display = setTimeout("flash_moves_display()", 5000 ); 
+
 	clog("ClientSentGameMode: " + selected_game_mode );
 	hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
   reset_gamestate(position, difficulty ); 
@@ -276,6 +317,10 @@ function animate_spin(delta_radians) {
 
 var is_spinning = false;
 function start_spin( start_spin ){
+		
+		// dont spin if there's no menu.
+		if( menustate == 0 ) return;
+
 		if( start_spin ){
 			if( is_spinning ) return; // cube is already spinning - dont start another thread.
 			// otherwise set the state variable and go!
@@ -346,8 +391,10 @@ function clicked_continue(){
 
 
 function flyin_menu_bg(){
+		// background is in place - thus ignore clicks on canvas
 		ignore_clicks=true;
 		
+		// animate all the opacities and positions to bring in the background of the menu
 		$("#levelmenu_bg").css("opacity", "-2.0"); 
 		$("#levelmenu_bg").css("left", "0"); 
 		$("#levelmenu_bgb").css("opacity", "-2.0"); 
@@ -497,6 +544,24 @@ function flyout_joinmenu() {
 
 
 
+function flyin_queuedmenu() {
+		$("#queuedmenu").css("left", "-25%"); 
+		$("#queuedmenu").animate( {
+		  left: "50%",	
+		},{ duration: 1000 }
+		);
+}
+
+function flyout_queuedmenu() {
+		$("#queuedmenu").animate( {
+		  left: "125%"	
+		},{ duration: 1000, 
+		    complete: function(){ $("#queuedmenu").css("left", "-25%");  } 
+		}
+		);
+}
+
+
 function flyin_waitingmenu() {
 		$("#waitingmenu").css("left", "-25%"); 
 		$("#waitingmenu").animate( {
@@ -514,6 +579,22 @@ function flyout_waitingmenu() {
 		);
 }
 
+function flyin_connectingmenu() {
+		$("#connectingmenu").css("left", "-25%"); 
+		$("#connectingmenu").animate( {
+		  left: "50%",	
+		},{ duration: 1000 }
+		);
+}
+
+function flyout_connectingmenu() {
+		$("#connectingmenu").animate( {
+		  left: "125%"	
+		},{ duration: 1000, 
+		    complete: function(){ $("#connectingmenu").css("left", "-25%");  } 
+		}
+		);
+}
 
 
 function goto_idle_screen(){
@@ -574,14 +655,34 @@ function goto_join_screen(){
 		start_spin( true );
 }
 
-function goto_waiting_screen(){
+function goto_queued_screen(){
     ignore_clicks = true;
    	if( menustate == 6 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();        
    	menustate = 6 
-		flyin_waitingmenu();
+		flyin_queuedmenu();
 		
+		start_spin( true );
+}
+
+function goto_waiting_screen(){
+    ignore_clicks = true;
+   	if( menustate == 7 ) return;
+		remove_menu();
+		if( menustate == 0 ) flyin_menu_bg();        
+   	menustate = 7 
+		flyin_waitingmenu();
+		start_spin( true );
+}
+
+function goto_connecting_screen(){
+    ignore_clicks = true;
+   	if( menustate == 8 ) return;
+		remove_menu();
+		if( menustate == 0 ) flyin_menu_bg();        
+   	menustate = 8 
+		flyin_connectingmenu();
 		start_spin( true );
 }
 
@@ -592,7 +693,9 @@ function remove_menu(){
 		if( menustate == 3 ) flyout_levelmenu();        
 		if( menustate == 4 ) flyout_timeoutmenu();        
 		if( menustate == 5 ) flyout_joinmenu();        
-		if( menustate == 6 ) flyout_waitingmenu();        
+		if( menustate == 6 ) flyout_queuedmenu();        
+		if( menustate == 7 ) flyout_waitingmenu();        
+		if( menustate == 8 ) flyout_connectingmenu();        
 }
 
 function clear_screen(){
@@ -601,6 +704,7 @@ function clear_screen(){
     menustate=0
 		ignore_clicks=false;
 		stop_spin()
+		set_initial_position();
 }
 
 
@@ -650,7 +754,8 @@ function clicked_join(){
 
 
 $(document).ready(function() {
-  goto_idle_screen();
+	goto_connecting_screen();
+	document.title = "Cube P:" + position 
 });
 
 </script>
@@ -749,6 +854,16 @@ $(document).ready(function() {
 			margin-left: -150px;
 			z-index: 8	
 		}
+		.movesdisplay{
+			clear: both;
+			position: fixed;
+			width: 900px;
+		  height: 200px;
+			left:  50%;
+			top: 30px;
+			margin-left: -450px;
+			z-index: 9	
+		}
 		.levelmenu{
 			clear: both;
 			position: fixed;
@@ -845,13 +960,19 @@ p
 			  <br>
       </div>
 
-			<!-- <img class="button_restart" id="button_restart" src="/static/restart.png" alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_waiting_screen()" > -->
+			<!-- <img class="button_restart" id="button_restart" src="/static/restart.png" alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="goto_queued_screen()" > -->
 			<img class="button_quit"    id="button_quit" src="/static/quit.png"    alt="Restart"  ondragstart="return false" onselectstart="return false" onclick="clicked_quit()"    >
 
 			<img id="levelmenu_bgt" src="/static/line.png"  class="topborder" height=6 width=2000>
 			<div id="levelmenu_bg"class="levelmenu_bg" >
 			</div>
 			<img id="levelmenu_bgb" src="/static/line.png"  class="bottomborder" height=6 width=2000 >
+			
+			<div id="movesdisplay" class="movesdisplay" > 
+				<center>
+         	  <h1 id="movestext"></h1>
+				</center>
+			</div>
 
 			<div id="idlemenu" class="levelmenu" > <!-- onclick="clicked_wake()" > -->
 				<br><br><br><br><br><br>
@@ -898,7 +1019,7 @@ p
 				 <img id="joinbutton"    src="/static/join.png"       ondragstart="return false" onselectstart="return false" onclick="clicked_join()" >
 			</div>
 			
-			<div id="waitingmenu" class="levelmenu" >
+			<div id="queuedmenu" class="levelmenu" >
          <center>
 				 <br>
 				 <br>
@@ -911,6 +1032,30 @@ p
 				 </center>
 			</div>
 
+			
+			<div id="waitingmenu" class="levelmenu" >
+         <center>
+				 <br>
+				 <br>
+				 <br>
+				 <h1> Waiting for other players to join the game!  </h1>
+				 <br>
+				 <br>
+				 <img src="/static/waiting.gif">
+				 </center>
+			</div>
+
+			<div id="connectingmenu" class="levelmenu" >
+         <center>
+				 <br>
+				 <br>
+				 <br>
+				 <h1> Connecting to Groovik's Cube's central brain. <br> Please wait..  </h1>
+				 <br>
+				 <br>
+				 <img src="/static/waiting.gif">
+				 </center>
+			</div>
 
 			<div class="footer" >
 			<font size=-1>
@@ -918,7 +1063,6 @@ p
 			</font>
 			</div>
 
-       <div id="cube_status">Waiting for controller...</div>
 
        <div id="manual_rotate" class="debug">
           Altitude: <input id="slide_alt" type="range" min="-1000" max="1000" value="220" onchange="rotate_view();"><br/>

@@ -14,12 +14,12 @@ class StateRotation( StateBase ):
 			[ 18, 21, 24, 44, 41, 38, 35, 32, 29, 45, 48, 51, 18, -1 ], # x axis
 			[ 19, 22, 25, 43, 40, 37, 34, 31, 28, 46, 49, 52, 19, -1 ],
 			[ 20, 23, 26, 42, 39, 36, 33, 30, 27, 47, 50, 53, 20, -1 ],
-			[ 9, 12, 15, 42, 43, 44, 8, 5, 2, 51, 52, 53, 9, -1 ], # y axis
-			[ 10, 13, 16, 39, 40, 41, 7, 4, 1, 48, 49, 50, 10, -1 ],
-			[ 11, 14, 17, 36, 37, 38, 6, 3, 0, 45, 46, 47, 11, -1 ],
-			[ 6, 7, 8, 24, 25, 26, 15, 16, 17, 33, 34, 35, 6, -1 ], # z axis
-			[ 3, 4, 5, 21, 22, 23, 12, 13, 14, 30, 31, 32, 3, -1 ],
-			[ 0, 1, 2, 18, 19, 20, 9, 10, 11, 27, 28, 29, 0, -1 ], 
+			[  9, 12, 15, 42, 43, 44,  8,  5,  2, 51, 52, 53, 9,  -1 ], # y axis
+			[ 10, 13, 16, 39, 40, 41,  7,  4,  1, 48, 49, 50, 10, -1 ],
+			[ 11, 14, 17, 36, 37, 38,  6,  3,  0, 45, 46, 47, 11, -1 ],
+			[  6, 7,  8,  24, 25, 26, 15, 16, 17, 33, 34, 35,  6, -1 ], # z axis
+			[  3, 4,  5,  21, 22, 23, 12, 13, 14, 30, 31, 32,  3, -1 ],
+			[  0, 1,  2,  18, 19, 20,  9, 10, 11, 27, 28, 29,  0, -1 ], 
 			[ 18, 21, 24, 44, 41, 38, 35, 32, 29, 45, 48, 51, 18, 9999, 19, 52, 49, 46, 28, 31, 34, 37, 40, 43, 25, 22, 19, 9999, 20, 23, 26, 42, 39, 36, 33, 30, 27, 47, 50, 53, 20, -1 ] # special 1
 		]		
 		self.__rotdesc2step = [
@@ -89,8 +89,8 @@ class StateRotation( StateBase ):
 		# Update returns a list; first element is a list containing colors, second element is time, 3rd element is whether the state is done
 		simTime = self.__ComputeNextSimTime( currentTime )
 
-                # tracks how far along in the cube rotation we are
-                rotationStep = self.__step3Index		
+		# tracks how far along in the cube rotation we are
+		rotationStep = self.__step3Index		
 
 		# Update the target rotation state ( 3 step )
 		if ( self.__step3Index < 3 ):
@@ -131,6 +131,34 @@ class StateRotation( StateBase ):
 					for c in range( 3 ):
 						output[0][i][c] = output[0][i][c] * dimFactor
 		return output
+	
+	def DoDirectRotation( self, colors, slice, direction ):
+		
+		newcolors = copy.deepcopy( colors )
+		# first rotate 3step band:
+		ifrom = 0
+		ito = 3
+		while( self.__rotdesc3step[slice][ifrom+1] >= 0 ):
+			# wrap around array end
+			if self.__rotdesc3step[slice][ito] < 0: ito = 1
+			#print ifrom, ito
+			if direction == 0:  colors[ self.__rotdesc3step[slice][ifrom] ] = copy.deepcopy(newcolors [ self.__rotdesc3step[slice][ito] ] )
+			else:               colors[ self.__rotdesc3step[slice][ito] ] = copy.deepcopy(newcolors [ self.__rotdesc3step[slice][ifrom] ] )
+			ito += 1
+			ifrom += 1
+		
+		ifrom = 0
+		ito = 2
+		while( self.__rotdesc2step[slice][ifrom+1] >= 0 ):
+			# wrap around array end
+			if self.__rotdesc2step[slice][ito] < 0: ito = 1
+			#print ifrom, ito
+			if direction == 0:  colors[ self.__rotdesc2step[slice][ifrom] ] = copy.deepcopy( newcolors [ self.__rotdesc2step[slice][ito] ] )
+			else:               colors[ self.__rotdesc2step[slice][ito] ] = copy.deepcopy( newcolors [ self.__rotdesc2step[slice][ifrom] ] )
+			ito += 1
+			ifrom += 1
+   
+		return True
 		
 	def __ComputeNextSimTime( self, currentTime ):
 		# keyframes should happen each time a pixel hits a control point 

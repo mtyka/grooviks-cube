@@ -21,9 +21,11 @@ var interrupt_ok=true;
 // 2 = level menu
 // 3 = timeout menu
 // 4 = join    menu
+// 5 = queued  menu
 // 5 = waiting menu
 
 
+var masterVolume = 100;
 
 soundManager.url = 'static';
 //soundManager.preferFlash = false;
@@ -108,6 +110,7 @@ function playFaceClickSound(frame){
 	var playerNumber = Math.floor(frame.payload[1]/ 3) + 1;
 	var columnNumber = (frame.payload[1] % 3) + 1;
         var faceSound = soundManager.getSoundById('column'+ playerNumber  + '_' + columnNumber);
+	faceSound.setVolume(masterVolume);
 	soundManager.stopAll();
 	faceSound.play();
 }
@@ -116,9 +119,14 @@ function playRotationSound(rotationStep){
 	clog(rotationStep);
         if(rotationStep ){
             var gearSound = soundManager.getSoundById('gear' + rotationStep );
+	    gearSound.setVolume(masterVolume);
 	    //soundManager.stopAll();
             gearSound.play();
         }
+}
+
+function setMasterVolumeLevel(volumeLevel){
+	masterVolume  = volumeLevel;	
 }
 
 // ####################################################################
@@ -135,10 +143,16 @@ function clog(msg) {
 
 
 var previous_datagram = null;
+var first_connection = true;
 
 function on_message_pushed( datagram ) {
      $('#cube_status').html('Begin play.');
      $('#cube_status').animate({'opacity': 0}, 4000 );
+			
+		 if( first_connection ){
+		   goto_idle_screen();
+			 first_connection = false
+		 }
 
      //clog("Got message published");
      //clog( datagram );
@@ -149,8 +163,9 @@ function on_message_pushed( datagram ) {
             previous_datagram = datagram;
          }
          update_view();  // calls into the renderer code
-     }
-     update_view();  // calls into the renderer code
+     } else {
+	     update_view();  // calls into the renderer code
+		 }
 }
 
 
@@ -168,12 +183,19 @@ function on_game_state_change(newState, activePosition, clientstate) {
 //     game_state = newState
      $('#game_state').val( newState )
      $('#active_position').val( activePosition )
-     
+    
+		 active_position = activePosition;
 		 new_client_state = clientstate[position-1];
+		 new_game_state = newState;
 
+     clog("ActivePlayer: " + active_position + "MyPosition: " + position );
 		 clog("Server: NewState:" + new_client_state + "OldState: " + client_state ); 
+		 clog("Server: NewGameState:" + new_game_state + "OldGameState: " + game_state ); 
+		 
+		 
+		 game_state = new_game_state;
+		 
 		 // is there a change in client state ? 
-		 if ( new_client_state != client_state ){
 			 client_state = new_client_state;
 			 if ( client_state == "IDLE" ){
 				 goto_idle_screen();
@@ -182,39 +204,25 @@ function on_game_state_change(newState, activePosition, clientstate) {
 				 goto_mode_screen();
 			 } else
 			 if ( client_state == "SING" ){
-				 clear_screen();
-			 } else
-			 if ( client_state == "MULT" ){
-				 clear_screen();
-			 } else
-			 if ( client_state == "VICT" ){
-				 clear_screen();
-			 }else{
-				 clog("Unknown client_state:" + client_state );
-			 }
-		}
-
-
-		new_game_state = newState;
-
-		clog("Server: NewGameState:" + new_game_state + "OldGameState: " + game_state ); 
-		if ( new_game_state != game_state ){
-			game_state = new_game_state;
-			 if ( client_state == "IDLE" ) { }
-			 if ( client_state == "HOME" ){
-			 } else
-			 if ( client_state == "SING" ){
+			
 				 if( game_state == "SINGLE_INVITE" ){
            goto_join_screen();
 				 } else
 				 if( game_state == "SINGLE" ){
-           clear_screen();
+     			 clog("Deciding on Single player: ActivePlayer: " + active_position + "MyPosition: " + position );
+           if ( active_position == position ){
+					 		clear_screen();
+				 	 } else {
+							goto_queued_screen();
+					 }
 				 } else
 				 if( game_state == "VICTORY" ){
            clear_screen();
 				 }
-			 } else {
+			 
+			 } else
 			 if ( client_state == "MULT" ){
+			
 				 if( game_state == "SINGLE_INVITE" ){
            goto_waiting_screen();
 				 } else
@@ -224,10 +232,15 @@ function on_game_state_change(newState, activePosition, clientstate) {
 				 if( game_state == "VICTORY" ){
            clear_screen();
 				 }
-			 } 
-			}
+			 
+			 } else
+			 if ( client_state == "VICT" ){
+				 clear_screen();
+			 }else{
+				 clog("Unknown client_state:" + client_state );
+			 }
 
-		}
+
 
 }
 
@@ -404,6 +417,15 @@ function establish_hookbox_connections() {
                 clog('Heard about click on face ' + frame.payload);
             };  
         }
+        if( channelName == 'movesfromsolved' ) {
+            movesfromsolved_subscription = _subscription;                
+            movesfromsolved_subscription.onPublish = function(frame) {
+                clog('moves_from_solved has announced answer' + frame.payload);
+            		moves_from_solved = frame.payload;
+								// start inactivity counter which will trigger the message to appear
+								next_flash_moves_display = setTimeout("flash_moves_display()", 5000 ); 
+						};  
+        }
         if( channelName == 'gameState' ) {
         	gamestate_subscription = _subscription;
             gamestate_subscription.onPublish = function(frame) {
@@ -421,6 +443,7 @@ function establish_hookbox_connections() {
    // Subscribe to the pubsub channel with the colors
    hookbox_conn.subscribe("iframe");
    hookbox_conn.subscribe("faceclick");
+   hookbox_conn.subscribe("movesfromsolved");
    hookbox_conn.subscribe("gamemode");
    hookbox_conn.subscribe("gameState");
    hookbox_conn.subscribe("rotationStep");
