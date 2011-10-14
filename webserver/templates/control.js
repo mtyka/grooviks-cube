@@ -136,10 +136,16 @@ function clog(msg) {
 
 
 var previous_datagram = null;
+var first_connection = true;
 
 function on_message_pushed( datagram ) {
      $('#cube_status').html('Begin play.');
      $('#cube_status').animate({'opacity': 0}, 4000 );
+			
+		 if( first_connection ){
+		   goto_idle_screen();
+			 first_connection = false
+		 }
 
      //clog("Got message published");
      //clog( datagram );
@@ -404,6 +410,15 @@ function establish_hookbox_connections() {
                 clog('Heard about click on face ' + frame.payload);
             };  
         }
+        if( channelName == 'movesfromsolved' ) {
+            movesfromsolved_subscription = _subscription;                
+            movesfromsolved_subscription.onPublish = function(frame) {
+                clog('moves_from_solved has announced answer' + frame.payload);
+            		moves_from_solved = frame.payload;
+								// start inactivity counter which will trigger the message to appear
+								next_flash_moves_display = setTimeout("flash_moves_display()", 5000 ); 
+						};  
+        }
         if( channelName == 'gameState' ) {
         	gamestate_subscription = _subscription;
             gamestate_subscription.onPublish = function(frame) {
@@ -421,6 +436,7 @@ function establish_hookbox_connections() {
    // Subscribe to the pubsub channel with the colors
    hookbox_conn.subscribe("iframe");
    hookbox_conn.subscribe("faceclick");
+   hookbox_conn.subscribe("movesfromsolved");
    hookbox_conn.subscribe("gamemode");
    hookbox_conn.subscribe("gameState");
    hookbox_conn.subscribe("rotationStep");

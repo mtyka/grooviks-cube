@@ -26,12 +26,16 @@ from groovikutils import *
 from statedelay import StateDelay
 from statefade import StateFade
 from stateidle import StateIdle
+
+
 from stateidlepulse import StateIdlePulse
 from staterotation import StateRotation
 from statespiralfade import StateSpiralFade
 from statestrobe import StateStrobe
 from statefire import StateFire
 from statetetris import StateTetris
+
+from movelibrary import MoveLibrary     ## This provides services on determining how many moves from solved a state is
 from modenormal import ModeNormal
 from modecalibration import ModeCalibration
 from modelightboardconfiguration import ModeLightBoardConfiguration
@@ -117,7 +121,14 @@ class GrooviksCube:
          self.QueueModeChange( params )
       else:
          self.__currentMode.HandleInput( self, self.display, cubeInputType, params )
-   
+  
+
+   def DetermineMovesFromSolved( self, curtime ):
+      print "Figuring out how many moves from solved"
+      output = self.__currentState.Update( curtime )
+      return self.__movelibrary.AnalysePosition( output[0] )
+	
+
    #-----------------------------------------------------------------------------
    # This method will take some client command to change the game state and 
    # process it according to the current state of that client and that of the 
@@ -211,6 +222,11 @@ class GrooviksCube:
    def QueueIdlePulse( self, duration ):
       if ( self.__CanQueueState( CubeState.IDLEPULSE ) ):
          self.__AppendState( [ CubeState.IDLEPULSE, duration ] )
+   
+	 # This state will pulse toward black and back to the current color over the specified duration (a float)
+   def QueueMoveLibrary( self, duration ):
+      if ( self.__CanQueueState( CubeState.MOVELIBRARY ) ):
+         self.__AppendState( [ CubeState.MOVELIBRARY, duration ] )
       
    # This state will fade the cube to the specified colors
    # duration is a float indicating the time of the fade
@@ -292,6 +308,9 @@ class GrooviksCube:
       else:
          for r in rotations:
             self.__event_manager.invalid_move(r[0]/6)
+      
+      self.QueueMoveLibrary( 0.01 ); 
+			
       return True
       
    #-----------------------------------------------------------------------------   
@@ -424,7 +443,10 @@ class GrooviksCube:
       self.__fadeState = StateFade()
       self.__spiralFadeState = StateSpiralFade()
       self.__delayState = StateDelay()
-      
+    
+			## hard coded for now
+      self.__movelibrary = MoveLibrary( "states" ) 
+
       # create all modes
       self.__normalMode = ModeNormal()
       self.__calibrationMode = ModeCalibration()
@@ -527,6 +549,8 @@ class GrooviksCube:
          self.__currentState = self.__idlePulseState
       elif ( self.__currentCubeState == CubeState.IDLE ):
          self.__currentState = self.__idleState
+      elif ( self.__currentCubeState == CubeState.MOVELIBRARY ):
+         self.__currentState = self.__movelibrary
       elif ( self.__currentCubeState == CubeState.STROBE ):
          self.__currentState = self.__strobeState
       elif ( self.__currentCubeState == CubeState.FIREMODE ):
