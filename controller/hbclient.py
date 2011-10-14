@@ -22,6 +22,8 @@ class HookClient:
         self.frame_id += 1
         self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'faceclick' }))
         self.frame_id += 1
+        self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'movesfromsolved' }))
+        self.frame_id += 1
         self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'gamemode' }))
         self.frame_id += 1
         self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'cubemode' }))
