@@ -25,6 +25,7 @@ var interrupt_ok=true;
 // 5 = waiting menu
 
 
+var masterVolume = 100;
 
 soundManager.url = 'static';
 //soundManager.preferFlash = false;
@@ -109,6 +110,7 @@ function playFaceClickSound(frame){
 	var playerNumber = Math.floor(frame.payload[1]/ 3) + 1;
 	var columnNumber = (frame.payload[1] % 3) + 1;
         var faceSound = soundManager.getSoundById('column'+ playerNumber  + '_' + columnNumber);
+	faceSound.setVolume(masterVolume);
 	soundManager.stopAll();
 	faceSound.play();
 }
@@ -117,9 +119,14 @@ function playRotationSound(rotationStep){
 	clog(rotationStep);
         if(rotationStep ){
             var gearSound = soundManager.getSoundById('gear' + rotationStep );
+	    gearSound.setVolume(masterVolume);
 	    //soundManager.stopAll();
             gearSound.play();
         }
+}
+
+function setMasterVolumeLevel(volumeLevel){
+	masterVolume  = volumeLevel;	
 }
 
 // ####################################################################
