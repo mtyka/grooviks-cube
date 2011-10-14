@@ -4,7 +4,7 @@
 # Only one state object can be active at a time
 #
 #-------------------------------------------------------------------------------
-class StateBase:
+class StateBase( object ):
 	# This is called when you entry this state. You are passed the following state:
 	# currentTime: the current simulation time in seconds
 	# params: initialization parameters (state dependent)
