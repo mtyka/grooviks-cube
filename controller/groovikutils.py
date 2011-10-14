@@ -48,7 +48,7 @@ class CubeState:
 	SWITCH_MODE = 8
 	FIREMODE = 9	
 	TETRISMODE = 10
-
+	MOVELIBRARY=11
 #-------------------------------------------------------------------------------
 # Game state:  These states define which clients are allowed to interact with
 # the cube game, and what actions they are allowed to take.
