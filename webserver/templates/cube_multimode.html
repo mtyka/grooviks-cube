@@ -26,63 +26,66 @@ if( isIE() ) {
 
 <script> 
 
+//////////// FLASH DISPLAY ////////////////////////////////////////////
 
+function flash_display( text ){
+	flash_display( test, 3000 );
+}
 
-
-
-
-var last_moves_from_solved = 0
-var moves_from_solved = 0
-
-var next_flash_moves_display;
-
-function flash_moves_display(){
-
-	// exclude when not to flash moves display
-	if ( client_state != "MULT" && client_state != "SING" ) return; 
-	if ( client_state == "SING" && ( active_position != position) ) return; 
-
-	clog( "next_flash_moves_display()" );
+function flash_display( text, uptime ){
 	$("#movestext").css("opacity", "0.0"); 
-	
-	if( moves_from_solved  <= 0 ) return;
-	if( moves_from_solved > 5 ) return;
-	if( (moves_from_solved > last_moves_from_solved) && 
-	    ( moves_from_solved >  -1 ) &&
-			( last_moves_from_solved > -1 )
-	){
-		if( moves_from_solved == 1 ) $("#movestext").html("Hey! It was so pristine - now you've messed it up!" );
-		if( moves_from_solved == 2 ) $("#movestext").html("Looks like that was wrong. You're now " + moves_from_solved + " moves away from solved!");	
-		if( moves_from_solved == 3 ) $("#movestext").html("Hmmm.. 3 moves from solved");
-		if( moves_from_solved == 4 ) $("#movestext").html("Wrong direction - you're now 4 moves away from solved.");
-		if( moves_from_solved == 5 ) $("#movestext").html("Believe it or not - You're now " + moves_from_solved + " moves from solved!");	
-	}
-	else if ( moves_from_solved == last_moves_from_solved ){
-		$("#movestext").html("You're just " + moves_from_solved + " moves from solved!"); 
-	}else{
-		if( moves_from_solved == 1 ) $("#movestext").html("Just one more move !" );
-		if( moves_from_solved == 2 ) $("#movestext").html("So close! Just " + moves_from_solved + " moves from solved!");	
-		if( moves_from_solved == 3 ) $("#movestext").html("Nice! Only " + moves_from_solved + " moves from solved!");	
-		if( moves_from_solved == 4 ) $("#movestext").html("Ok, you're getting close now - you're " + moves_from_solved + " moves from solved!");	
-		if( moves_from_solved == 5 ) $("#movestext").html("Believe it or not - You're merely " + moves_from_solved + " moves from solved!");	
-	}
-
-	last_moves_from_solved = moves_from_solved;
-
+	$("#movestext").html( text );
 	$("#movestext").animate( {
 		opacity:1.0
 	},{ duration: 1000 }
 	);
-	setTimeout( "remove_moves_display()", 3000 )
+	setTimeout( "remove_flash_display()", uptime )
 }
 
-function remove_moves_display(){
+function remove_flash_display(){
 	$("#movestext").animate( {
 		opacity:0.0
 	},{ duration: 1000,
 	    complete: function() { $("#movestext").html(""); } }
 	);
 	
+}
+
+</script>
+
+
+<script>
+
+///////////// HOW MANY MOVES FROM SOLVED - DISPLAY ////////////////////
+var last_moves_from_solved = 0
+var moves_from_solved = 0
+var next_flash_moves_display;
+function flash_moves_display(){
+	// exclude when not to flash moves display
+	if ( client_state != "MULT" && client_state != "SING" ) return; 
+	if ( client_state == "SING" && ( active_position != position) ) return; 
+	if( moves_from_solved  <= 0 ) return;
+	if( moves_from_solved > 5 ) return;
+	if( (moves_from_solved > last_moves_from_solved) && 
+	    ( moves_from_solved >  -1 ) &&
+			( last_moves_from_solved > -1 )
+	){
+		if( moves_from_solved == 1 ) flash_display("Hey! It was so pristine - now you've messed it up!" );
+		if( moves_from_solved == 2 ) flash_display("Looks like that was wrong. You're now " + moves_from_solved + " moves away from solved!");	
+		if( moves_from_solved == 3 ) flash_display("Hmmm.. 3 moves from solved");
+		if( moves_from_solved == 4 ) flash_display("Wrong direction - you're now 4 moves away from solved.");
+		if( moves_from_solved == 5 ) flash_display("Believe it or not - You're now " + moves_from_solved + " moves from solved!");	
+	}
+	else if ( moves_from_solved == last_moves_from_solved ){
+		flash_display("You're just " + moves_from_solved + " moves from solved!"); 
+	}else{
+		if( moves_from_solved == 1 ) flash_display("Just one more move !" );
+		if( moves_from_solved == 2 ) flash_display("So close! Just " + moves_from_solved + " moves from solved!");	
+		if( moves_from_solved == 3 ) flash_display("Nice! Only " + moves_from_solved + " moves from solved!");	
+		if( moves_from_solved == 4 ) flash_display("Ok, you're getting close now - you're " + moves_from_solved + " moves from solved!");	
+		if( moves_from_solved == 5 ) flash_display("Believe it or not - You're merely " + moves_from_solved + " moves from solved!");	
+	}
+	last_moves_from_solved = moves_from_solved;
 }
 
 function reset_flash_moves_timeout(){
@@ -92,9 +95,9 @@ function reset_flash_moves_timeout(){
 }
 
 
-
 $(window).click( function() {
 	reset_flash_moves_timeout();
+	reset_timeout();
 	//touch screen to begin!
 	if( menustate == 1 ){
 		clicked_wake();
@@ -216,7 +219,15 @@ jQuery.fn.elementlocation = function() {
 {% include "render.js" %}
 
 
+
+
 // GAME TIMOUT COUNTER & LOGIC 
+
+function clear_game_timeout(){
+	game_timeout = -2;
+	$("#game_timeout").css("display", "none" );
+}
+
 function count_down_game_timeout(){
 	if( game_timeout > -2 ) game_timeout -= 1;
 	
@@ -245,6 +256,7 @@ function set_initial_position(){
         //$("#slide_azi").val(  start_azimuth );
         //rotate_view(); 
       clog("Resetting proper position: " + position + "  (" + start_azimuth + ")" );
+			stop_spin();
 			animate_absolute_spin( start_azimuth ) 
 }
 
@@ -309,6 +321,7 @@ function animate_absolute_spin(radians) {
 		    complete: function(){
 					locked_buttons = false;
 					ignore_clicks = false;
+					update_view();
 				},
 				step: function() {  
 					//console.log($("#slide_azi").attr("animate_val") ); 
@@ -363,15 +376,12 @@ function start_spin( start_spin ){
 	  }
 
 		if( !is_spinning ){
-			set_initial_position();
 			return;
 		}
 
-		
 		var azimuth = $("#slide_azi").val()*1.0; // convert from string to number. javascript sucks
 		azimuth += 1 ;
 		azimuth = azimuth % (100*Math.PI*2);  // Re-center
-		//clog(azimuth);
 		$("#slide_azi").val( azimuth  ); 
 		rotate_view();
 		setTimeout("start_spin( false )",25 ) 
@@ -379,7 +389,6 @@ function start_spin( start_spin ){
 
 function stop_spin(){
 		is_spinning = false;
-		//set_initial_position();
 }
 
 
@@ -389,29 +398,29 @@ function stop_spin(){
 
 <script>
 
-var timeout_length = 10 
-var timeout_state = -1; // off by default 
-function update_timeout( reset ){
-	if( reset ){
-		timeout_state = timeout_length;
-	}
-	if( timeout_state == 0 ){
-		// TIMEOUT OCCURED!
-		// RESET GAMESTATE
-		clicked_quit();
-	} 
-	if( timeout_state < 0 ) return;
+var timeout_length = 40; 
+var inactivity_timeout = -1; // off by default 
 
-	$("#timeout_display").html( timeout_state );
-	timeout_state-=1
-	
-	if( timeout_state >= 0 ){ 
-		setTimeout("update_timeout( false )",1000) // call me again in 1000 ms
+function reset_timeout(){
+	if ( menustate != 4 ) inactivity_timeout = timeout_length;
+}
+
+function update_timeout( ){
+	if( inactivity_timeout == 10 ){ 
+		//Only show timeout menu when we're not already in some menu
+		if( menustate == 0 ) goto_timeout_screen(); 
 	}
+	
+	document.title = inactivity_timeout 
+	// Fulltimeout
+	if( inactivity_timeout == 0 ){ clicked_quit(); } 
+	$("#timeout_display").html( inactivity_timeout );
+	if( inactivity_timeout > -2 ) inactivity_timeout-=1;
+	setTimeout("update_timeout()",1000) // call me again in 1000 ms
 }
 
 function clicked_continue(){
-	timeout_state = -1; // quit timeout
+	reset_timeout();	
 	clear_screen(); 
 }
 
@@ -546,7 +555,7 @@ function flyin_timeoutmenu() {
 		},{ duration: 1000 }
 		);
 		// start the timeout!
-		update_timeout( true );
+		reset_timeout();
 }
 
 function flyout_timeoutmenu() {
@@ -555,7 +564,7 @@ function flyout_timeoutmenu() {
 		},{ duration: 1000 }
 		);
     // also turn off timer
-	  timeout_state = -1; // 
+	  inactivity_timeout = -1; // 
 }
 
 
@@ -738,11 +747,8 @@ function clear_screen(){
 		if( menustate != 0 ) flyout_menu_bg();        
     menustate=0
 		ignore_clicks=false;
-		stop_spin()
 		set_initial_position();
 }
-
-
 
 
 function clicked_quit(){
@@ -790,6 +796,7 @@ function clicked_join(){
 
 $(document).ready(function() {
 	goto_connecting_screen();
+	update_timeout( );
 	document.title = "Cube P:" + position 
 });
 
