@@ -10,7 +10,7 @@ rotator = MoveLibrary()
 
 state_hash = {}
 
-maxdepth = 4
+maxdepth = 5
 
 ## add solved state as 0
 rotator.Recursive_make_all_single_moves( start_state, state_hash, maxdepth, 0,  True )
