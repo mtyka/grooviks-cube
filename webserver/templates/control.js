@@ -3,15 +3,11 @@
 // ####################################################################
 {% include "soundmanager2-nodebug-jsmin.js" %}
 
-
-
-
-
 var client_state = "IDLE";
 var game_state = "UNBOUND";
 var active_position = 0;
 
-var game_timeout = 50;
+var game_timeout = -2;
 var inactivity_timeout = -1;
 var ignore_clicks = false;
 var locked_buttons=false;
@@ -209,7 +205,6 @@ function on_game_state_change(newState, activePosition, clientstate) {
 		 
 		 game_state = new_game_state;
 		 
-		 // is there a change in client state ? 
 			 client_state = new_client_state;
 			 if ( client_state == "IDLE" ){
 				 goto_idle_screen();
@@ -225,7 +220,9 @@ function on_game_state_change(newState, activePosition, clientstate) {
 				 if( game_state == "SINGLE" ){
      			 clog("Deciding on Single player: ActivePlayer: " + active_position + "MyPosition: " + position );
            if ( active_position == position ){
-					 		clear_screen();
+					 		clog("game_timeout=50");
+							game_timeout=50;
+							clear_screen();
 				 	 } else {
 							goto_queued_screen();
 					 }
