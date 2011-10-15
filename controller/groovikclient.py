@@ -2,6 +2,7 @@
 from hbclient import *
 from groovikutils import *
 import groovik
+from time import time
 
 class GrooviksClient:
 
@@ -29,6 +30,10 @@ class GrooviksClient:
     
     def SetState(self, newState):
         self.__state = newState
+        
+    def GetStart1PRequestTime(self):
+        '''Return the time that this session requested a single player game'''
+        return self.__singleRequestTime
     
     def HandleCommand(self, command, parameters):
         '''
@@ -46,7 +51,7 @@ class GrooviksClient:
         self.LogEvent("Exceuting command %s in client state %s; game state is %s" % (command, self.GetState(), self.GetCube().GetGameState()))
         try:
             action(self, parameters)
-            self.LogEvent("Command complete.  New client state is %s; game state is %s" % (self.GetState(), self.GetCube().GetGameState()))
+            self.LogEvent("Command complete.  New client state is %s; game state is %s; active position is %s" % (self.GetState(), self.GetCube().GetGameState(), self.GetCube().GetActivePosition()))
         except Exception as e:
             self.LogEvent("Command %s failed: %s" % (command, e.args))
             raise e
@@ -76,7 +81,7 @@ class GrooviksClient:
         self.GetCube().MultiplePlayerExits()
         
     def RestartFromSingle(self, parameters):
-        raise "Not implemented"
+        raise NotImplementedError()
         
     def RestartFromMultiple(self, parameters):
         # SINGLE_INVITE:
@@ -94,11 +99,12 @@ class GrooviksClient:
         #   If all non-IDLE players are also MULTIPLE_DIFFICULTY:
         #     cubeState <= MULTIPLE
         #
-        raise "Not implemented"     
+        raise NotImplementedError()
         
     # TODO: it looks like Start1P and Start3P should probably be factored
     def Start1P(self, parameters):
         self.SetState(ClientState.SING)
+        self.__singleRequestTime = time()
         self.GetCube().SinglePlayerStarts(self)
 
     def Start3P(self, parameters):
