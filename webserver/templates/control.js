@@ -11,7 +11,8 @@ var client_state = "IDLE";
 var game_state = "UNBOUND";
 var active_position = 0;
 
-
+var game_timeout = 50;
+var inactivity_timeout = -1;
 var ignore_clicks = false;
 var locked_buttons=false;
 var menustate = 0;
@@ -186,6 +187,11 @@ function set_grey() {
     }
     update_view();
 }
+
+function game_timeout_occured() {
+	clicked_quit();	
+}
+
 
 function on_game_state_change(newState, activePosition, clientstate) {
 //     game_state = newState
