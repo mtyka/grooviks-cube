@@ -33,10 +33,15 @@ var moves_from_solved = 0
 var next_flash_moves_display;
 
 function flash_moves_display(){
+
+	// exclude when not to flash moves display
+	if ( client_state != "MULT" && client_state != "SING" ) return; 
+	if ( client_state == "SING" && ( active_position != position) ) return; 
+
 	clog( "next_flash_moves_display()" );
 	$("#movestext").css("opacity", "0.0"); 
 	
-	if( moves_from_solved == 0 ) return;
+	if( moves_from_solved  <= 0 ) return;
 	if( moves_from_solved > 5 ) return;
 	if( (moves_from_solved > last_moves_from_solved) && 
 	    ( moves_from_solved >  -1 ) &&
@@ -44,16 +49,16 @@ function flash_moves_display(){
 	){
 		if( moves_from_solved == 1 ) $("#movestext").html("Hey! It was so pristine - now you've messed it up!" );
 		if( moves_from_solved == 2 ) $("#movestext").html("Looks like that was wrong. You're now " + moves_from_solved + " moves away from solved!");	
-		if( moves_from_solved == 3 ) $("#movestext").html("Colder..");
-		if( moves_from_solved == 4 ) $("#movestext").html("Ok, you're just making it worse");
+		if( moves_from_solved == 3 ) $("#movestext").html("Hmmm.. 3 moves from solved");
+		if( moves_from_solved == 4 ) $("#movestext").html("Wrong direction - you're now 4 moves away from solved.");
 		if( moves_from_solved == 5 ) $("#movestext").html("Believe it or not - You're now " + moves_from_solved + " moves from solved!");	
 	}
 	else if ( moves_from_solved == last_moves_from_solved ){
 		$("#movestext").html("You're just " + moves_from_solved + " moves from solved!"); 
 	}else{
-		if( moves_from_solved == 1 ) $("#movestext").html("Just 1 more move !" );
+		if( moves_from_solved == 1 ) $("#movestext").html("Just one more move !" );
 		if( moves_from_solved == 2 ) $("#movestext").html("So close! Just " + moves_from_solved + " moves from solved!");	
-		if( moves_from_solved == 3 ) $("#movestext").html("Only " + moves_from_solved + " moves from solved!");	
+		if( moves_from_solved == 3 ) $("#movestext").html("Nice! Only " + moves_from_solved + " moves from solved!");	
 		if( moves_from_solved == 4 ) $("#movestext").html("Ok, you're getting close now - you're " + moves_from_solved + " moves from solved!");	
 		if( moves_from_solved == 5 ) $("#movestext").html("Believe it or not - You're merely " + moves_from_solved + " moves from solved!");	
 	}
@@ -207,7 +212,8 @@ jQuery.fn.elementlocation = function() {
 {% include "render.js" %}
 
 function set_initial_position(){
-        // using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
+      clog("Resetting proper position: " + position );
+			// using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
         var start_azimuth = parseInt([ -Math.PI*2/3.1, 0, Math.PI*2/3.1 ][position-1] * 100);
         //clog('start azi: ' + start_azimuth);
         //$("#slide_azi").val(  start_azimuth );
@@ -265,7 +271,11 @@ function animate_absolute_spin(radians) {
 		var azimuth = $("#slide_azi").val()*1.0; // convert from string to number. javascript sucks
 		azimuth = azimuth % (100*Math.PI*2);  // Re-center
 		$("#slide_azi").attr("animate_val", azimuth); // prep temporary animation variable
-		
+	
+		if( azimuth == radians ){
+			// we're already at solved position
+			return;
+		}
 		azimuth = radians 
 		//console.log(azimuth);
 		$("#slide_azi").animate( { 
@@ -344,7 +354,7 @@ function start_spin( start_spin ){
 
 function stop_spin(){
 		is_spinning = false;
-		//set_initial_position();
+		set_initial_position();
 }
 
 
