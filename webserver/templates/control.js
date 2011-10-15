@@ -201,15 +201,18 @@ function on_game_state_change(newState, activePosition, clientstate) {
      clog("ActivePlayer: " + active_position + "MyPosition: " + position );
 		 clog("Server: NewState:" + new_client_state + "OldState: " + client_state ); 
 		 clog("Server: NewGameState:" + new_game_state + "OldGameState: " + game_state ); 
-		 
+		
+		 reset_timeout();
 		 
 		 game_state = new_game_state;
 		 
 			 client_state = new_client_state;
 			 if ( client_state == "IDLE" ){
+				 clear_game_timeout();
 				 goto_idle_screen();
 			 } else
 			 if ( client_state == "HOME" ){
+				 clear_game_timeout();
 				 goto_mode_screen();
 			 } else
 			 if ( client_state == "SING" ){
@@ -220,14 +223,15 @@ function on_game_state_change(newState, activePosition, clientstate) {
 				 if( game_state == "SINGLE" ){
      			 clog("Deciding on Single player: ActivePlayer: " + active_position + "MyPosition: " + position );
            if ( active_position == position ){
-					 		clog("game_timeout=50");
-							game_timeout=50;
+							game_timeout=99;
+           		flash_display("Welcome to the Single Player Game", 6000 );
 							clear_screen();
 				 	 } else {
 							goto_queued_screen();
 					 }
 				 } else
 				 if( game_state == "VICTORY" ){
+					 clear_game_timeout();
            clear_screen();
 				 }
 			 
@@ -235,10 +239,13 @@ function on_game_state_change(newState, activePosition, clientstate) {
 			 if ( client_state == "MULT" ){
 			
 				 if( game_state == "SINGLE_INVITE" ){
+					 clear_game_timeout();
            goto_waiting_screen();
 				 } else
 				 if( game_state == "MULTIPLE" ){
-           clear_screen();
+           flash_display("Welcome to the 3-Player Game", 6000);
+					 clear_game_timeout();
+					 clear_screen();
 				 } else
 				 if( game_state == "VICTORY" ){
            clear_screen();
@@ -341,6 +348,7 @@ function rotate_view() {
     update_view();
 
 		$("body").click( function( eventObj ) {
+			reset_timeout();
 			if( !ignore_clicks ){
 				 //var x = eventObj.pageX;
 				 //var y = eventObj.pageY;
