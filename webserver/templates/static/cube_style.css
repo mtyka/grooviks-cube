@@ -89,7 +89,7 @@
 		  height: 100px;
 			left:  80px;
 			top: 30px;
-			z-index: 9	
+			z-index: 4	
 		}
     .game_timeout h1{
         color: #ffffff;
@@ -105,7 +105,7 @@
 			left:  50%;
 			top: 30px;
 			margin-left: -450px;
-			z-index: 9	
+			z-index: 5
 		}
 		.levelmenu{
 			clear: both;

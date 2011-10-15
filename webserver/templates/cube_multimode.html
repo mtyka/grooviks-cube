@@ -288,25 +288,21 @@ $(document).ready(function(){
 
 
 function animate_absolute_spin(radians) {
-		// lock the buttons
-		//if(locked_buttons) return;
-		locked_buttons = true;
-    ignore_clicks = true;
-
-    clog("Here");
 		// do the boogie 
 		var azimuth = $("#slide_azi").val()*1.0; // convert from string to number. javascript sucks
 		azimuth = azimuth % (100*Math.PI*2);  // Re-center
 		$("#slide_azi").attr("animate_val", azimuth); // prep temporary animation variable
 	
-    clog("Here: " + azimuth + "    " + radians);
+    clog("Animate_absolute_spin: " + azimuth + "    " + radians);
 		if( azimuth == radians ){
 			// we're already at solved position
 			clog("Already at solved position");
 			return;
 		}
+		
+		locked_buttons = true;
+    ignore_clicks = true;
 		azimuth = radians 
-		console.log(azimuth);
 		$("#slide_azi").animate( { 
 			animate_val: azimuth 
 		},{ duration: 2000, 
