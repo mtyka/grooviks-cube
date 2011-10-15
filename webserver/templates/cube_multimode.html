@@ -224,7 +224,10 @@ function count_down_game_timeout(){
 	if( game_timeout == -1 ){
 		game_timeout_occured();
 	}
+	if( game_timeout < 0 ) $("#game_timeout").css("display", "none" )
+	else                   $("#game_timeout").css("display", "inline" )
 	$("#game_timeout").html( game_timeout );
+	
 	setTimeout( "count_down_game_timeout()", 1000 );
 }
 var game_timeout_display = $( jQuery( '<div class="game_timeout"> <h1 id="game_timeout" >Timeout</h1> </div>' ) )
