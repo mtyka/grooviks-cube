@@ -129,6 +129,14 @@ function setMasterVolumeLevel(volumeLevel){
 	masterVolume  = volumeLevel;	
 }
 
+function handle_vol(payload){
+    if(payload[0] == "ping") {
+      	hookbox_conn.publish("volumeControl", ["pong", position, masterVolume] );
+    } else if (payload[0] == "update") {
+        setMasterVolumeLevel(payload[parseInt(position)+1]);
+    }
+}
+
 // ####################################################################
 // ######################## Control Logic #############################
 // ####################################################################
@@ -438,6 +446,12 @@ function establish_hookbox_connections() {
                 playRotationSound(frame.payload);
             }
         }
+        if( channelName == 'volumeControl' ) {
+            vol_subscription = _subscription;
+            vol_subscription.onPublish = function(frame) {
+                handle_vol(frame.payload);
+            }
+        }
     };
 
    // Subscribe to the pubsub channel with the colors
@@ -447,6 +461,7 @@ function establish_hookbox_connections() {
    hookbox_conn.subscribe("gamemode");
    hookbox_conn.subscribe("gameState");
    hookbox_conn.subscribe("rotationStep");
+   hookbox_conn.subscribe("volumeControl");
 }
 
 
