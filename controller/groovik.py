@@ -153,16 +153,33 @@ class GrooviksCube:
        self.SetGameState(newState)
 
    def SinglePlayerStarts( self, client ):
-       '''Enter single player mode, setting the given client as the active position'''
-       if self.GetGameState() == GameState.UNBOUND:
-           self.ChangeGameState({ GameState.UNBOUND : GameState.SINGLE })
-           self.SetActivePosition(client.GetPosition())
-       elif self.GetGameState() in [GameState.SINGLE, GameState.VICTORY]:
-           self.QueueSinglePlayer(client)      
+       '''
+       If the cube is currently unbound, give control of the cube to the next
+       client in line.
+       
+       The vestigial 'client' argument is ignored.
+       '''
+       self.StartSinglePlayerIfUnbound()
    
-   def QueueSinglePlayer( self, client ):
-       '''Record a request by a non-active position to play in single-player mode'''
-       self.__queuedSinglePlayerRequests[client.GetPosition()] = None 
+   def StartSinglePlayerIfUnbound(self):
+       if self.GetGameState() != GameState.UNBOUND:
+           return
+       nextPlayer = self.FindQueuedSinglePlayer()
+       if nextPlayer != None:
+           self.ChangeGameState({ GameState.UNBOUND : GameState.SINGLE })
+           self.SetActivePosition(nextPlayer.GetPosition())
+   
+   def FindQueuedSinglePlayer(self):
+       '''
+       Find and return the client in state SING with the earliest Start1P
+       request time.  If no clients are in state SING, return None.
+       '''
+       queuedClients = filter( lambda client: client.GetState() == ClientState.SING,
+                               self.GetAllClients() )
+       if not queuedClients:
+           return None
+       return sorted( queuedClients, 
+                      key=lambda player: player.GetStart1PRequestTime() )[0]
    
    def MultiplePlayerStarts( self ):
        self.ChangeGameState({
@@ -172,34 +189,42 @@ class GrooviksCube:
        })
        
    def SinglePlayerJoins( self, client ):
-       if not self.IsPositionActive( client.GetPosition() ):
-           self.LogEvent("Unexpected call to SinglePlayerJoing by position %d (active position is %d)" % (client.GetPosition(), self.GetActivePosition()))
-           return
-       self.ChangeGameState({
-           GameState.SINGLE_INVITE : GameState.MULTIPLE,
-       })
+       '''
+       If the active player joins a multiplayer game, the game mode 
+       immediately changes the multiplayer.
+       '''
+       if self.IsPositionActive( client.GetPosition() ):
+           self.ChangeGameState({ GameState.SINGLE_INVITE : GameState.MULTIPLE, })
    
    def SinglePlayerExits( self, client ):
-       if not self.IsPositionActive( client.GetPosition() ):
-           # is this possible?
-           del self.__queuedSinglePlayerRequests[client.GetPosition()]
-           return
-       self.ChangeGameState({
-           GameState.SINGLE : GameState.UNBOUND,
-           GameState.SINGLE_INVITE : GameState.MULTIPLE,
-           GameState.VICTORY : GameState.VICTORY,
-       })
-       if len(self.__queuedSinglePlayerRequests) > 0:
-           # TODO
-           pass
+       '''
+       If the active player exits, change the game state, possibly starting a
+       queued single player game.  If any players are waiting for multiplayer 
+       mode to begin, multiplayer mode begins.  If no players are waiting for
+       multiplayer mode, but at least one player is waiting for single player
+       mode, the next player in line gains control of the cube.  Otherwise, the
+       cube becomes unbound.
+       '''
+       if self.IsPositionActive( client.GetPosition() ):
+           self.ChangeGameState({
+               GameState.SINGLE : GameState.UNBOUND,
+               GameState.SINGLE_INVITE : GameState.MULTIPLE,
+               GameState.VICTORY : GameState.VICTORY,
+           })
+           self.StartSinglePlayerIfUnbound()           
    
    def MultiplePlayerExits( self ):
-       activePlayersRemain = False
-       for client in self.__clientdict.values():
-           if client.GetState() != ClientState.IDLE:
-                activePlayersRemain = True
-       if not activePlayersRemain:
-           self.__currentGameState = GameState.UNBOUND
+       '''
+       If one of the participants of a multiplayer game quits, check to see if
+       any players remain.  If all participants are idle, then change the game
+       state back to UNBOUND; if there are any players queued for single player
+       mode, give them control of the cube. 
+       '''
+       activePlayers = queuedClients = filter( lambda client: client.GetState() == ClientState.MULT,
+                                               self.GetAllClients() )
+       if not activePlayers:
+           self.SetGameState( GameState.UNBOUND )
+           self.StartSinglePlayerIfUnbound()
    
    #-----------------------------------------------------------------------------
    # This method will queue a game mode change. mode is member of the CubeMode enum.
@@ -343,7 +368,6 @@ class GrooviksCube:
    def Randomize( self, client, depth ):
       if not self.IsPositionActive(client.GetPosition()):
           # only randomize if the cube is bound to the requesting client
-          self.__queuedSinglePlayerRequests[client.GetPosition()] = depth
           return
       if self.GetGameState() in [GameState.UNBOUND, GameState.VICTORY]:
           # ignore if the cube isn't bound to an active game
@@ -462,7 +486,6 @@ class GrooviksCube:
       self.__gameStateLock = threading.RLock() 
       self.__currentGameState = GameState.UNBOUND
       self.__currentActivePosition = None
-      self.__queuedSinglePlayerRequests = {}
 
       # Initialize the three GroovikClients
       self.__clientdict = {}
