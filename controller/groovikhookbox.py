@@ -182,14 +182,7 @@ class Cube():
                     push_game_client_state(self.grooviksCube)
 
                 elif channel == 'gamemode':
-                    position, difficulty = payload['position'], payload['difficulty']
-                    self.logger.logLine( "GameMode: %s " % (payload) )
-                    self.grooviksCube.SetActivePosition(position)
-                    if self.grooviksCube.IsPositionActive(position):
-                        self.grooviksCube.ResetColors()
-                        self.grooviksCube.Randomize(difficulty)
-                    else:
-                        self.logger.logLine( "Skipping setting game mode from position %d" % (position) )
+                    self.logger.logLine( "Received commmand for defunct channel 'gamemode' %s " % (payload) )
 
                 elif channel == 'cubemode':
                     mode = payload['mode']
