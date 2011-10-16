@@ -426,46 +426,57 @@ function clear_svg() {
     svg_polygons = [];
 }
 
-function drawCube( ctx, viewProj, viewProjViewport, colors )
+function drawCube( ctx, viewProj, viewProjViewport, colors, grey_mode )
 {
 	var red = [ 0.0, 0.7, 1.0 ];
-    var quadlist = buildQuadList( ctx, viewProj, viewProjViewport );
-    for( ndx=0; ndx<54; ndx++) {
-        var quad = quadlist[ndx];
+	var quadlist = buildQuadList( ctx, viewProj, viewProjViewport );
+	for( ndx=0; ndx<54; ndx++) {
+		var quad = quadlist[ndx];
 
-        // draw the arrow slightly darker than the actual color
-        var darkcolor = [ colors[ndx][0]*.6, colors[ndx][1]*.6, colors[ndx][2]*.6 ]
-        drawQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], colors[ndx], ndx );
+		// draw the arrow slightly darker than the actual color
+	  var darkcolor;	
+		if( !grey_mode ){
+			darkcolor = [ colors[ndx][0]*.6, colors[ndx][1]*.6, colors[ndx][2]*.6 ]
+		  drawQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], colors[ndx], ndx );
+		} else {
+			darkcolor = [ 0 , 0,  0 ] 
+		  drawQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], [0.8, 0.8, 0.8], ndx );
+		}
+		
 		var arrowDirection = -1;
 		if (shouldDrawArrow(ndx)) {
-            var sign = arrowRotation[ndx][0] < 0;
-            arrowDirection = rotToOrient[Math.abs(arrowRotation[ndx][0]) - 1][Math.floor(ndx / 9)]
-            if (sign) {
-              arrowDirection = (2 + arrowDirection) % 4
-            }
-            //clog(arrowRotation[ndx], Math.floor(ndx/9), sign, arrowDirection)
-            if (arrowDirection >= 0) 
+			var sign = arrowRotation[ndx][0] < 0;
+			arrowDirection = rotToOrient[Math.abs(arrowRotation[ndx][0]) - 1][Math.floor(ndx / 9)]
+				if (sign) {
+					arrowDirection = (2 + arrowDirection) % 4
+				}
+			//clog(arrowRotation[ndx], Math.floor(ndx/9), sign, arrowDirection)
+			if (arrowDirection >= 0) 
 			{
-			    if( INCLUDE_ARROWS ) 
+				if( INCLUDE_ARROWS ) 
 				{
-              		drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor );
-            	}
+					if( !grey_mode ){
+						drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor );
+					} else {
+						drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor );
+					}
+				}
 			}
-        }
+		}
 
 		if ( ( lastFaceClicked >= 0 ) && (lastFaceClicked == ndx ) )
 		{
-       		if (arrowDirection >= 0) 
+			if (arrowDirection >= 0) 
 			{
-	             drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, red );
-	        }
+				drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, red );
+			}
 			renderClickedFaceCount--;
 			if ( renderClickedFaceCount <= 0 )
 			{
 				lastFaceClicked = -1;
 			}
 		}
-    }           
+	}           
 }
 
 
@@ -494,6 +505,12 @@ function render_view( width, height, altitude, azimuth, distance )
     ctx.restore();   
     
     var view_context = build_view_context();
-    drawCube( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'], current_cube_colors );
+    
+		if( grey == 1 && menustate == 0 ){
+			drawCube( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'], current_cube_colors, true );
+		} else { 
+			drawCube( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'], current_cube_colors, false );
+		}
+
 }
 

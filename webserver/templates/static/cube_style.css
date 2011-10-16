@@ -72,14 +72,16 @@
 			left:-100%;
 			z-index: 5	
 		}
-		.joinmenu{
+		.levelmenu{
+			display: none;
 			clear: both;
 			position: fixed;
-			width: 300px;
+			width: 800px;
 		  height: 400px;
-			right: 125%;
-			top:  50px; 
-			margin-left: -150px;
+			left: -25%;
+			top: 50%;
+			margin-left: -400px;
+			margin-top: -160px;
 			z-index: 8	
 		}
 		.game_timeout {
@@ -107,18 +109,8 @@
 			margin-left: -450px;
 			z-index: 3
 		}
-		.levelmenu{
-			clear: both;
-			position: fixed;
-			width: 800px;
-		  height: 400px;
-			left: -25%;
-			top: 50%;
-			margin-left: -400px;
-			margin-top: -160px;
-			z-index: 8	
-		}
 		.button_restart {
+			display: none;
 			position: fixed;
 			opacity:0.0;
 			bottom: 100px;

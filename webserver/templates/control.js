@@ -159,30 +159,14 @@ function on_message_pushed( datagram ) {
 			 first_connection = false
 		 }
 
-     //clog("Got message published");
-     //clog( datagram );
-     if (( client_state != "MULT" && client_state != "SING") || grey == 0 ) {
-         current_cube_colors = decompress_datagram( datagram );
-         if( previous_datagram != datagram ) {
-            reset_arrow_timer();
-            previous_datagram = datagram;
-         }
-         update_view();  // calls into the renderer code
-     } else {
-	     update_view();  // calls into the renderer code
+		 current_cube_colors = decompress_datagram( datagram );
+		 if( previous_datagram != datagram ) {
+			 reset_arrow_timer();
+			 previous_datagram = datagram;
 		 }
+		 update_view();  // calls into the renderer code
 }
 
-
-function set_grey() {
-    if( grey == 0) {
-        return;
-    }
-    for(var i=0; i<54; i++ ) {
-        current_cube_colors[i] = [0.5,0.5,0.5];
-    }
-    update_view();
-}
 
 function game_timeout_occured() {
 	clicked_quit();	
@@ -203,7 +187,8 @@ function on_game_state_change(newState, activePosition, clientstate) {
 		 clog("Server: NewGameState:" + new_game_state + "OldGameState: " + game_state ); 
 		
 		 reset_timeout();
-		 
+		
+		 var old_game_state = game_state;
 		 game_state = new_game_state;
 		 
 			 client_state = new_client_state;
@@ -223,8 +208,9 @@ function on_game_state_change(newState, activePosition, clientstate) {
 				 if( game_state == "SINGLE" ){
      			 clog("Deciding on Single player: ActivePlayer: " + active_position + "MyPosition: " + position );
            if ( active_position == position ){
-							game_timeout=99;
-           		flash_display("Welcome to the Single Player Game", 6000 );
+							if( old_game_state != new_game_state ){
+								game_timeout=99;
+							}
 							clear_screen();
 				 	 } else {
 							goto_queued_screen();
@@ -243,9 +229,15 @@ function on_game_state_change(newState, activePosition, clientstate) {
            goto_waiting_screen();
 				 } else
 				 if( game_state == "MULTIPLE" ){
-           flash_display("Welcome to the 3-Player Game", 6000);
-					 clear_game_timeout();
-					 clear_screen();
+					 
+					 // active player gets to select difficulty mode.
+					 if ( active_position == position ){
+						 goto_level_screen( )   // create level screen
+					 } else {
+						 clear_game_timeout();  // no timeout in 3 player mode
+						 clear_screen();        // got to game
+					 }
+
 				 } else
 				 if( game_state == "VICTORY" ){
            clear_screen();
