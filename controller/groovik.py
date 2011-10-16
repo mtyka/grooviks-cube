@@ -80,6 +80,7 @@ class GrooviksCube:
        }[self.__currentGameState](position)
    
    def SetActivePosition( self, position ):
+       print "New position: ", position
        self.__currentActivePosition = position
    
    def GetGameState( self ):
@@ -135,6 +136,7 @@ class GrooviksCube:
    # cube.
    #-----------------------------------------------------------------------------
    def HandleClientCommand( self, position, command, parameters ):
+       print "ClientCommand: ", position, command, parameters
        with self.__gameStateLock:
            client = self.GetClient( position )
            return client.HandleCommand( command, parameters )

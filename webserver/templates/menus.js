@@ -170,7 +170,8 @@ function goto_mode_screen(){
 }
 
 function goto_level_screen(){
-    ignore_clicks = true;
+    clog("goto_level_screen()");
+		ignore_clicks = true;
    	if( menustate == 3 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();
