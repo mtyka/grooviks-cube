@@ -35,11 +35,16 @@ $( document ).ready( function(){
 
 
 
-var inactivity_timeout_length = 40; 
+var inactivity_timeout_length = 20; 
 var inactivity_timeout = -1; // off by default 
 
 function clear_timeout(){
+	clog( "Clear inactivity timeout..." );
 	inactivity_timeout = -1;
+}
+function start_timeout(){
+	clog( "Starting timeout: ", inactivity_timeout_length );
+	inactivity_timeout = inactivity_timeout_length;
 }
 
 function reset_timeout(){
@@ -63,7 +68,13 @@ function update_timeout( ){
 	
 	if( inactivity_timeout >= 0 ){
 		$("#timeout_display").html( inactivity_timeout );
+	}else{
+		$("#timeout_display").html( 0 );
 	}
+
 	if( inactivity_timeout > -2 ) inactivity_timeout-=1;
 	setTimeout("update_timeout()",1000) // call me again in 1000 ms
 }
+
+
+

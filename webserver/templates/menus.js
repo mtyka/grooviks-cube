@@ -241,8 +241,6 @@ function goto_connecting_screen(){
 
 
 function remove_menu(){
-    inactivity_timeout = -1;
-
 		if( menustate == 1 )   flyout_menu("#idlemenu");
 		if( menustate == 2 )   flyout_menu("#modemenu");
 		if( menustate == 3 )   flyout_menu("#levelmenu");
@@ -251,7 +249,6 @@ function remove_menu(){
 		if( menustate == 6 )   flyout_menu("#queuedmenu");
 		if( menustate == 7 )   flyout_menu("#waitingmenu");
 		if( menustate == 8 )   flyout_menu("#connectingmenu");
-
 
 		if( menustate == 1 ) {
 			$("#button_quit").animate( {
@@ -266,14 +263,15 @@ function clear_screen(){
 		if( menustate != 0 ) flyout_menu_bg();
     menustate=0
 		ignore_clicks=false;
-		reset_timeout();
 		set_initial_position();
 
 		// trigger greeting flash
 		if( game_state == "MULTIPLE" ){
+			start_timeout();
       flash_display("Welcome to the 3-Player Game", 6000);
 		}
-		if( game_state == "SING" ){
+		if( game_state == "SINGLE" ){
+			start_timeout();
 			flash_display("Welcome to the Single Player Game", 6000 );
 		}
 }
@@ -314,7 +312,7 @@ function clicked_join(){
 
 
 function clicked_continue(){
-	reset_timeout();
+	start_timeout();
 	clear_screen();
 }
 
