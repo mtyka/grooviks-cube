@@ -52,6 +52,7 @@ from GScript import GScript
 
 TARGET_FRAMERATE = 3
 TARGET_FRAMETIME = 1.0 / TARGET_FRAMERATE
+INACTIVITY_TIMEOUT = 125
 
 # 30 looks good on real PCs.  iphones and ipads max out at about 5-10.
 # TODO: publish multiple channels at different framerates
@@ -147,6 +148,10 @@ class Cube():
         curTime = time.time()
         self.simTime = curTime;
         self.grooviksCube.SetStartTime( curTime )
+
+        # used for initiating server-side timeouts
+        self.positionForUser = {}
+        self.clientLastActivity = {}
         
         # simulate one frame so we have a valid state to render on first frame
         # self.simulate()
@@ -161,7 +166,7 @@ class Cube():
         action, params = rtjp_frame[1:3]
         
         if action == "PUBLISH":
-            channel, payload = params['channel_name'], params['payload']
+            channel, payload, user = params['channel_name'], params['payload'], params['user']
 
             try:
                 if channel == 'faceclick':
@@ -173,6 +178,7 @@ class Cube():
                         self.grooviksCube.HandleInput( CubeInput.ROTATION, [rot_command])
                         self.grooviksCube.HandleInput( CubeInput.FACE_CLICK, face)
                         #self.grooviksCube.QueueEffect( "victory0" )
+                    self.resetClientTimeout(user)
                 elif channel == 'clientcommand':
                     '''This channel is used for sending commands to change the game state'''
                     position = int(payload.pop('position'))
@@ -180,6 +186,8 @@ class Cube():
                     self.logger.logLine( "Received command '%s' from client at position %d with arguments %s" % (command, position, payload) )
                     self.grooviksCube.HandleClientCommand(position, command, payload)
                     push_game_client_state(self.grooviksCube)
+                    if command != ClientCommand.QUIT:
+                        self.resetClientTimeout(user, position)
 
                 elif channel == 'gamemode':
                     self.logger.logLine( "Received commmand for defunct channel 'gamemode' %s " % (payload) )
@@ -205,6 +213,29 @@ class Cube():
             except Exception, msg:
                 self.logger.logLine("Swallowed exception '%s' raised during command handling in hookbox while handling command on %s " % (msg, channel))
                 
+    def resetClientTimeout( self, user, position = None ):
+        if position is None:
+            try:
+                position = self.positionForUser[user]
+            except KeyError:
+                self.logger.logLine("Failure to reset timeout for unknown user %s" % (user))
+        else:
+            self.positionForUser[user] = position
+        self.clientLastActivity[position] = time.time()
+
+    def checkTimeouts( self ):
+        '''
+        Check if any clients have been inactive for too long, and send a 'QUIT'
+        client command for each of those clients.
+        ''' 
+        now = time.time()
+        for position, last_activity in self.clientLastActivity.items():
+            if now - last_activity > INACTIVITY_TIMEOUT:
+                self.logger.logLine("Client at position %s inactive for %d seconds; timing out" % (position, now - last_activity))
+                push_message( json.dumps({ 'position':position, 'command':ClientCommand.QUIT, }), 'clientcommand' )
+                del self.clientLastActivity[position]
+                for user, position_ignored in self.positionForUser.items():
+                    del self.positionForUser[user]
 
     def interpolateFrames( this, data, passedTime, dataLast ):
         if not data:
@@ -266,6 +297,8 @@ class Cube():
 
 
             lastFrameLerpedColors = data[-1][1];
+            
+            self.checkTimeouts()
               
     def simulate(self):
         with cube_lock:
