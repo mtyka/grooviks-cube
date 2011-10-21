@@ -268,11 +268,11 @@ function clear_screen(){
 		// trigger greeting flash
 		if( game_state == "MULTIPLE" ){
 			start_timeout();
-      flash_display("Welcome to the 3-Player Game", 6000);
+      flash_display("Welcome to the 3-Player Game", 8000);
 		}
 		if( game_state == "SINGLE" ){
 			start_timeout();
-			flash_display("Welcome to the Single Player Game", 6000 );
+			flash_display("Welcome to the Single Player Game", 8000 );
 		}
 }
 

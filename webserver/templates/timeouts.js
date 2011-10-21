@@ -35,7 +35,7 @@ $( document ).ready( function(){
 
 
 
-var inactivity_timeout_length = 20; 
+var inactivity_timeout_length = 30; 
 var inactivity_timeout = -1; // off by default 
 
 function clear_timeout(){
