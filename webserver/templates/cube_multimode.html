@@ -346,19 +346,27 @@ $(document).ready(function() {
         <br>
         <br>
         <br>
-				<!--
 				<img class="button left"   id="buttonleft"  src="/static/button_left.png"      alt="Left"   ondragstart="return false" onselectstart="return false" >
 				<img class="button right"   id="buttonright" src="/static/button_right.png"    alt="Right"  ondragstart="return false" onselectstart="return false" >
-				-->
 				<div class="clear"></div>
 			  <br>
       </div>
+			
+			<div class="instructions" >
+     	<center>
+     	<h3>
+			This puzzle requires 3 people to solve. </br>
+			There are 2 other stations. Each station controls one axis of the cube. Grab 2 friends and work cooperatively to gain control of the entire cube and solve!
+			</h3>
+			</center>
+			</div>
 
 			<div class="footer" >
 			<font size=-1>
      	<center>Groovik's Cube by GroovLabs<br>www.groovik.com</center> 
 			</font>
 			</div>
+			
 
        <div id="manual_rotate" class="debug">
           Altitude: <input id="slide_alt" type="range" min="-1000" max="1000" value="220" onchange="rotate_view();"><br/>

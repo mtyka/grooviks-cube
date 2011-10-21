@@ -10,14 +10,14 @@ $(document).ready(function(){
     $("#full").click(   function() { select_difficulty(20); } );
 
 //    //if (!position) {
-//        $("#buttonleft").click( function(){
-//           animate_spin( -Math.PI*2/3 );
-//        });
-//        $("#buttonright").click( function(){
-//           animate_spin( Math.PI*2/3 );
-//        });
+        $("#buttonleft").click( function(){
+           animate_spin( -Math.PI*2/3 );
+        });
+        $("#buttonright").click( function(){
+           animate_spin( Math.PI*2/3 );
+        });
 //    } else {
-    $("#buttonleft, #buttonright").css('visibility', 'hidden');
+//    $("#buttonleft, #buttonright").css('visibility', 'hidden');
 //    }
 
 });
@@ -75,6 +75,8 @@ function flyin_menu_bg(){
 		);
 		ignore_clicks = true;
 
+		hide_rotation_buttons();
+		hide_instructions();
 }
 
 function flyout_menu_bg(){
@@ -157,7 +159,7 @@ function goto_idle_screen(){
 }
 
 function goto_mode_screen(){
-    ignore_clicks = true;
+	ignore_clicks = true;
    	if( menustate == 2 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();
@@ -258,6 +260,23 @@ function remove_menu(){
 		}
 }
 
+
+function show_instructions(){
+			$(".instructions").css("display", "inline")	
+}
+
+function hide_instructions(){
+			$(".instructions").css("display", "none")	
+}
+
+function show_rotation_buttons(){
+	    $("#buttonleft, #buttonright").css('display', 'inline');
+}
+
+function hide_rotation_buttons(){
+	    $("#buttonleft, #buttonright").css('display', 'none');
+}
+
 function clear_screen(){
 		remove_menu()
 		if( menustate != 0 ) flyout_menu_bg();
@@ -266,13 +285,17 @@ function clear_screen(){
 		set_initial_position();
 
 		// trigger greeting flash
+		hide_rotation_buttons();
+		hide_instructions();
 		if( game_state == "MULTIPLE" ){
 			start_timeout();
       flash_display("Welcome to the 3-Player Game", 8000);
+			show_instructions();
 		}
 		if( game_state == "SINGLE" ){
 			start_timeout();
 			flash_display("Welcome to the Single Player Game", 8000 );
+			show_rotation_buttons();
 		}
 }
 

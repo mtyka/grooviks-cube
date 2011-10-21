@@ -41,6 +41,14 @@
 			left: 50%;
 			margin-left: -300px;
 		}
+		.instructions{
+			clear: both;
+			position: fixed;
+			width: 900px;
+		  bottom: 80px;
+			left: 50%;
+			margin-left: -450px;
+		}
 		.footer{
 			clear: both;
 			position: fixed;
@@ -128,14 +136,14 @@
 		.button {
 			position: fixed;
 			bottom: 35%;
-			z-index: 3;
+			z-index: 13;
     }
 		.button.left{
-		  left: 20%;
+		  left: 15%;
 		  float:left; 
 		}
 		.button.right{
-		  right: 20%;
+		  right: 15%;
 		  float:right; 
 		}
 		.clear{ clear: both; }
