@@ -210,7 +210,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
      			 clog("Deciding on Single player: ActivePlayer: " + active_position + "MyPosition: " + position );
            if ( active_position == position ){
 							if( old_game_state != new_game_state ){
-								game_timeout=99;
+								game_timeout=180;
 							}
 							clear_screen();
 				 	 } else {
