@@ -2,7 +2,7 @@
 
 function set_initial_position(){
 			// using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
-      var start_azimuth = parseInt([ -Math.PI*2/3.1, 0, Math.PI*2/3.1 ][position-1] * 100);
+      var start_azimuth = parseInt([ -Math.PI*2/3.01, 0, Math.PI*2/3.01 ][position-1] * 100);
         //clog('start azi: ' + start_azimuth);
         //$("#slide_azi").val(  start_azimuth );
         //rotate_view(); 
