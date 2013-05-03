@@ -12,6 +12,26 @@
         <script type="text/javascript" src="/static/jquery.svgplot.js"></script> 
 
 
+<script type="text/javascript"> 
+
+{% include "loadhookbox.js" %}
+{% include "checkie.js" %}
+{% include "control.js" %}
+{% include "hookbox_setup.js" %}
+{% include "soundcontrol.js" %}
+{% include "vector.js" %}
+{% include "render.js" %}
+{% include "cube_spinning.js" %}
+{% include "timeouts.js" %}
+{% include "menus.js" %}
+
+$(document).ready(function() {
+	goto_connecting_screen();
+	update_timeout( );
+	document.title = "P:" + position 
+});
+
+</script>
 
 <script> 
 
@@ -101,26 +121,6 @@ $(window).click( function() {
 
 
 
-<script type="text/javascript"> 
-
-{% include "loadhookbox.js" %}
-{% include "checkie.js" %}
-{% include "control.js" %}
-{% include "hookbox_setup.js" %}
-{% include "soundcontrol.js" %}
-{% include "vector.js" %}
-{% include "render.js" %}
-{% include "cube_spinning.js" %}
-{% include "timeouts.js" %}
-{% include "menus.js" %}
-
-$(document).ready(function() {
-	goto_connecting_screen();
-	update_timeout( );
-	document.title = "P:" + position 
-});
-
-</script>
 
 </head>
 
