@@ -43,6 +43,7 @@ function establish_hookbox_connections() {
                     changeSlider ( rgb_floats );
                     clog('done with calibration message');
             };
+        }
         if( channelName == 'movesfromsolved' ) {
             movesfromsolved_subscription = _subscription;                
             movesfromsolved_subscription.onPublish = function(frame) {
