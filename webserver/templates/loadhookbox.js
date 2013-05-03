@@ -25,8 +25,6 @@ function loadScript(sScriptSrc) {
 $(document).ready(function() {
     loadScript( server + '/static/hookbox.js' );
     });
-</script>
-<script type="text/javascript">
 
 function get_querystring_parameter(name) {
   var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
