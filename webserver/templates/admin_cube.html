@@ -1,6 +1,8 @@
 <html>   
     <head>
         <title>One cube to rule them all</title>
+	      
+        <link rel="stylesheet" href="static/admin.css" type="text/css" media="all" />
         <script src="static/jquery.min.js"></script>
         <script src="static/jquery-ui.min.js"></script>
         <script src="static/jquery.svg.js"></script>
@@ -11,6 +13,7 @@
         <script type="text/javascript" src="static/jquery.svgplot.js"></script> 
 
 
+  
 	<link rel="stylesheet" href="static/jquery-ui.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="static/ui.theme.css" type="text/css" media="all" />
 	<!-- <script src="static/jquery.bgiframe-2.1.2.js" type="text/javascript"></script> -->
@@ -123,117 +126,7 @@ function animate_spin(delta_radians) {
 
 
 </script>   
-<style>
-	#red, #green, #blue {
-		width: 200px;
-		margin: 15px;
-	}
 
-	#red .ui-slider-range { background: #ef2929; }
-	#red .ui-slider-handle { border-color: #ef2929; }
-	#green .ui-slider-range { background: #8ae234; }
-	#green .ui-slider-handle { border-color: #8ae234; }
-	#blue .ui-slider-range { background: #729fcf; }
-	#blue .ui-slider-handle { border-color: #729fcf; }
-    #calibration-sliders {
-        position:relative;
-        top:-600px;
-    }
-    #facenum {
-        text-align:left;
-        position: absolute;
-        left:15px;
-        top:-30px;
-        font-size:12px;
-    }
-    .debug {
-        display:none;
-    }
-
-    body {
-        font-family: verdana, sans-serif;
-        background: black;
-        color: #ffffdd;
-        overflow: hidden;
-		}
-
-    h1 {
-        text-shadow: 0px 0px 5px #ff8888; 
-    }
-
-    #container {
-      text-align: center;
-			margin: 0px auto;
-		}
-
-		.toprow{
-			margin-left: auto;
-			margin-right: auto;
-			width: 1000px;
-			position: relative;
-			top: 0px;
-		}
-		.bottomrow{
-			clear: both;
-			margin-left: auto;
-			margin-right: auto;
-			top: -285px;
-			position: relative;
-			width: 600px;
-		}
-        #blankpixel {
-            position:relative;
-            top: -550px;
-            left: -400px;
-        }
-    .button {
- 			margin-left:  4px;
-			margin-right:  4px;
-			z-index: 3;
-       }
-		.button.left{ float:left; }
-		.button.right{ float:right; }
-		.clear{ clear: both; }
-
-		#canvas{
-			width: 750px;
-			height: 750px;
-			position: relative;
-			top: -140px;
-			z-index:   -1;	
-		}
-
-		#manual_rotate {
-			position: relative;
-			top: -400px;
-		}
-        #screensaver {
-            width: 200px;
-            height: auto;
-        }
-        .bigbutton {
-            vertical-align:middle;
-        }
-
-</style>
-<!--
-position: absolute; left: 610px; top: 80px;
-
-
-style="float:left; left:  350px; top: 90px;"  
-style="float:left; left:  540px; top: 90px;"  
-style=" left:  730px; top: 90px;"             
-style=" left:  920px; top: 90px;"             
-style=" left: 1110px; top: 90px;"             
-style=" left:  425px; top: 650px;"            
-style=" left: 1110px; top: 650px;"            
-
-
-       <h1 class="pulse">One cube to rule them all</h1>
-
-p
-			width: 100px;
--->
 
 	</head>
     <body>
