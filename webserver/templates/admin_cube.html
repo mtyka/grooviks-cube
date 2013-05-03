@@ -62,6 +62,7 @@ var client_state = "IDLE"
 {% include "admin_control.js" %}
 {% include "vector.js" %}
 {% include "admin_render.js" %}
+{% include "cube_spinning.js" %}
 
 $(document).ready(function(){
     $("#screensaver").click(  function(){ set_cubemode(3); } );
@@ -96,32 +97,6 @@ $(document).ready(function(){
 
 var locked_buttons=false;
 
-function animate_spin(delta_radians) {
-		// lock the buttons
-		if(locked_buttons) return;
-		locked_buttons = true;
-		
-
-		// do the boogie 
-		var azimuth = $("#slide_azi").val()*1.0; // convert from string to number. javascript sucks
-		azimuth = azimuth % (100*Math.PI*2);  // Re-center
-		$("#slide_azi").attr("animate_val", azimuth); // prep temporary animation variable
-		azimuth += delta_radians*100;
-		//console.log(azimuth);
-		$("#slide_azi").animate( { 
-			animate_val: azimuth 
-		},{ duration: 2000, 
-		    complete: function(){
-					locked_buttons = false;
-				},
-				step: function() {  
-					//console.log($("#slide_azi").attr("animate_val") ); 
-					$("#slide_azi").val( $("#slide_azi").attr("animate_val") );
-					rotate_view(); 
-		    }     
-      }
-		);
-}
 
 
 
