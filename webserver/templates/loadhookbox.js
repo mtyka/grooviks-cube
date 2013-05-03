@@ -8,23 +8,22 @@ var server = location.protocol + '//' + location.hostname + ':2974';
 // Dynamically inserts the code to load the script into the page.
 
 
-function loadScript(sScriptSrc) {
+function loadScript(sScriptSrc, success_func ) {
   var headelem = document.getElementsByTagName('head')[0];
   var oScript = document.createElement('script');
   oScript.type = 'text/javascript';
   oScript.src = sScriptSrc;
   oScript.onload = function() {
+    console.log("HOOKBOX LOADED!");
     is_hookbox_loaded = true;
     establish_hookbox_connections();
+    if( success_func ) success_func(); 
   }
   oScript.onerror = function() {
     alert("Could not load library from hookbox server.");
   }
   headelem.appendChild(oScript);
 }
-$(document).ready(function() {
-    loadScript( server + '/static/hookbox.js' );
-    });
 
 function get_querystring_parameter(name) {
   var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);

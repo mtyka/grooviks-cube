@@ -21,43 +21,44 @@
 
 var client_state = "IDLE"
 
-{% include "admin.js" %}
 {% include "loadhookbox.js" %}
 {% include "checkie.js" %}
-{% include "admin_control.js" %}
+{% include "control.js" %}
 {% include "hookbox_setup.js" %}
+{% include "admin.js" %}
 {% include "vector.js" %}
 {% include "render.js" %}
 {% include "cube_spinning.js" %}
 
 $(document).ready(function(){
-    $("#screensaver").click(  function(){ set_cubemode(3); } );
-    $("#pixelmapping").click(  function(){ set_cubemode(2); } );
-    $("#colorcalibration").click(     function(){ set_cubemode(1); } );
-    $("#normal").click(     function(){ set_cubemode(0); } );
-    $("#blankpixel").click(     function(){ map_blank_pixel(); } );
+    loadScript( server + '/static/hookbox.js', function(){ 
+      $("#screensaver").click(  function(){ set_cubemode(3); } );
+      $("#pixelmapping").click(  function(){ set_cubemode(2); } );
+      $("#colorcalibration").click(     function(){ set_cubemode(1); } );
+      $("#normal").click(     function(){ set_cubemode(0); } );
+      $("#blankpixel").click(     function(){ map_blank_pixel(); } );
 
-    if (!position) {
-        $("#buttonleft").click( function(){ 
-           animate_spin( -Math.PI*2/3 );
-        });
-        $("#buttonright").click( function(){ 
-           animate_spin( Math.PI*2/3 );
-        });
-    } else {
-        $("#buttonleft, #buttonright").css('visibility', 'hidden');
+      if (!position) {
+          $("#buttonleft").click( function(){ 
+             animate_spin( -Math.PI*2/3 );
+          });
+          $("#buttonright").click( function(){ 
+             animate_spin( Math.PI*2/3 );
+          });
+      } else {
+          $("#buttonleft, #buttonright").css('visibility', 'hidden');
 
-        // using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
-        var start_azimuth = parseInt([ -Math.PI*2/3.1, 0, Math.PI*2/3.1 ][position-1] * 100);
-        clog('start azi: ' + start_azimuth);
-        $("#slide_azi").val(  start_azimuth );
-        rotate_view(); 
-    }
+          // using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
+          var start_azimuth = parseInt([ -Math.PI*2/3.1, 0, Math.PI*2/3.1 ][position-1] * 100);
+          clog('start azi: ' + start_azimuth);
+          $("#slide_azi").val(  start_azimuth );
+          rotate_view(); 
+      }
 
-    $("#calibration-sliders").hide();
-    $("#blankpixel").hide();
-    set_cubemode(0);
-
+      $("#calibration-sliders").hide();
+      $("#blankpixel").hide();
+      set_cubemode(0);
+    } );
 });
 
 

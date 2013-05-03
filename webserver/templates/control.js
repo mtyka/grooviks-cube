@@ -1,21 +1,6 @@
 
-var client_state = "IDLE";
-var game_state = "UNBOUND";
-var active_position = 0;
 
-var game_timeout = -2;
-var inactivity_timeout = -1;
 var ignore_clicks = false;
-var locked_buttons=false;
-var menustate = 0;
-var interrupt_ok=true;
-// 0 = no menu
-// 1 = mode menu
-// 2 = level menu
-// 3 = timeout menu
-// 4 = join    menu
-// 5 = queued  menu
-// 5 = waiting menu
 
 
 
@@ -23,6 +8,8 @@ var interrupt_ok=true;
 // ######################## Control Logic #############################
 // ####################################################################
 
+var max_slider = 1000;
+var current_mode;
 
 // safe way to log things on webkit and not blow up firefox
 function clog(msg) {
@@ -40,7 +27,7 @@ function on_message_pushed( datagram ) {
      $('#cube_status').animate({'opacity': 0}, 4000 );
 			
 		 if( first_connection ){
-		   goto_idle_screen();
+		   if( goto_idle_screen ) goto_idle_screen();
 			 first_connection = false
 		 }
 
@@ -53,99 +40,12 @@ function on_message_pushed( datagram ) {
 }
 
 
-function game_timeout_occured() {
-	clicked_quit();	
+function decompress_rgbfloat(rgb) { 
+    var output = [];
+    output = rgb.split(" ");
+    var rgb_floats = [ parseFloat(output[2]), parseFloat(output[1]), parseFloat(output[0])] ;
+    return rgb_floats;
 }
-
-
-function on_game_state_change(newState, activePosition, clientstate) {
-//     game_state = newState
-     $('#game_state').val( newState )
-     $('#active_position').val( activePosition )
-    
-		 active_position = activePosition;
-		 var old_client_state = client_state;
-		 new_client_state = clientstate[position-1];
-		 new_game_state = newState;
-
-     clog("ActivePlayer: " + active_position + "MyPosition: " + position );
-		 clog("Server: NewState:" + new_client_state + "OldState: " + client_state ); 
-		 clog("Server: NewGameState:" + new_game_state + "OldGameState: " + game_state ); 
-		
-		 reset_timeout();
-		
-		 var old_game_state = game_state;
-		 game_state = new_game_state;
-		 
-			 client_state = new_client_state;
-			 if ( client_state == "IDLE" ){
-				 clear_game_timeout();
-				 goto_idle_screen();
-			 } else
-			 if ( client_state == "HOME" ){
-				 clear_game_timeout();
-				 goto_mode_screen();
-			 } else
-			 if ( client_state == "SING" ){
-			
-				 if( game_state == "SINGLE_INVITE" ){
-           goto_join_screen();
-				 } else
-				 if( game_state == "SINGLE" ){
-     			 clog("Deciding on Single player: ActivePlayer: " + active_position + "MyPosition: " + position );
-           if ( active_position == position ){
-							if( old_game_state != new_game_state ){
-								game_timeout=180;
-							}
-							clear_screen();
-				 	 } else {
-							goto_queued_screen();
-					 }
-				 } else
-				 if( game_state == "VICTORY" ){
-					 clear_game_timeout();
-           clear_screen();
-				 }
-			 
-			 } else
-			 if ( client_state == "MULT" ){
-			
-				 if( game_state == "SINGLE_INVITE" ){
-					 clear_game_timeout();
-           goto_waiting_screen();
-				 } else
-				 if( game_state == "MULTIPLE" ){
-					 // active player gets to select difficulty mode.
-					 if ( new_client_state == "MULT" && old_client_state == "HOME" ){ 
-						 goto_level_screen( )   // create level screen
-					 } 
-					 else 
-					 // active player comes from a waiting screen
-					 if ( new_client_state == "MULT" && old_client_state == "MULT" && old_game_state == "SINGLE_INVITE"  ){
-						 goto_level_screen( )   // create level screen
-					 }
-					 else {
-						 clear_game_timeout();  // no timeout in 3 player mode
-						 clear_screen();        // got to game
-					 }
-
-				 } else
-				 if( game_state == "VICTORY" ){
-           clear_screen();
-				 }
-			 
-			 } else
-			 if ( client_state == "VICT" ){
-				 clear_screen();
-			 }else{
-				 clog("Unknown client_state:" + client_state );
-			 }
-
-
-
-}
-
-
 // Converts a long hex string into an array of 54 RGB-float-triples
 function decompress_datagram(datagram) {
     //clog("decompressing...");
@@ -214,9 +114,6 @@ function update_view() {
 }
 
 
-
-
-
 function set_ignore_clicks( value ){
 	ignore_clicks = value;
 }
@@ -230,9 +127,22 @@ function rotate_view() {
     // Draw the cube in its default state when the page first loads
     update_view();
 
-		$("body").click( function( eventObj ) {
-			reset_timeout();
-			if( !ignore_clicks ){
+    // add click events that control the cube.
+    $("body").click( function( eventObj ) {
+			if(eventObj.shiftKey) {
+			    	//Shift-Click
+
+				 var top_left_canvas_corner = $("#canvas").elementlocation();
+				 var x = eventObj.pageX - top_left_canvas_corner.x;
+				 var y = eventObj.pageY - top_left_canvas_corner.y;
+
+				 clog("local shift click at relative ("+x+","+y+")");
+
+				 cube_got_shift_clicked_on(x,y);
+			
+				 return true;
+  		} 
+			else if( !ignore_clicks ){
 				 //var x = eventObj.pageX;
 				 //var y = eventObj.pageY;
 				 //clog("local click at absolute ("+x+","+y+")");
@@ -241,7 +151,7 @@ function rotate_view() {
 				 var x = eventObj.pageX - top_left_canvas_corner.x;
 				 var y = eventObj.pageY - top_left_canvas_corner.y;
 
-				 //clog("local click at relative ("+x+","+y+")");
+				 clog("local click at relative ("+x+","+y+")");
 
 				 cube_got_clicked_on(x,y);
 			
@@ -258,12 +168,11 @@ function cube_got_clicked_on(x,y)
 {
     facenum = whichFaceIsPointIn(x,y);
     if( facenum < 0 )
-	{
+	  {
      	// not on a cube face
      	clog("Local click not on cube face.");
      	return;
     }
-    //faceclick_subscription.publish( facenum );  // docs say this should work but it doesn't
     if (shouldDrawArrow(facenum)) {
         clog("Publishing local click on face "+facenum);
       	var rotation_direction = arrowRotation[facenum][0] > 0;

@@ -16,6 +16,7 @@
 
 {% include "loadhookbox.js" %}
 {% include "checkie.js" %}
+{% include "client_state.js" %}
 {% include "control.js" %}
 {% include "hookbox_setup.js" %}
 {% include "soundcontrol.js" %}
@@ -24,6 +25,10 @@
 {% include "cube_spinning.js" %}
 {% include "timeouts.js" %}
 {% include "menus.js" %}
+
+$(document).ready(function() {
+    loadScript( server + '/static/hookbox.js' );
+});
 
 $(document).ready(function() {
 	goto_connecting_screen();

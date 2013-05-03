@@ -1,4 +1,13 @@
 
+var interrupt_ok=true;
+var menustate = 0;
+// 0 = no menu
+// 1 = mode menu
+// 2 = level menu
+// 3 = timeout menu
+// 4 = join    menu
+// 5 = queued  menu
+// 5 = waiting menu
 
 
 // Set up the click handlers

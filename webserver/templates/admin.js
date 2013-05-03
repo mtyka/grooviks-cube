@@ -30,3 +30,76 @@
 			change: refreshSwatch
 		});
 	});
+
+
+
+
+var calibrationFace = -1;
+
+
+
+function cube_got_shift_clicked_on(x,y)
+{
+    if ( current_mode == 1 ) {
+        var facenum = whichFaceIsPointIn(x,y);
+        calibrationFace = facenum;   	
+        hookbox_conn.publish('colorcalib', [facenum] );
+        $('div#facenum').html('Face number ' + facenum + ' is now being calibrated.');
+        clog("facenum " + facenum + " is now being calibrated");
+    }
+}
+
+function calibrate(face, red, green, blue) {
+	clog("Calibrating face: " + face +" r: " + red + " g: " + green + " b: " + blue);
+	hookbox_conn.publish('colorcalib', [face, blue, green, red]);
+}
+
+function calibrateEvent()
+{
+	if (calibrationFace == -1) {
+		clog("Escaping out of calibration because no face selected");
+		return;
+	}
+
+	// TODO: (CWhite) Add mode check
+
+	var red = $( "#red" ).slider( "value" ),
+	green = $( "#green" ).slider( "value" ),
+	blue = $( "#blue" ).slider( "value" );
+	calibrate(calibrationFace ,red/max_slider, green/max_slider, blue/max_slider);     	
+}
+function changeSlider(rgb_floats){
+        clog("changing slider based on message" );
+        $( "#red" ).slider( "value", rgb_floats[0]*max_slider);
+        $( "#green" ).slider( "value", rgb_floats[1]*max_slider );
+        $( "#blue" ).slider( "value", rgb_floats[2]*max_slider );
+}
+
+function set_cubemode(mode) {
+    clog("Setting cube mode: " + mode);
+    clog( hookbox_conn )
+    hookbox_conn.publish('cubemode', {'mode' : mode});
+    current_mode = mode;
+
+    if (mode == 1)
+    {
+        $("#calibration-sliders").show();
+    }
+    else
+    {
+    	$("#calibration-sliders").hide();	
+    }
+    if (mode == 2)
+    {
+        $("#blankpixel").show();
+    }
+    else
+    {
+    	$("#blankpixel").hide();	
+    }
+}
+
+function map_blank_pixel() {
+    hookbox_conn.publish('faceclick', [54, 0, 0] );
+}
+ 

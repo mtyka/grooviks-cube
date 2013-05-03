@@ -1,5 +1,11 @@
 
+var inactivity_timeout = -1;
+
 // GAME TIMOUT COUNTER & LOGIC 
+
+function game_timeout_occured() {
+	clicked_quit();	
+}
 
 function clear_game_timeout(){
 	game_timeout = -2;
@@ -24,6 +30,10 @@ var game_timeout_display = $( jQuery( '<div class="game_timeout"> <h1 id="game_t
 
 $( document ).ready( function(){
 		$( "body" ).append( game_timeout_display )
+    // Add a click event that resets the timeouts
+    $("body").click( function( eventObj ) {
+			reset_timeout();
+    });
 		
 		// start the timeout counters
 		//update_timeout();
