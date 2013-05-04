@@ -74,6 +74,18 @@ $(document).ready(function() {
     });
 
 
+// Show SVG element if configured.
+var svg;
+if( RENDER_WITH_SVG ) {
+    $(document).ready( function() {
+        $('#svgholder').append('<h4>svg</h4><div id="svgdiv" style="width:300px; height:300px; background: black;"> </div>');
+        $('#svgdiv').svg({onLoad: store_svg_obj});
+    });
+}
+function store_svg_obj(new_svg) { 
+    svg = new_svg;
+}
+
 
 // ####################################################################
 // ###################### jquery helpers ##############################
@@ -96,3 +108,11 @@ jQuery.fn.elementlocation = function() {
 
   return ( {x:curleft, y:curtop} );
 };
+     
+     
+ // Display debug stuff if URL snippet is #debug
+ $(document).ready( function() {
+    if( location.hash == "#debug" ) {
+        $(".debug").css('display','block');
+    }
+ });
