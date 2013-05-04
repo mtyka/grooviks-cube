@@ -182,72 +182,7 @@
        <div id="frameratediv" class="debug">
        Framerate: <span id="framerate">...</span> fps
        </div>
-
-   <script>
-
-     // Display debug stuff if URL snippet is #debug
-     $(document).ready( function() {
-        if( location.hash == "#debug" ) {
-            $(".debug").css('display','block');
-        }
-     });
-    
-    // Show SVG element if configured.
-    var svg;
-    if( RENDER_WITH_SVG ) {
-        $(document).ready( function() {
-            $('#svgholder').append('<h4>svg</h4><div id="svgdiv" style="width:300px; height:300px; background: black;"> </div>');
-            $('#svgdiv').svg({onLoad: store_svg_obj});
-        });
-    }
-    function store_svg_obj(new_svg) { 
-        svg = new_svg;
-    }
-
-    // Pulse the color of the header
-    function fade_to_red() {
-        $('.pulse').animate(
-          { 'color': '#f88' },
-          40000, 'linear', fade_to_yellow
-        );
-    }
-    function fade_to_yellow() {
-        $('.pulse').animate(
-          { 'color': '#ffd' },
-          40000, 'linear',fade_to_red
-        );
-    }
-    $(document).ready( function() {
-        fade_to_red();
-    });
-
-</script>
     </div>
-
-<script type="text/javascript">
-
-// Only include GA if we're on port 80, i.e. production
-if( ! document.location.port ) {
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-16219925-1']);
-  _gaq.push(['_setDomainName', 'none']);
-  _gaq.push(['_setAllowLinker', true]);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-}
-
-</script>
-    </script>
-
-
-
-
-
     </body> 
 </html>  
 
