@@ -1,114 +1,110 @@
-<html>   
-    <head>
-        <title>Groovik's Cube Admin Panel</title>
-	      
-        <link rel="stylesheet" href="static/admin.css" type="text/css" media="all" />
-        <script src="static/jquery.min.js"></script>
-        <script src="static/jquery-ui.min.js"></script>
-        <script src="static/jquery.svg.js"></script>
-        <script type="text/javascript" src="static/jquery.svganim.js"></script> 
-        <script type="text/javascript" src="static/jquery.svgdom.js"></script> 
-        <script type="text/javascript" src="static/jquery.svgfilter.js"></script> 
-        <script type="text/javascript" src="static/jquery.svggraph.js"></script> 
-        <script type="text/javascript" src="static/jquery.svgplot.js"></script> 
-        
-        <script type="text/javascript" src="js/loadhookbox.js"></script> 
-        <script type="text/javascript" src="js/checkie.js"></script> 
-        <script type="text/javascript" src="js/client_state.js"></script> 
-        <script type="text/javascript" src="js/control.js"></script> 
-        <script type="text/javascript" src="js/hookbox_setup.js"></script> 
-        
-        <script type="text/javascript" src="js/soundmanager2-nodebug-jsmin.js"></script> 
-        <script type="text/javascript" src="js/soundcontrol.js"></script> 
-        <script type="text/javascript" src="js/vector.js"></script> 
-        <script type="text/javascript" src="js/render.js"></script> 
-        <script type="text/javascript" src="js/cube_spinning.js"></script> 
-        <script type="text/javascript" src="js/timeouts.js"></script> 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Groovik's Cube Admin Panel</title>
+    
+    <link href="static/admin.css" media="all" rel="stylesheet" type="text/css">
+    <link href="static/jquery-ui.css" media="all" rel="stylesheet" type="text/css">
+    <link href="static/ui.theme.css" media="all" rel="stylesheet" type="text/css">
+    
+    <script src="static/jquery.min.js"></script>
+    <script src="static/jquery-ui.min.js"></script>
+    <script src="static/jquery.svg.js"></script>
+    <script src="static/jquery.svganim.js" type="text/javascript"></script>
+    <script src="static/jquery.svgdom.js" type="text/javascript"></script>
+    <script src="static/jquery.svgfilter.js" type="text/javascript"></script>
+    <script src="static/jquery.svggraph.js" type="text/javascript"></script>
+    <script src="static/jquery.svgplot.js" type="text/javascript"></script>
+    <script src="js/loadhookbox.js" type="text/javascript"></script>
+    <script src="js/checkie.js" type="text/javascript"></script>
+    <script src="js/client_state.js" type="text/javascript"></script>
+    <script src="js/control.js" type="text/javascript"></script>
+    <script src="js/hookbox_setup.js" type="text/javascript"></script>
+    <script src="js/soundmanager2-nodebug-jsmin.js" type="text/javascript"></script>
+    <script src="js/soundcontrol.js" type="text/javascript"></script>
+    <script src="js/vector.js" type="text/javascript"></script>
+    <script src="js/render.js" type="text/javascript"></script>
+    <script src="js/cube_spinning.js" type="text/javascript"></script>
+    <script src="js/timeouts.js" type="text/javascript"></script>
+    <script src="js/menus.js" type="text/javascript"></script>
+    <script src="js/admin.js" type="text/javascript"></script>
+    
+    
+    <script type="text/javascript">
+      $(document).ready(function(){
+      loadScript( server + '/static/hookbox.js', function(){ 
+        $("#screensaver").click(  function(){ set_cubemode(3); } );
+        $("#pixelmapping").click(  function(){ set_cubemode(2); } );
+        $("#colorcalibration").click(     function(){ set_cubemode(1); } );
+        $("#normal").click(     function(){ set_cubemode(0); } );
+        $("#blankpixel").click(     function(){ map_blank_pixel(); } );
 
-        <script type="text/javascript" src="js/menus.js"></script> 
-        <script type="text/javascript" src="js/admin.js"></script>  
+        if (!position) {
+            $("#buttonleft").click( function(){ 
+               animate_spin( -Math.PI*2/3 );
+            });
+            $("#buttonright").click( function(){ 
+               animate_spin( Math.PI*2/3 );
+            });
+        } else {
+            $("#buttonleft, #buttonright").css('visibility', 'hidden');
 
+            // using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
+            var start_azimuth = parseInt([ -Math.PI*2/3.1, 0, Math.PI*2/3.1 ][position-1] * 100);
+            clog('start azi: ' + start_azimuth);
+            $("#slide_azi").val(  start_azimuth );
+            rotate_view(); 
+        }
 
-				<link rel="stylesheet" href="static/jquery-ui.css" type="text/css" media="all" />
-				<link rel="stylesheet" href="static/ui.theme.css" type="text/css" media="all" />
-	
-<script type="text/javascript"> 
+        $("#calibration-sliders").hide();
+        $("#blankpixel").hide();
+        set_cubemode(0);
+      });
+      });
+    </script>
+</head>
 
-$(document).ready(function(){
-    loadScript( server + '/static/hookbox.js', function(){ 
-      $("#screensaver").click(  function(){ set_cubemode(3); } );
-      $("#pixelmapping").click(  function(){ set_cubemode(2); } );
-      $("#colorcalibration").click(     function(){ set_cubemode(1); } );
-      $("#normal").click(     function(){ set_cubemode(0); } );
-      $("#blankpixel").click(     function(){ map_blank_pixel(); } );
-
-      if (!position) {
-          $("#buttonleft").click( function(){ 
-             animate_spin( -Math.PI*2/3 );
-          });
-          $("#buttonright").click( function(){ 
-             animate_spin( Math.PI*2/3 );
-          });
-      } else {
-          $("#buttonleft, #buttonright").css('visibility', 'hidden');
-
-          // using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
-          var start_azimuth = parseInt([ -Math.PI*2/3.1, 0, Math.PI*2/3.1 ][position-1] * 100);
-          clog('start azi: ' + start_azimuth);
-          $("#slide_azi").val(  start_azimuth );
-          rotate_view(); 
-      }
-
-      $("#calibration-sliders").hide();
-      $("#blankpixel").hide();
-      set_cubemode(0);
-    });
-});
-
-</script>   
-
-
-	</head>
-    <body>
+<body>
     <div id="container">
-            <div class="toprow" >
-                <img class="bigbutton"   id="screensaver"      src="/static/animated_disco.gif"  alt="Screen Saver"  >
-                <img class="bigbutton"   id="pixelmapping"      src="/static/button_pixelmap.png"  alt="Pixel Mapping"  >
-                <img class="bigbutton"   id="colorcalibration"     src="/static/button_colorcalib.png" alt="Color Calibration" >
-                <img class="bigbutton"   id="normal"     src="/static/button_normalmode.png" alt="Normal Mode" >
+        <div class="toprow">
+          <img alt="Screen Saver" class="bigbutton" id="screensaver" src="/static/animated_disco.gif"> 
+          <img alt= "Pixel Mapping" class="bigbutton" id="pixelmapping" src="/static/button_pixelmap.png"> 
+          <img alt="Color Calibration" class= "bigbutton" id="colorcalibration" src="/static/button_colorcalib.png"> 
+          <img alt="Normal Mode" class="bigbutton" id="normal" src= "/static/button_normalmode.png">
+        </div>
+
+        <div id="svgholder"></div><canvas height="750" id="canvas" width="750"></canvas>
+
+        <div class="bottomrow">
+          <img alt="Left" class="button left" id="buttonleft" src="/static/button_left.png"> 
+          <img alt="Right" class= "button right" id="buttonright" src="/static/button_right.png">
+        </div>
+
+        <div id="calibration-sliders">
+            <div id="facenum">
+                No face being calibrated now.
             </div>
+            <div id="red"></div>
+            <div id="green"></div>
+            <div id="blue"></div>
+        </div>
 
-			<div id="svgholder"></div>
-	
-           <canvas id="canvas" width=750 height=750></canvas>   
-
-
-            <div class="bottomrow" >
-                <img class="button left"   id="buttonleft"  src="/static/button_left.png"      alt="Left"  >
-                <img class="button right"   id="buttonright" src="/static/button_right.png"     alt="Right" >
-            </div>
-            <div id="calibration-sliders">
-                <div id="facenum">No face being calibrated now.</div>
-                <div id="red"></div>
-                <div id="green"></div>
-                <div id="blue"></div>
-            </div>
-            <div id="pixelholder">
-                <img class="blankpixel"   id="blankpixel"  src="/static/blankpixel.png"      alt="blank"  >
-            </div>
-      </div>
-
-       <div id="cube_status">Waiting for controller...</div>
-
-       <div id="manual_rotate" class="debug">
-          Altitude: <input id="slide_alt" type="range" min="-1000" max="1000" value="220" onchange="rotate_view();"><br/>
-          Azimuth: <input id="slide_azi" type="range" min="-1000" max="1000" value="0" onchange="rotate_view();"><br/>
-       </div>
-       <div id="frameratediv" class="debug">
-       Framerate: <span id="framerate">...</span> fps
-       </div>
+        <div id="pixelholder">
+          <img alt="blank" class="blankpixel" id="blankpixel" src="/static/blankpixel.png">
+        </div>
     </div>
-    </body> 
-</html>  
 
+    <div id="cube_status">
+        Waiting for controller...
+    </div>
 
+    <div class="debug" id="manual_rotate">
+        Altitude: <input id="slide_alt" max="1000" min="-1000" onchange="rotate_view();" type="range" value="220"><br>
+        Azimuth: <input id="slide_azi" max="1000" min="-1000" onchange="rotate_view();" type="range" value="0"><br>
+    </div>
+
+    <div class="debug" id="frameratediv">
+        Framerate: <span id="framerate">...</span> fps
+    </div>
+</body>
+</html>
