@@ -20,17 +20,11 @@ function clog(msg) {
 
 
 var previous_datagram = null;
-var first_connection = true;
 
 function on_message_pushed( datagram ) {
      $('#cube_status').html('Begin play.');
      $('#cube_status').animate({'opacity': 0}, 4000 );
 			
-		 if( first_connection ){
-		   if( goto_idle_screen ) goto_idle_screen();
-			 first_connection = false
-		 }
-
 		 current_cube_colors = decompress_datagram( datagram );
 		 if( previous_datagram != datagram ) {
 			 reset_arrow_timer();
