@@ -1,6 +1,6 @@
 <html>   
     <head>
-        <title>One cube to rule them all</title>
+        <title>Groovik's Cube Admin Panel</title>
 	      
         <link rel="stylesheet" href="static/admin.css" type="text/css" media="all" />
         <script src="static/jquery.min.js"></script>
@@ -71,15 +71,12 @@ $(document).ready(function(){
 	</head>
     <body>
     <div id="container">
-      {% block top %}
             <div class="toprow" >
                 <img class="bigbutton"   id="screensaver"      src="/static/animated_disco.gif"  alt="Screen Saver"  >
                 <img class="bigbutton"   id="pixelmapping"      src="/static/button_pixelmap.png"  alt="Pixel Mapping"  >
                 <img class="bigbutton"   id="colorcalibration"     src="/static/button_colorcalib.png" alt="Color Calibration" >
                 <img class="bigbutton"   id="normal"     src="/static/button_normalmode.png" alt="Normal Mode" >
             </div>
-
-      {% endblock %}
 
 			<div id="svgholder"></div>
 	
@@ -99,8 +96,6 @@ $(document).ready(function(){
             <div id="pixelholder">
                 <img class="blankpixel"   id="blankpixel"  src="/static/blankpixel.png"      alt="blank"  >
             </div>
-        {% block bottom %}
-        {% endblock %}
       </div>
 
        <div id="cube_status">Waiting for controller...</div>
