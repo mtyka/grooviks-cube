@@ -11,24 +11,28 @@
         <script type="text/javascript" src="static/jquery.svgfilter.js"></script> 
         <script type="text/javascript" src="static/jquery.svggraph.js"></script> 
         <script type="text/javascript" src="static/jquery.svgplot.js"></script> 
+        
+        <script type="text/javascript" src="js/loadhookbox.js"></script> 
+        <script type="text/javascript" src="js/checkie.js"></script> 
+        <script type="text/javascript" src="js/client_state.js"></script> 
+        <script type="text/javascript" src="js/control.js"></script> 
+        <script type="text/javascript" src="js/hookbox_setup.js"></script> 
+        
+        <script type="text/javascript" src="js/soundmanager2-nodebug-jsmin.js"></script> 
+        <script type="text/javascript" src="js/soundcontrol.js"></script> 
+        <script type="text/javascript" src="js/vector.js"></script> 
+        <script type="text/javascript" src="js/render.js"></script> 
+        <script type="text/javascript" src="js/cube_spinning.js"></script> 
+        <script type="text/javascript" src="js/timeouts.js"></script> 
+
+        <script type="text/javascript" src="js/menus.js"></script> 
+        <script type="text/javascript" src="js/admin.js"></script>  
 
 
-  
-	<link rel="stylesheet" href="static/jquery-ui.css" type="text/css" media="all" />
-	<link rel="stylesheet" href="static/ui.theme.css" type="text/css" media="all" />
+				<link rel="stylesheet" href="static/jquery-ui.css" type="text/css" media="all" />
+				<link rel="stylesheet" href="static/ui.theme.css" type="text/css" media="all" />
 	
 <script type="text/javascript"> 
-
-var client_state = "IDLE"
-
-{% include "loadhookbox.js" %}
-{% include "checkie.js" %}
-{% include "control.js" %}
-{% include "hookbox_setup.js" %}
-{% include "admin.js" %}
-{% include "vector.js" %}
-{% include "render.js" %}
-{% include "cube_spinning.js" %}
 
 $(document).ready(function(){
     loadScript( server + '/static/hookbox.js', function(){ 
@@ -58,12 +62,8 @@ $(document).ready(function(){
       $("#calibration-sliders").hide();
       $("#blankpixel").hide();
       set_cubemode(0);
-    } );
+    });
 });
-
-
-var locked_buttons=false;
-
 
 </script>   
 
