@@ -22,6 +22,7 @@ DATABASES = {
 }
 
 STATIC_DOC_ROOT = os.path.join(os.path.dirname(__file__), 'templates/static')
+JS_ROOT = os.path.join(os.path.dirname(__file__), 'templates/js')
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
