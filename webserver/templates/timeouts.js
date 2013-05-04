@@ -1,5 +1,6 @@
 
-var inactivity_timeout = -1;
+var inactivity_timeout_length = 30; 
+var inactivity_timeout = -1; // off by default 
 
 // GAME TIMOUT COUNTER & LOGIC 
 
@@ -45,8 +46,6 @@ $( document ).ready( function(){
 
 
 
-var inactivity_timeout_length = 30; 
-var inactivity_timeout = -1; // off by default 
 
 function clear_timeout(){
 	clog( "Clear inactivity timeout..." );
