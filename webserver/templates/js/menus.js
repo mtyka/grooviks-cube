@@ -65,18 +65,10 @@ function flyin_menu_bg(){
 		$("#levelmenu_bgb").css("opacity", "-2.0");
 		$("#levelmenu_bgt").css("opacity", "-2.0");
 
-		$("#levelmenu_bgb").animate( {
-			opacity:1.0
-		},{ duration: 1000 }
-		);
-		$("#levelmenu_bgt").animate( {
-			opacity:1.0
-		},{ duration: 1000 }
-		);
-		$("#levelmenu_bg").animate( {
-			opacity:0.6
-		},{ duration: 1000 }
-		);
+		$("#levelmenu_bgb").animate( { opacity:1.0 },{ duration: 1000 });
+		$("#levelmenu_bgt").animate( { opacity:1.0 },{ duration: 1000 });
+		$("#levelmenu_bg").css("display", "inline");
+    $("#levelmenu_bg").animate( { opacity:0.6 },{ duration: 1000 });
 
 		$("#button_restart").animate( {
 			opacity:0.0
@@ -89,20 +81,9 @@ function flyin_menu_bg(){
 }
 
 function flyout_menu_bg(){
-		$("#levelmenu_bgb").animate( {
-			opacity:-1.0
-		},{ duration: 1000 }
-		);
-		$("#levelmenu_bgt").animate( {
-			opacity:-1.0
-		},{ duration: 1000 }
-		);
-		$("#levelmenu_bg").animate( {
-			opacity:-1.0
-		},{ duration: 1000
-		//, complete: function(){ } //  $("#levelmenu_bg").css("left", "-100%") }   }
-		
-		} );
+		$("#levelmenu_bgb").animate( { opacity:-1.0 },{ duration:  600 });
+		$("#levelmenu_bgt").animate( { opacity:-1.0 },{ duration:  600 });
+		$("#levelmenu_bg").animate( { opacity:-1.0 },{ duration:  600, complete: function(){ $("#levelmenu_bg").css("display", "none") }  } );
 		$("#button_restart").animate( {
 			opacity:1.0
 		},{ duration: 1000 }
