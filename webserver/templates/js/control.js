@@ -4,7 +4,7 @@
 
 
 CubeControl = (function($){
-  my = {}
+  var my = {}
 
   my.ignore_clicks = false;
   my.lastFaceClicked = -1;
@@ -54,23 +54,17 @@ CubeControl = (function($){
       enable_arrows_timeout = setTimeout( show_arrows, HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS );
   }
 
-  function show_arrows() {
-      if(!my.admin_mode){
-        my.INCLUDE_ARROWS = true;
-      }
-      my.update_view();
-  }
 
   function cube_got_clicked_on(x,y) 
   {
-      facenum = whichFaceIsPointIn(x,y);
+      facenum = Renderer.whichFaceIsPointIn(x,y);
       if( facenum < 0 )
       {
         // not on a cube face
         console.log("Local click not on cube face.");
         return;
       }
-      if (shouldDrawArrow(facenum) || my.admin_mode ) {
+      if (Renderer.shouldDrawArrow(facenum) || my.admin_mode ) {
           console.log("Publishing local click on face "+facenum);
           var rotation_direction = arrowRotation[facenum][0] > 0;
           // See QueueRotation in groovik.py
@@ -93,10 +87,16 @@ CubeControl = (function($){
      var azimuth = $("#slide_azi").val() / 100.0;
      var height = $('#canvas').attr('height');
      var width = $('#canvas').attr('width');
-     render_view(height, width, altitude, azimuth, 15 );
+     Renderer.render_view(height, width, altitude, azimuth, 15 );
      frames_rendered ++;
   }
 
+  function show_arrows() {
+      if(!my.admin_mode){
+        my.INCLUDE_ARROWS = true;
+      }
+      my.update_view();
+  }
 
   my.set_ignore_clicks = function( value ){
     my.ignore_clicks = value;
@@ -105,12 +105,11 @@ CubeControl = (function($){
  
   // public function update view
   my.rotate_view = function() {
-      clear_svg();
       my.update_view();
   }
   
   my.update_cube_state_from_datagram = function( datagram ) {
-       current_cube_colors = decompress_datagram( datagram );
+       Renderer.set_current_cube_colors(decompress_datagram( datagram ));
        if( previous_datagram != datagram ) {
          reset_arrow_timer();
          previous_datagram = datagram;
@@ -122,7 +121,7 @@ CubeControl = (function($){
   // set up events
   $(document).ready( function() {
      // Draw the cube in its default state when the page first loads
-     my.update_view();
+     CubeControl.update_view();
 
      // add click events that control the cube.
      $("body").click( function( eventObj ) {

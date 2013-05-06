@@ -42,7 +42,7 @@ var calibrationFace = -1;
 function cube_got_shift_clicked_on(x,y)
 {
     if ( CubeControl.current_mode == 1 ) {
-        var facenum = whichFaceIsPointIn(x,y);
+        var facenum = Renderer.whichFaceIsPointIn(x,y);
         calibrationFace = facenum;   	
         HookboxConnection.hookbox_conn.publish('colorcalib', [facenum] );
         $('div#facenum').html('Face number ' + facenum + ' is now being calibrated.');

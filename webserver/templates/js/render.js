@@ -2,6 +2,27 @@
 // ###################### Cube Rendering ##############################
 // ####################################################################
 
+Renderer = (function($){
+  var my = {}  // public functions - filled later below
+  
+  // private variables
+var svg_polygons = [];
+    var current_cube_colors = new Array( 54 );
+
+
+// Initializes the cube with gray until it connects to the server.
+function init(){
+    var index = 0;
+    for ( var i = 0; i < 6; ++i )
+    {
+        for ( var j = 0; j < 9; ++j )
+        {
+            current_cube_colors[index] = [0.2, 0.2, 0.2];
+            index++;            
+        }
+    }
+}
+
 function hex_digit_from_int(num) {
     return num.toString(16);
 }
@@ -21,8 +42,6 @@ function hex_colorstring_from_array( colorvec )
             + hex_from_float(colorvec[0]);
 }
 
-
-var svg_polygons = [];
 
 //-----------------------------------------------------------------------------
 // This draws a quad, projecting it from world space to screenspace, and then rendering it.
@@ -200,7 +219,7 @@ function build_view_context( ) {
 
 // Returns a number 0-53 if the x,y point (relative to canvas) is one of the faces.
 // Returns -1 if no match.
-function whichFaceIsPointIn( x,y )
+my.whichFaceIsPointIn = function( x,y )
 {
     var point = new vec4;
     point.v[0] = x;
@@ -290,7 +309,7 @@ function buildQuadList( ctx, viewProj, viewProjViewport ) {
 //  This determines whether an arrow should be drawn, and/or should be 
 //   available for click
 //-----------------------------------------------------------------------------
-function shouldDrawArrow( faceNum )
+my.shouldDrawArrow = function( faceNum )
 {
     // If we're in single player mode, verify that this arrow is intended for this player
     if ( CubeControl.ignore_clicks ){
@@ -444,7 +463,7 @@ function drawCube( ctx, viewProj, viewProjViewport, colors, grey_mode )
 		}
 		
 		var arrowDirection = -1;
-		if (shouldDrawArrow(ndx)) {
+		if (my.shouldDrawArrow(ndx)) {
 			var sign = arrowRotation[ndx][0] < 0;
 			arrowDirection = rotToOrient[Math.abs(arrowRotation[ndx][0]) - 1][Math.floor(ndx / 9)]
 				if (sign) {
@@ -480,23 +499,14 @@ function drawCube( ctx, viewProj, viewProjViewport, colors, grey_mode )
 }
 
 
-    // Initialize the cube with gray until it connects to the server.
-    var current_cube_colors = new Array( 54 );
-    var index = 0;
-    for ( var i = 0; i < 6; ++i )
-    {
-        for ( var j = 0; j < 9; ++j )
-        {
-            current_cube_colors[index] = [0.2, 0.2, 0.2];
-            index++;            
-        }
-    }
 
 
-function render_view( width, height, altitude, azimuth, distance ) 
+my.render_view = function( width, height, altitude, azimuth, distance ) 
 { 
     var canvas = document.getElementById("canvas");   
     var ctx = canvas.getContext("2d");   
+
+    
 
     // Clear to black
     ctx.save();   
@@ -513,4 +523,14 @@ function render_view( width, height, altitude, azimuth, distance )
 		}
 
 }
+
+my.set_current_cube_colors = function( new_colors ){
+  current_cube_colors = new_colors;
+}
+
+init();
+  
+  return my; // export public functions
+}(jQuery))
+
 
