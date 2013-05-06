@@ -113,17 +113,17 @@ var HookboxConnection = (function(){
         }
       };
 
-     // Subscribe to the pubsub channel with the colors
+     // Subscribe to all the channels we'll need 
      my.hookbox_conn.subscribe("iframe");
-//     my.hookbox_conn.subscribe("faceclick");
-//     my.hookbox_conn.subscribe("movesfromsolved");
+     my.hookbox_conn.subscribe("faceclick");
+     my.hookbox_conn.subscribe("movesfromsolved");
      my.hookbox_conn.subscribe("gamemode");
      my.hookbox_conn.subscribe("gameState");
-//     my.hookbox_conn.subscribe("rotationStep");
-//     my.hookbox_conn.subscribe("volumeControl");
-//     my.hookbox_conn.subscribe("cubemode");
-//     my.hookbox_conn.subscribe("colorcalib");
-//     my.hookbox_conn.subscribe("colorcalibrx");
+     my.hookbox_conn.subscribe("rotationStep");
+     my.hookbox_conn.subscribe("volumeControl");
+     my.hookbox_conn.subscribe("cubemode");
+     my.hookbox_conn.subscribe("colorcalib");
+     my.hookbox_conn.subscribe("colorcalibrx");
   }
 
 
