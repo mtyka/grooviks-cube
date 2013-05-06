@@ -5,7 +5,7 @@ function set_initial_position(){
       var start_azimuth = parseInt([ -Math.PI*2/3.01, 0, Math.PI*2/3.01 ][position-1] * 100);
         //clog('start azi: ' + start_azimuth);
         //$("#slide_azi").val(  start_azimuth );
-        //rotate_view(); 
+        //CubeControl.rotate_view(); 
       clog("Resetting proper position: " + position + "  (" + start_azimuth + ")" );
 			stop_spin();
 			animate_absolute_spin( start_azimuth ) 
@@ -25,20 +25,20 @@ function animate_absolute_spin(radians) {
 		}
 		
 		locked_buttons = true;
-    ignore_clicks = true;
+    CubeControl.ignore_clicks = true;
 		azimuth = radians 
 		$("#slide_azi").animate( { 
 			animate_val: azimuth 
 		},{ duration: 2000, 
 		    complete: function(){
 					locked_buttons = false;
-					ignore_clicks = false;
-					update_view();
+					CubeControl.ignore_clicks = false;
+					CubeControl.update_view();
 				},
 				step: function() {  
 					//console.log($("#slide_azi").attr("animate_val") ); 
 					$("#slide_azi").val( $("#slide_azi").attr("animate_val") );
-					rotate_view(); 
+					CubeControl.rotate_view(); 
 		    }     
       }
 		);
@@ -49,7 +49,7 @@ function animate_spin(delta_radians) {
 		// lock the buttons
 		if(locked_buttons) return;
 		locked_buttons = true;
-		ignore_clicks = true;
+		CubeControl.ignore_clicks = true;
 		
 
 		// do the boogie 
@@ -63,12 +63,12 @@ function animate_spin(delta_radians) {
 		},{ duration: 2000, 
 		    complete: function(){
 					locked_buttons = false;
-					ignore_clicks = false;
+					CubeControl.ignore_clicks = false;
 				},
 				step: function() {  
 					//console.log($("#slide_azi").attr("animate_val") ); 
 					$("#slide_azi").val( $("#slide_azi").attr("animate_val") );
-					rotate_view(); 
+					CubeControl.rotate_view(); 
 		    }     
       }
 		);
@@ -95,7 +95,7 @@ function start_spin( start_spin ){
 		azimuth += 1 ;
 		azimuth = azimuth % (100*Math.PI*2);  // Re-center
 		$("#slide_azi").val( azimuth  ); 
-		rotate_view();
+		CubeControl.rotate_view();
 		setTimeout("start_spin( false )",25 ) 
 }
 

@@ -31,6 +31,10 @@ $(document).ready(function(){
 
 });
 
+function reset_gamestate(position, difficulty) {
+    console.log("Resetting gamestate: " + difficulty);
+    HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'SELECT_DIFFICULTY', 'difficulty' : difficulty});
+}
 
 var selected_game_mode = "START_3P"
 function select_difficulty( difficulty ){
@@ -57,7 +61,7 @@ function select_difficulty( difficulty ){
 
 function flyin_menu_bg(){
 		// background is in place - thus ignore clicks on canvas
-		ignore_clicks=true;
+		CubeControl.ignore_clicks=true;
 
 		// animate all the opacities and positions to bring in the background of the menu
 		$("#levelmenu_bg").css("opacity", "-2.0");
@@ -74,7 +78,7 @@ function flyin_menu_bg(){
 			opacity:0.0
 		},{ duration: 1000 }
 		);
-		ignore_clicks = true;
+		CubeControl.ignore_clicks = true;
 
 		hide_rotation_buttons();
 		hide_instructions();
@@ -110,7 +114,7 @@ function flyin_menu( id ){
 			opacity:0.6
 		},{ duration: 1000 }
 		);
-		ignore_clicks = true;
+		CubeControl.ignore_clicks = true;
 }
 
 function flyout_menu( id ){
@@ -133,7 +137,7 @@ function flyout_idlemenu() {
 }
 
 function goto_idle_screen(){
-    ignore_clicks = true;
+    CubeControl.ignore_clicks = true;
    	if( menustate == 1 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();
@@ -149,7 +153,7 @@ function goto_idle_screen(){
 }
 
 function goto_mode_screen(){
-	ignore_clicks = true;
+	CubeControl.ignore_clicks = true;
    	if( menustate == 2 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();
@@ -163,7 +167,7 @@ function goto_mode_screen(){
 
 function goto_level_screen(){
     clog("goto_level_screen()");
-		ignore_clicks = true;
+		CubeControl.ignore_clicks = true;
    	if( menustate == 3 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();
@@ -174,7 +178,7 @@ function goto_level_screen(){
 }
 
 function goto_timeout_screen(){
-    ignore_clicks = true;
+    CubeControl.ignore_clicks = true;
    	if( menustate == 4 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();
@@ -184,7 +188,7 @@ function goto_timeout_screen(){
 }
 
 function goto_join_screen(){
-    ignore_clicks = true;
+    CubeControl.ignore_clicks = true;
    	if( menustate == 5 ) return;
 		if( interrupt_ok ){
 			remove_menu();
@@ -198,7 +202,7 @@ function goto_join_screen(){
 
 function goto_queued_screen(){
     clog("goto_queued_screen()");
-		ignore_clicks = true;
+		CubeControl.ignore_clicks = true;
    	if( menustate == 6 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();
@@ -210,7 +214,7 @@ function goto_queued_screen(){
 
 function goto_waiting_screen(){
     clog("goto_waiting_screen()");
-    ignore_clicks = true;
+    CubeControl.ignore_clicks = true;
    	if( menustate == 7 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();
@@ -221,7 +225,7 @@ function goto_waiting_screen(){
 }
 
 function goto_connecting_screen(){
-    ignore_clicks = true;
+    CubeControl.ignore_clicks = true;
    	if( menustate == 8 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();
@@ -271,7 +275,7 @@ function clear_screen(){
 		remove_menu()
 		if( menustate != 0 ) flyout_menu_bg();
     menustate=0
-		ignore_clicks=false;
+		CubeControl.ignore_clicks=false;
 		set_initial_position();
 
 		// trigger greeting flash

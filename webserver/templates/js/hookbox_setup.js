@@ -35,7 +35,12 @@ var HookboxConnection = (function(){
     headelem.appendChild(oScript);
   }
 
-
+  function decompress_rgbfloat(rgb) { 
+      var output = [];
+      output = rgb.split(" ");
+      var rgb_floats = [ parseFloat(output[2]), parseFloat(output[1]), parseFloat(output[0])] ;
+      return rgb_floats;
+  }
 
   function establish_hookbox_connections() {
       if( !is_hookbox_loaded ) {
@@ -49,10 +54,11 @@ var HookboxConnection = (function(){
 
       subscription = null;
       my.hookbox_conn.onSubscribed = function(channelName, _subscription) {
+        try{
           if( channelName == 'iframe' ) {
               subscription = _subscription;                
               subscription.onPublish = function(frame) {
-                  on_message_pushed( frame.payload );
+                  CubeControl.update_cube_state_from_datagram( frame.payload );
               };  
           }
           if( channelName == 'faceclick' ) {
@@ -101,19 +107,23 @@ var HookboxConnection = (function(){
                   handle_vol(frame.payload);
               }
           }
+        }
+        catch(e){
+          console.log(e)
+        }
       };
 
      // Subscribe to the pubsub channel with the colors
      my.hookbox_conn.subscribe("iframe");
-     my.hookbox_conn.subscribe("faceclick");
-     my.hookbox_conn.subscribe("movesfromsolved");
+//     my.hookbox_conn.subscribe("faceclick");
+//     my.hookbox_conn.subscribe("movesfromsolved");
      my.hookbox_conn.subscribe("gamemode");
      my.hookbox_conn.subscribe("gameState");
-     my.hookbox_conn.subscribe("rotationStep");
-     my.hookbox_conn.subscribe("volumeControl");
-     my.hookbox_conn.subscribe("cubemode");
-     my.hookbox_conn.subscribe("colorcalib");
-     my.hookbox_conn.subscribe("colorcalibrx");
+//     my.hookbox_conn.subscribe("rotationStep");
+//     my.hookbox_conn.subscribe("volumeControl");
+//     my.hookbox_conn.subscribe("cubemode");
+//     my.hookbox_conn.subscribe("colorcalib");
+//     my.hookbox_conn.subscribe("colorcalibrx");
   }
 
 

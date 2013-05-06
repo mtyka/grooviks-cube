@@ -1,3 +1,4 @@
+var max_slider = 1000;
 
 	function hexFromRGB(r, g, b) {
 		var hex = [
@@ -40,7 +41,7 @@ var calibrationFace = -1;
 
 function cube_got_shift_clicked_on(x,y)
 {
-    if ( current_mode == 1 ) {
+    if ( CubeControl.current_mode == 1 ) {
         var facenum = whichFaceIsPointIn(x,y);
         calibrationFace = facenum;   	
         HookboxConnection.hookbox_conn.publish('colorcalib', [facenum] );
@@ -79,7 +80,7 @@ function set_cubemode(mode) {
     clog("Setting cube mode: " + mode);
     clog( HookboxConnection.hookbox_conn )
     HookboxConnection.hookbox_conn.publish('cubemode', {'mode' : mode});
-    current_mode = mode;
+    CubeControl.current_mode = mode;
 
     if (mode == 1)
     {

@@ -1,44 +1,36 @@
-
-
-var ignore_clicks = false;
-var admin_mode = false;
-
 // ####################################################################
-// ######################## Control Logic #############################
+// ######################## Cube clicks and drawing ###################
 // ####################################################################
 
-var max_slider = 1000;
+
+CubeControl = (function($){
+  my = {}
+
+my.ignore_clicks = false;
+my.lastFaceClicked = -1;
+my.renderClickedFaceCount = 0;
+my.INCLUDE_ARROWS = false;
+my.admin_mode = false;
 var current_mode;
-
-// safe way to log things on webkit and not blow up firefox
-function clog(msg) {
-    if( window.console ) {
-        console.log(msg);
-    }
-}
-
-
 var previous_datagram = null;
+var faceclick_subscription;
+var enable_arrows_timeout = null;
 
-function on_message_pushed( datagram ) {
-     $('#cube_status').html('Begin play.');
-     $('#cube_status').animate({'opacity': 0}, 4000 );
-			
+
+
+
+
+my.update_cube_state_from_datagram = function( datagram ) {
 		 current_cube_colors = decompress_datagram( datagram );
 		 if( previous_datagram != datagram ) {
 			 reset_arrow_timer();
 			 previous_datagram = datagram;
 		 }
-		 update_view();  // calls into the renderer code
+		 my.update_view();  // calls into the renderer code
 }
 
 
-function decompress_rgbfloat(rgb) { 
-    var output = [];
-    output = rgb.split(" ");
-    var rgb_floats = [ parseFloat(output[2]), parseFloat(output[1]), parseFloat(output[0])] ;
-    return rgb_floats;
-}
+
 // Converts a long hex string into an array of 54 RGB-float-triples
 function decompress_datagram(datagram) {
     //console.log("decompressing...");
@@ -71,22 +63,18 @@ function parse_hex_rgb(hexstring) {
 // Logic to turn arrows off when moving
 //
 
-var INCLUDE_ARROWS = false;
-
-var enable_arrows_timeout = null;
-
 
 function reset_arrow_timer() {
-    INCLUDE_ARROWS = false;
+    my.INCLUDE_ARROWS = false;
     clearTimeout( enable_arrows_timeout );
     enable_arrows_timeout = setTimeout( show_arrows, HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS );
 }
 
 function show_arrows() {
-    if(!admin_mode){
-      INCLUDE_ARROWS = true;
+    if(!my.admin_mode){
+      my.INCLUDE_ARROWS = true;
     }
-    update_view();
+    my.update_view();
 }
 
 
@@ -96,31 +84,51 @@ function show_arrows() {
 //
 
 
-function update_view() {
+my.update_view = function() {
    // looks at the view sliders and renders-the cube with that and the current color-state
    var altitude = $("#slide_alt").val() / 100.0;
    var azimuth = $("#slide_azi").val() / 100.0;
    var height = $('#canvas').attr('height');
    var width = $('#canvas').attr('width');
    render_view(height, width, altitude, azimuth, 15 );
-   //window.setTimeout( update_view, 50 );
-
    frames_rendered ++;
 }
 
 
 function set_ignore_clicks( value ){
-	ignore_clicks = value;
+	my.ignore_clicks = value;
 }
 
-function rotate_view() {
-    clear_svg();
-    update_view();
-}
 
+function cube_got_clicked_on(x,y) 
+{
+    facenum = whichFaceIsPointIn(x,y);
+    if( facenum < 0 )
+	  {
+     	// not on a cube face
+     	console.log("Local click not on cube face.");
+     	return;
+    }
+    if (shouldDrawArrow(facenum) || my.admin_mode ) {
+        console.log("Publishing local click on face "+facenum);
+      	var rotation_direction = arrowRotation[facenum][0] > 0;
+      	// See QueueRotation in groovik.py
+      	// TODO(bretford): mapping is weird, fix
+      	var rotation_index = arrowRotation[facenum][1] + (Math.abs(arrowRotation[facenum][0]))%3*3;
+      	HookboxConnection.hookbox_conn.publish('faceclick', [facenum, rotation_index, rotation_direction] );
+    
+		if ( my.INCLUDE_ARROWS )
+		{
+			my.lastFaceClicked = facenum;
+			renderClickedFaceCount = 5;
+		}
+	}
+}
+ 
+ // set up events
  $(document).ready( function() {
     // Draw the cube in its default state when the page first loads
-    update_view();
+    my.update_view();
 
     // add click events that control the cube.
     $("body").click( function( eventObj ) {
@@ -137,11 +145,7 @@ function rotate_view() {
 			
 				 return true;
   		} 
-			else if( !ignore_clicks ){
-				 //var x = eventObj.pageX;
-				 //var y = eventObj.pageY;
-				 //console.log("local click at absolute ("+x+","+y+")");
-
+			else if( !my.ignore_clicks ){
 				 var top_left_canvas_corner = $("#canvas").elementlocation();
 				 var x = eventObj.pageX - top_left_canvas_corner.x;
 				 var y = eventObj.pageY - top_left_canvas_corner.y;
@@ -155,38 +159,12 @@ function rotate_view() {
 		});
 });
 
-var faceclick_subscription;
-var lastFaceClicked = -1;
-var renderClickedFaceCount = 0;
+  // public function update view
+  my.rotate_view = function() {
+      clear_svg();
+      my.update_view();
+  }
 
-function cube_got_clicked_on(x,y) 
-{
-    facenum = whichFaceIsPointIn(x,y);
-    if( facenum < 0 )
-	  {
-     	// not on a cube face
-     	console.log("Local click not on cube face.");
-     	return;
-    }
-    if (shouldDrawArrow(facenum) || admin_mode ) {
-        console.log("Publishing local click on face "+facenum);
-      	var rotation_direction = arrowRotation[facenum][0] > 0;
-      	// See QueueRotation in groovik.py
-      	// TODO(bretford): mapping is weird, fix
-      	var rotation_index = arrowRotation[facenum][1] + (Math.abs(arrowRotation[facenum][0]))%3*3;
-      	HookboxConnection.hookbox_conn.publish('faceclick', [facenum, rotation_index, rotation_direction] );
-    
-		if ( INCLUDE_ARROWS )
-		{
-			lastFaceClicked = facenum;
-			renderClickedFaceCount = 5;
-		}
-	}
-}
-
-function reset_gamestate(position, difficulty) {
-    console.log("Resetting gamestate: " + difficulty);
-    HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'SELECT_DIFFICULTY', 'difficulty' : difficulty});
-}
-
+  return my; // return public members
+}(jQuery))
 

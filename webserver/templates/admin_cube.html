@@ -33,7 +33,7 @@
     <script type="text/javascript">
       $(document).ready(function(){
       HookboxConnection.init( '/static/hookbox.js', function(){ 
-        admin_mode = true;
+        CubeControl.admin_mode = true;
 
         $("#screensaver").click(  function(){ set_cubemode(3); } );
         $("#pixelmapping").click(  function(){ set_cubemode(2); } );
@@ -94,10 +94,6 @@
         <div id="pixelholder">
           <img alt="blank" class="blankpixel" id="blankpixel" src="/static/blankpixel.png">
         </div>
-    </div>
-
-    <div id="cube_status">
-        Waiting for controller...
     </div>
 
     <div class="debug" id="manual_rotate">
