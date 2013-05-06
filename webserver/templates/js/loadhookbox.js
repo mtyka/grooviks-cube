@@ -4,6 +4,13 @@ function get_querystring_parameter(name) {
   return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 }
 
+// safe way to log things on webkit and not blow up firefox
+function clog(msg) {
+    if( window.console ) {
+        console.log(msg);
+    }
+}
+
 // ####################################################################
 // ######################## Configuration #############################
 // ####################################################################

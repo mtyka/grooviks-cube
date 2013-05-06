@@ -293,7 +293,7 @@ function buildQuadList( ctx, viewProj, viewProjViewport ) {
 function shouldDrawArrow( faceNum )
 {
     // If we're in single player mode, verify that this arrow is intended for this player
-    if ( ignore_clicks ){
+    if ( CubeControl.ignore_clicks ){
 		  return false;
 		}
 
@@ -453,7 +453,7 @@ function drawCube( ctx, viewProj, viewProjViewport, colors, grey_mode )
 			//clog(arrowRotation[ndx], Math.floor(ndx/9), sign, arrowDirection)
 			if (arrowDirection >= 0) 
 			{
-				if( INCLUDE_ARROWS ) 
+				if( CubeControl.INCLUDE_ARROWS ) 
 				{
 					if( !grey_mode ){
 						drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor );
@@ -464,16 +464,16 @@ function drawCube( ctx, viewProj, viewProjViewport, colors, grey_mode )
 			}
 		}
 
-		if ( ( lastFaceClicked >= 0 ) && (lastFaceClicked == ndx ) )
+		if ( ( CubeControl.lastFaceClicked >= 0 ) && (CubeControl.lastFaceClicked == ndx ) )
 		{
 			if (arrowDirection >= 0) 
 			{
 				drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, red );
 			}
-			renderClickedFaceCount--;
-			if ( renderClickedFaceCount <= 0 )
+			CubeControl.renderClickedFaceCount--;
+			if ( CubeControl.renderClickedFaceCount <= 0 )
 			{
-				lastFaceClicked = -1;
+				CubeControl.lastFaceClicked = -1;
 			}
 		}
 	}           
