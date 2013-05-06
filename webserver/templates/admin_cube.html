@@ -33,6 +33,8 @@
     <script type="text/javascript">
       $(document).ready(function(){
       HookboxConnection.init( '/static/hookbox.js', function(){ 
+        admin_mode = true;
+
         $("#screensaver").click(  function(){ set_cubemode(3); } );
         $("#pixelmapping").click(  function(){ set_cubemode(2); } );
         $("#colorcalibration").click(     function(){ set_cubemode(1); } );

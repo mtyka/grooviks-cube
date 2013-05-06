@@ -1,8 +1,7 @@
 
 
 var ignore_clicks = false;
-
-
+var admin_mode = false;
 
 // ####################################################################
 // ######################## Control Logic #############################
@@ -42,8 +41,8 @@ function decompress_rgbfloat(rgb) {
 }
 // Converts a long hex string into an array of 54 RGB-float-triples
 function decompress_datagram(datagram) {
-    //clog("decompressing...");
-    //clog(datagram);
+    //console.log("decompressing...");
+    //console.log(datagram);
     var output = [];
 
     while( datagram.length > 0 ) {
@@ -51,8 +50,8 @@ function decompress_datagram(datagram) {
         datagram = datagram.substring(6);
         output[output.length] = parse_hex_rgb(rgb);
     }
-    //clog("decompressed to...");
-    //clog(output);
+    //console.log("decompressed to...");
+    //console.log(output);
     return output;
 }
 
@@ -84,7 +83,9 @@ function reset_arrow_timer() {
 }
 
 function show_arrows() {
-    INCLUDE_ARROWS = true;
+    if(!admin_mode){
+      INCLUDE_ARROWS = true;
+    }
     update_view();
 }
 
@@ -130,7 +131,7 @@ function rotate_view() {
 				 var x = eventObj.pageX - top_left_canvas_corner.x;
 				 var y = eventObj.pageY - top_left_canvas_corner.y;
 
-				 clog("local shift click at relative ("+x+","+y+")");
+				 console.log("local shift click at relative ("+x+","+y+")");
 
 				 cube_got_shift_clicked_on(x,y);
 			
@@ -139,13 +140,13 @@ function rotate_view() {
 			else if( !ignore_clicks ){
 				 //var x = eventObj.pageX;
 				 //var y = eventObj.pageY;
-				 //clog("local click at absolute ("+x+","+y+")");
+				 //console.log("local click at absolute ("+x+","+y+")");
 
 				 var top_left_canvas_corner = $("#canvas").elementlocation();
 				 var x = eventObj.pageX - top_left_canvas_corner.x;
 				 var y = eventObj.pageY - top_left_canvas_corner.y;
 
-				 clog("local click at relative ("+x+","+y+")");
+				 console.log("local click at relative ("+x+","+y+")");
 
 				 cube_got_clicked_on(x,y);
 			
@@ -164,11 +165,11 @@ function cube_got_clicked_on(x,y)
     if( facenum < 0 )
 	  {
      	// not on a cube face
-     	clog("Local click not on cube face.");
+     	console.log("Local click not on cube face.");
      	return;
     }
-    if (shouldDrawArrow(facenum)) {
-        clog("Publishing local click on face "+facenum);
+    if (shouldDrawArrow(facenum) || admin_mode ) {
+        console.log("Publishing local click on face "+facenum);
       	var rotation_direction = arrowRotation[facenum][0] > 0;
       	// See QueueRotation in groovik.py
       	// TODO(bretford): mapping is weird, fix
@@ -184,7 +185,7 @@ function cube_got_clicked_on(x,y)
 }
 
 function reset_gamestate(position, difficulty) {
-    clog("Resetting gamestate: " + difficulty);
+    console.log("Resetting gamestate: " + difficulty);
     HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'SELECT_DIFFICULTY', 'difficulty' : difficulty});
 }
 
