@@ -5,7 +5,7 @@ function set_initial_position(){
       var start_azimuth = parseInt([ -Math.PI*2/3.01, 0, Math.PI*2/3.01 ][position-1] * 100);
         //clog('start azi: ' + start_azimuth);
         //$("#slide_azi").val(  start_azimuth );
-        //CubeControl.rotate_view(); 
+        //CubeControl.update_view(); 
       clog("Resetting proper position: " + position + "  (" + start_azimuth + ")" );
 			stop_spin();
 			animate_absolute_spin( start_azimuth ) 
@@ -38,7 +38,7 @@ function animate_absolute_spin(radians) {
 				step: function() {  
 					//console.log($("#slide_azi").attr("animate_val") ); 
 					$("#slide_azi").val( $("#slide_azi").attr("animate_val") );
-					CubeControl.rotate_view(); 
+					CubeControl.update_view(); 
 		    }     
       }
 		);
@@ -68,7 +68,7 @@ function animate_spin(delta_radians) {
 				step: function() {  
 					//console.log($("#slide_azi").attr("animate_val") ); 
 					$("#slide_azi").val( $("#slide_azi").attr("animate_val") );
-					CubeControl.rotate_view(); 
+					CubeControl.update_view(); 
 		    }     
       }
 		);
@@ -95,7 +95,7 @@ function start_spin( start_spin ){
 		azimuth += 1 ;
 		azimuth = azimuth % (100*Math.PI*2);  // Re-center
 		$("#slide_azi").val( azimuth  ); 
-		CubeControl.rotate_view();
+		CubeControl.update_view();
 		setTimeout("start_spin( false )",25 ) 
 }
 

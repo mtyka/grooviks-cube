@@ -102,12 +102,6 @@ CubeControl = (function($){
     my.ignore_clicks = value;
   }
 
- 
-  // public function update view
-  my.rotate_view = function() {
-      my.update_view();
-  }
-  
   my.update_cube_state_from_datagram = function( datagram ) {
        Renderer.set_current_cube_colors(decompress_datagram( datagram ));
        if( previous_datagram != datagram ) {
