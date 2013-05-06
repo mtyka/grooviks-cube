@@ -6,9 +6,31 @@ Renderer = (function($){
   var my = {}  // public functions - filled later below
   
   // private variables
+  
+  var RENDER_WITH_CANVAS = true;
+
+  /* SVG is an alternate way to render. It's not fully hooked up (no arrows, or input)
+     but does offer smooth blending between frames using jquery.animate.
+     It also renders vector-based when zooming on ipad/iphone although doesn't
+     seem to offer real performance benefits on that platform.
+   */
+  var RENDER_WITH_SVG = false;
+  var SVG_ANIMATION_SPEED = 65;  // how many ms to blend color transitions over
   var svg_polygons = [];
   var current_cube_colors = new Array( 54 );
-
+  // Show SVG element if configured.
+  var svg;
+  function store_svg_obj(new_svg) { 
+      svg = new_svg;
+  }
+  if( RENDER_WITH_SVG ) {
+      $(document).ready( function() {
+          $('#svgholder').append('<h4>svg</h4><div id="svgdiv" style="width:300px; height:300px; background: black;"> </div>');
+          $('#svgdiv').svg({onLoad: store_svg_obj});
+      });
+  }
+  // ---------------------------------------------------------------------
+  
   // Initializes the cube with gray until it connects to the server.
   function init(){
       var index = 0;
@@ -528,7 +550,6 @@ Renderer = (function($){
   // Initializes the cube with gray until it connects to the server.
   init();
 
-  
   return my; // export public functions
 }(jQuery))
 

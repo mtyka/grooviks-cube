@@ -11,25 +11,11 @@ function clog(msg) {
     }
 }
 
-// ####################################################################
-// ######################## Configuration #############################
-// ####################################################################
-
-var HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS = 700;  // ms
-
-var HOW_OFTEN_DISPLAY_FRAMERATE = 400;  // ms between updates
-var RENDER_WITH_CANVAS = true;
-
-/* SVG is an alternate way to render. It's not fully hooked up (no arrows, or input)
-   but does offer smooth blending between frames using jquery.animate.
-   It also renders vector-based when zooming on ipad/iphone although doesn't
-   seem to offer real performance benefits on that platform.
- */
-var RENDER_WITH_SVG = false;
-var SVG_ANIMATION_SPEED = 65;  // how many ms to blend color transitions over
+// some global url parameters
 
 var position = get_querystring_parameter('position') || null;
 var grey = get_querystring_parameter('grey') || 0;
+
 
 
 
@@ -37,6 +23,7 @@ var grey = get_querystring_parameter('grey') || 0;
 // #################### Framerate calculation #########################
 // ####################################################################
 
+var HOW_OFTEN_DISPLAY_FRAMERATE = 400;  // ms between updates
 var frames_rendered=0;
 var frame_cnt_reset_at = (new Date()).getTime(); // epoch time in ms
 
@@ -53,20 +40,9 @@ function display_framerate() {
 
 $(document).ready(function() {
     setInterval( display_framerate, HOW_OFTEN_DISPLAY_FRAMERATE );
-    });
+});
 
 
-// Show SVG element if configured.
-var svg;
-if( RENDER_WITH_SVG ) {
-    $(document).ready( function() {
-        $('#svgholder').append('<h4>svg</h4><div id="svgdiv" style="width:300px; height:300px; background: black;"> </div>');
-        $('#svgdiv').svg({onLoad: store_svg_obj});
-    });
-}
-function store_svg_obj(new_svg) { 
-    svg = new_svg;
-}
 
 
 // ####################################################################

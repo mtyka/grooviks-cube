@@ -16,6 +16,8 @@ CubeControl = (function($){
   var previous_datagram = null;
   var faceclick_subscription;
   var enable_arrows_timeout = null;
+  var HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS = 700;  // ms
+
 
 
   // Converts a long hex string into an array of 54 RGB-float-triples
