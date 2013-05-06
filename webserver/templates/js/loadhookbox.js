@@ -1,34 +1,9 @@
 
-// load the hookbox library, or display an error
-var is_hookbox_loaded = false;
-
-// This code loads the hookbox.js from the current host but changing the port to 2974.
-var server = location.protocol + '//' + location.hostname + ':2974';
-
-// Dynamically inserts the code to load the script into the page.
-
-
-function loadScript(sScriptSrc, success_func ) {
-  var headelem = document.getElementsByTagName('head')[0];
-  var oScript = document.createElement('script');
-  oScript.type = 'text/javascript';
-  oScript.src = sScriptSrc;
-  oScript.onload = function() {
-    console.log("HOOKBOX LOADED!");
-    is_hookbox_loaded = true;
-    establish_hookbox_connections();
-    if( success_func ) success_func(); 
-  }
-  oScript.onerror = function() {
-    alert("Could not load library from hookbox server.");
-  }
-  headelem.appendChild(oScript);
-}
-
 function get_querystring_parameter(name) {
   var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
   return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 }
+
 // ####################################################################
 // ######################## Configuration #############################
 // ####################################################################

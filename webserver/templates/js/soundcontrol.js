@@ -108,7 +108,7 @@ function setMasterVolumeLevel(volumeLevel){
 
 function handle_vol(payload){
     if(payload[0] == "ping") {
-      	hookbox_conn.publish("volumeControl", ["pong", position, masterVolume] );
+      	HookboxConnection.hookbox_conn.publish("volumeControl", ["pong", position, masterVolume] );
     } else if (payload[0] == "update") {
         setMasterVolumeLevel(payload[parseInt(position)+1]);
     }

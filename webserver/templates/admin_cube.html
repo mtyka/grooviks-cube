@@ -16,10 +16,10 @@
     <script src="static/jquery.svggraph.js" type="text/javascript"></script>
     <script src="static/jquery.svgplot.js" type="text/javascript"></script>
     <script src="js/loadhookbox.js" type="text/javascript"></script>
+    <script src="js/hookbox_setup.js" type="text/javascript"></script>
     <script src="js/checkie.js" type="text/javascript"></script>
     <script src="js/client_state.js" type="text/javascript"></script>
     <script src="js/control.js" type="text/javascript"></script>
-    <script src="js/hookbox_setup.js" type="text/javascript"></script>
     <script src="js/soundmanager2-nodebug-jsmin.js" type="text/javascript"></script>
     <script src="js/soundcontrol.js" type="text/javascript"></script>
     <script src="js/vector.js" type="text/javascript"></script>
@@ -32,7 +32,7 @@
     
     <script type="text/javascript">
       $(document).ready(function(){
-      loadScript( server + '/static/hookbox.js', function(){ 
+      HookboxConnection.init( '/static/hookbox.js', function(){ 
         $("#screensaver").click(  function(){ set_cubemode(3); } );
         $("#pixelmapping").click(  function(){ set_cubemode(2); } );
         $("#colorcalibration").click(     function(){ set_cubemode(1); } );

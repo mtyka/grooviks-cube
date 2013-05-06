@@ -43,7 +43,7 @@ function cube_got_shift_clicked_on(x,y)
     if ( current_mode == 1 ) {
         var facenum = whichFaceIsPointIn(x,y);
         calibrationFace = facenum;   	
-        hookbox_conn.publish('colorcalib', [facenum] );
+        HookboxConnection.hookbox_conn.publish('colorcalib', [facenum] );
         $('div#facenum').html('Face number ' + facenum + ' is now being calibrated.');
         clog("facenum " + facenum + " is now being calibrated");
     }
@@ -51,7 +51,7 @@ function cube_got_shift_clicked_on(x,y)
 
 function calibrate(face, red, green, blue) {
 	clog("Calibrating face: " + face +" r: " + red + " g: " + green + " b: " + blue);
-	hookbox_conn.publish('colorcalib', [face, blue, green, red]);
+	HookboxConnection.hookbox_conn.publish('colorcalib', [face, blue, green, red]);
 }
 
 function calibrateEvent()
@@ -77,8 +77,8 @@ function changeSlider(rgb_floats){
 
 function set_cubemode(mode) {
     clog("Setting cube mode: " + mode);
-    clog( hookbox_conn )
-    hookbox_conn.publish('cubemode', {'mode' : mode});
+    clog( HookboxConnection.hookbox_conn )
+    HookboxConnection.hookbox_conn.publish('cubemode', {'mode' : mode});
     current_mode = mode;
 
     if (mode == 1)
@@ -100,6 +100,6 @@ function set_cubemode(mode) {
 }
 
 function map_blank_pixel() {
-    hookbox_conn.publish('faceclick', [54, 0, 0] );
+    HookboxConnection.hookbox_conn.publish('faceclick', [54, 0, 0] );
 }
  
