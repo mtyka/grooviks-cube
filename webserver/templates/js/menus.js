@@ -40,7 +40,7 @@ function select_difficulty( difficulty ){
 	next_flash_moves_display = setTimeout("flash_moves_display()", 5000 );
 
 	clog("ClientSentGameMode: " + selected_game_mode );
-	hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
+	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
   reset_gamestate(position, difficulty );
 
 	set_initial_position();
@@ -292,12 +292,12 @@ function clear_screen(){
 
 function clicked_quit(){
 		clog("ClientSent: QUIT ");
-		hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
+		HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
 }
 
 function clicked_wake(){
 		clog("ClientSent: WAKE ");
-		hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
+		HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
 }
 
 function clicked_alone(){
@@ -308,7 +308,7 @@ function clicked_alone(){
 function clicked_3player(){
 	  selected_game_mode = "START_3P";
 		clog("ClientSentGameMode: " + selected_game_mode );
-		hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
+		HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
 	  //goto_level_screen( )
 }
 
@@ -320,7 +320,7 @@ function clicked_ignore(){
 function clicked_join(){
 	  clear_screen()
     //not implemented yet
-    hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'JOIN_3P' } );
+    HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'JOIN_3P' } );
 }
 
 

@@ -173,7 +173,7 @@ function cube_got_clicked_on(x,y)
       	// See QueueRotation in groovik.py
       	// TODO(bretford): mapping is weird, fix
       	var rotation_index = arrowRotation[facenum][1] + (Math.abs(arrowRotation[facenum][0]))%3*3;
-      	hookbox_conn.publish('faceclick', [facenum, rotation_index, rotation_direction] );
+      	HookboxConnection.hookbox_conn.publish('faceclick', [facenum, rotation_index, rotation_direction] );
     
 		if ( INCLUDE_ARROWS )
 		{
@@ -185,7 +185,7 @@ function cube_got_clicked_on(x,y)
 
 function reset_gamestate(position, difficulty) {
     clog("Resetting gamestate: " + difficulty);
-    hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'SELECT_DIFFICULTY', 'difficulty' : difficulty});
+    HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'SELECT_DIFFICULTY', 'difficulty' : difficulty});
 }
 
 
