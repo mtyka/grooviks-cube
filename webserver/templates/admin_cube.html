@@ -56,7 +56,7 @@
             var start_azimuth = parseInt([ -Math.PI*2/3.1, 0, Math.PI*2/3.1 ][position-1] * 100);
             clog('start azi: ' + start_azimuth);
             $("#slide_azi").val(  start_azimuth );
-            rotate_view(); 
+            CubeControl.update_view(); 
         }
 
         $("#calibration-sliders").hide();
@@ -98,8 +98,8 @@
     </div>
 
     <div class="debug" id="manual_rotate">
-        Altitude: <input id="slide_alt" max="1000" min="-1000" onchange="rotate_view();" type="range" value="220"><br>
-        Azimuth: <input id="slide_azi" max="1000" min="-1000" onchange="rotate_view();" type="range" value="0"><br>
+        Altitude: <input id="slide_alt" max="1000" min="-1000" onchange="CubeControl.update_view();" type="range" value="220"><br>
+        Azimuth: <input id="slide_azi" max="1000" min="-1000" onchange="CubeControl.update_view();" type="range" value="0"><br>
     </div>
 
     <div class="debug" id="frameratediv">
