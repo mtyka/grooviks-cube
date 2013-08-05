@@ -532,9 +532,10 @@ class GrooviksCube:
    # Implementation details below here
    #-----------------------------------------------------------------------------   
    def __CanQueueState( self, state ):
-      # Illegal to queue states during a transition
-      if ( self.__currentCubeState != CubeState.IDLE and self.__currentCubeState != CubeState.UNKNOWN ):
-         return False
+      # Illegal to queue states during a transition (other than during screensaver mode)
+      if self.__currentMode != self.__screensaver: 
+        if ( self.__currentCubeState != CubeState.IDLE and self.__currentCubeState != CubeState.UNKNOWN ):
+          return False
       
       return self.__currentMode.CanQueueState( self, state )
       
@@ -602,14 +603,18 @@ class GrooviksCube:
    def __SwitchMode( self, params ):
       if ( params[0] == CubeMode.NORMAL ):
          self.__currentMode = self.__normalMode
+         self.LogEvent( "Switching to Normal Game mode" )
       elif ( params[0] == CubeMode.CALIBRATION ):
          self.__currentMode = self.__calibrationMode
+         self.LogEvent( "Switching to calibration mode" )
       elif ( params[0] == CubeMode.LIGHT_BOARD_CONFIGURATION ):
          self.__currentMode = self.__lightBoardConfiguration
+         self.LogEvent( "Switching to lightBoardConfiguration mode" )
       elif ( params[0] == CubeMode.SCREENSAVER ):
          self.__currentMode = self.__screensaver
+         self.LogEvent( "Switching to screensaver" )
       else:
-         print "Unknown cube mode requested!"
+         self.LogEvent( "Unknown cube mode requested!" )
       
       self.__currentCubeMode = params[0]
       
