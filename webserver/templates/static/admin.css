@@ -9,13 +9,6 @@
 	#green .ui-slider-handle { border-color: #8ae234; }
 	#blue .ui-slider-range { background: #729fcf; }
 	#blue .ui-slider-handle { border-color: #729fcf; }
-    #facenum {
-        text-align:left;
-        position: absolute;
-        left:15px;
-        top:-30px;
-        font-size:12px;
-    }
     .debug {
         display:none;
     }
@@ -37,7 +30,8 @@
       left: 10px;
       width: 40%;
       height:  97%;
-    }
+      z-index: 20;
+   }
 
     #container {
       position: absolute;
@@ -47,6 +41,11 @@
       text-align: center;
 			margin: 0px auto;
 		}
+
+    .blankpixel {
+      height:35px; 
+      font-size: 15px;
+    }
 
 		.toprow{
 			margin-left: auto;
