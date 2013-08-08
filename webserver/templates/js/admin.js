@@ -45,8 +45,8 @@ function cube_got_shift_clicked_on(x,y)
         var facenum = Renderer.whichFaceIsPointIn(x,y);
         calibrationFace = facenum;   	
         HookboxConnection.hookbox_conn.publish('colorcalib', [facenum] );
-        $('div#facenum').html('Face number ' + facenum + ' is now being calibrated.');
-        clog("facenum " + facenum + " is now being calibrated");
+        $('div#facenum').html('Facet ' + facenum + ' is now being calibrated.');
+        clog("Facet " + facenum + " is now being calibrated");
     }
 }
 
