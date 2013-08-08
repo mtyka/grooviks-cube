@@ -42,11 +42,16 @@
       HookboxConnection.init( '/static/hookbox.js', function(){ 
         CubeControl.admin_mode = true;
 
-        $("#screensaver").click(  function(){ set_cubemode(3); } );
-        $("#pixelmapping").click(  function(){ set_cubemode(2); } );
-        $("#colorcalibration").click(     function(){ set_cubemode(1); } );
-        $("#normal").click(     function(){ set_cubemode(0); } );
+        $("#screensaver").click(  function(){ set_cubemode(3);  restore_tabs_width(); } );
+        $("#pixelmapping").click(  function(){ set_cubemode(2); restore_tabs_width();} );
+        $("#colorcalibration").click(     function(){ set_cubemode(1); restore_tabs_width();} );
+        $("#normal").click(     function(){ set_cubemode(0); restore_tabs_width();} );
+        $("#power").click(  function(){ load_log( "/static/power.log", $("#powercontents") ); } );
+        $("#logs").click(  function(){ load_log( "/static/moves.log", $("#logcontents") ); } );
+        
         $("#blankpixel").click(     function(){ map_blank_pixel(); } );
+        $( "#tabs" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
+        $( "#tabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
 
         if (!position) {
             $("#buttonleft").click( function(){ 
@@ -70,11 +75,25 @@
         set_cubemode(0);
       });
       });
+
+      function restore_tabs_width(){
+        $("#tabs").animate( { width: "40%" } );
+      }
+
+      function load_log( url, container ){ 
+        console.log("Here?");
+        $("#tabs").animate( { width: "98%" } );
+        $.ajax({
+          "url": url,
+          "success": function( msg ){
+                   container.html( "<pre>" + msg + "</pre>" );
+          }
+        });
+      }
+
     </script>
     <script>
       $(function() {
-        $( "#tabs" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
-        $( "#tabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
       });
     </script>
 
@@ -83,52 +102,79 @@
 <body>
     
 <div id="tabs"> 
-  <ul style="width: 25%">
+  <ul style="width: 150px">
     <li><a id="normal"           href="#tabs-1">Normal Mode</a></li>
     <li><a id="pixelmapping"     href="#tabs-2">Pixel Map</a></li>
     <li><a id="colorcalibration" href="#tabs-3">Color Calib</a></li>
     <li><a id="power"            href="#tabs-4">Power Status</a></li>
     <li><a id="logs"             href="#tabs-5">Logs</a></li>
     <li><a id="screensaver"      href="#tabs-6">Color Cycle</a></li>
-    <li><a id="reset"            href="#tabs-7">Reset</a></li>
   </ul>
-  <div id="tabs-1"  style=" width: 65%; ">
-  To return to the normal game mode. You should return the cube to this state before leaving the admin interface.
-  </div>
-  <div id="tabs-2"  style=" width: 65%; ">
-  Pixelmapping. DO NOT change this unless you know what you're doing. Once you start calibration you must complete it or the mapping will
-  wrong! Any changes are *permanent*. <br><br>
-  Calibration works like this:<br>
-  Green squares are not yet calibrated.<br>
-  Red squares have already been mapped.<br>
-  The blue square is the currently selected facet:<br>
-  If its location on the screen and its location on the real cube are:<br>
-  - identical, it is mapped correctly. Click on the blue square to go to the next facet.<br>
-  - different, its not mapped correctly. Click on the square that matches the location of the blue facet on the real cube.<br>
-  - if there is no blue square on the *real* cube, this facet is inactive. Clikc on the "Facet inactive" button.<br>
-<br>
-  Once complete, verify mapping by going to the normal game mode, make some rotations and compare the logical screen state with the real state.<br>
-      <img alt="blank" class="blankpixel" id="blankpixel" src="/static/blankpixel.png">
-  </div>
-  <div id="tabs-3"  style=" width:  65%" >
-            Calibration Color sliders
-            <div id="facenum">
-                No face being calibrated now.
-            </div>
-            <div id="red"></div>
-            <div id="green"></div>
-            <div id="blue"></div>
-  </div>
-  <div id="tabs-4"  style=" width: 65%; ">
   
+  <div id="tabs-1"  style=" width: 65%; ">
+    To return to the normal game mode. You should return the cube to this state before leaving the admin interface.
+  </div>
+  
+  <div id="tabs-2"  style=" width: 65%; ">
+    Pixelmapping. DO NOT change this unless you know what you're doing. Once you start calibration you must complete it or the mapping will
+    wrong! Any changes are *permanent*. <br><br>
+    Calibration works like this:<br>
+    Green squares are not yet calibrated.<br>
+    Red squares have already been mapped.<br>
+    The blue square is the currently selected facet:<br>
+    If its location on the screen and its location on the real cube are:<br>
+    - identical, it is mapped correctly. Click on the blue square to go to the next facet.<br>
+    - different, its not mapped correctly. Click on the square that matches the location of the blue facet on the real cube.<br>
+    - if there is no blue square on the *real* cube, this facet is inactive. Click on "Skip facet" button.<br>
+    <br>
+    Once complete, verify mapping by going to the normal game mode, make some rotations and compare the logical screen state with the real state.<br>
+  </div>
+  
+  <div id="tabs-3"  style=" width:  65%" >
+    <ul>
+    <li>Left click on cube rotates colors through R,G,B and white.
+    Typically you want to just calibrate white.
+    </li>
+    <li>
+    Shift-Click selects a facet for calibration. Adjust the sliders to 
+    balance the hue. Note that the color will <b>only</b> change on the real cube, not on the screen!
+    </li>
+    </ul>
 
+    TIP: Try only color balance one of the 6 faces at a time.
+    <br>
+    
+    <br>
+    
+    Calibration Color sliders
+    <div id="red"></div>
+    <div id="green"></div>
+    <div id="blue"></div>
+    <div id="facenum">
+        No facet selected 
+    </div>
   </div>
-  <div id="tabs-5"  style=" width: 65%; ">
+  
+  <div id="tabs-4"  style=" width: 85%; ">
+   Log of power supply status (chronological). Values in the 170-255 range indicate Power is ok. Below that, there appears to be dropping voltage and a powersupply may be broken.
+   The ID (a-m) is equivalent to the controler box label written on the box inside the cube. The LED indicator lights will help you figure out which  of the two supplies (PW1 or PW2) is broken.
+   Note that the cube is designed to have redundant power an thus a single power supply is enough to operate the box - however you should periodically check the status. <br>
+   <div id="powercontents" style="height:550px; overflow:scroll" > >
+     <!-- filled by AJAX request -->
+   </div>
   </div>
+  <div id="tabs-5"  style=" width: 85%; ">
+   <div id="logcontents" style="height:550px; overflow:scroll" > >
+     <!-- filled by AJAX request -->
+   </div>
+  </div>
+  
   <div id="tabs-6"  style=" width: 65%; ">
+     This mode is useful to quickly inspect color channels. Also
+     it is entertaining - think of it a screen saver when you don't
+     want to be in game mode.
   </div>
-  <div id="tabs-7"  style=" width: 65%; ">
-  </div>
+
 </div>
 
     
@@ -137,6 +183,9 @@
 
         <div class="bottomrow">
           <img alt="Left" class="button left" id="buttonleft" src="/static/button_left.png"> 
+          <br>
+          <br>
+          <button class="blankpixel" id="blankpixel">Skip facet</button>
           <img alt="Right" class= "button right" id="buttonright" src="/static/button_right.png">
         </div>
 
