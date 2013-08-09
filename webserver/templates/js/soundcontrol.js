@@ -106,10 +106,26 @@ function setMasterVolumeLevel(volumeLevel){
 	masterVolume  = volumeLevel;	
 }
 
+// This is a placeholder for a function that can handle pongs
+pong_handler = null;
+
+ping_handler = function(){ 
+  HookboxConnection.hookbox_conn.publish("volumeControl", ["pong", position, masterVolume] );
+}
+
 function handle_vol(payload){
     if(payload[0] == "ping") {
-      	HookboxConnection.hookbox_conn.publish("volumeControl", ["pong", position, masterVolume] );
+        console.log("Volume ping")
+        // ping handler is defined only by admin interface. Player mode does not respond or act on pongs
+        if( ping_handler ) ping_handler();
+    } else if( payload[0] == "pong" ){
+        console.log("Volume pong")
+        // pong handler is defined only by admin interface. Player mode does not respond or act on pongs
+        if( pong_handler ) pong_handler( payload[1], payload[2]);
     } else if (payload[0] == "update") {
+        console.log("Volume update")
         setMasterVolumeLevel(payload[parseInt(position)+1]);
     }
 }
+
+
