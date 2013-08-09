@@ -77,7 +77,8 @@ function animate_spin(delta_radians) {
 
 var is_spinning = false;
 function start_spin( start_spin ){
-		
+	  if ( position == 0 ) return;
+
 		// dont spin if there's no menu.
 		if( menustate == 0 ) return;
 
