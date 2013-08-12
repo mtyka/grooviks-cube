@@ -37,28 +37,32 @@ var Numpad = (function(){
   }
 
   my.show = function(){
+    my.timeout = setTimeout( Numpad.hide,  8000 )
     $("#admin_background").fadeIn()
   }
   
   my.hide = function(){
+    clearTimeout( my.timeout )
     $("#admin_background").fadeOut()
   }
 
-$( function(){ 
-  $("#footer").click(function(){
-    Numpad.number_clear()
-    Numpad.show()
-    });
+  my.timeout = null;
 
-  $("#admin_background").click(function(){
-    Numpad.number_clear()
-    Numpad.hide()
-    });
+  $( function(){ 
+    $("#footer").click(function(){
+      Numpad.number_clear()
+      Numpad.show()
+      });
 
-  $("#securitycode").click(function(){
-    return false; 
-    });
-})
+    $("#admin_background").click(function(){
+      Numpad.number_clear()
+      Numpad.hide()
+      });
+
+    $("#securitycode").click(function(){
+      return false; 
+      });
+  })
 
   return my;
 }())
