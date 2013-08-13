@@ -12,8 +12,6 @@ urlpatterns = patterns('',
 
     (r'^$', direct_to_template, {'template': 'homepage.html'} ),
     (r'^admin_cube$', direct_to_template, {'template': 'admin_cube.html'} ),
-    (r'^pacsci$', direct_to_template, {'template': 'pacsci_admin.html'} ),
-    (r'^cube_inspector$', direct_to_template, {'template': 'cube_inspector.html'} ),
     (r'^cube_multimode$', direct_to_template, {'template': 'cube_multimode.html'} ),
 
     (r'^static/(?P<path>[-\w]+.[-\w]+)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
