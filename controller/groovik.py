@@ -368,6 +368,7 @@ class GrooviksCube:
       self.__ClearRotationQueue( )
 
    def Randomize( self, client, depth ):
+      """Do a scramble of a given depth"""
       if not self.IsPositionActive(client.GetPosition()):
           # only randomize if the cube is bound to the requesting client
           return
@@ -376,6 +377,11 @@ class GrooviksCube:
           return
       self.ResetColors()
       self.__normalMode.Randomize(self, depth)
+   
+   def RandomUnboundIdleMove( self ):
+      """Do a random move"""
+      if self.GetGameState() in [GameState.UNBOUND]:
+        self.__normalMode.Randomize(self, 1)
 
    #-----------------------------------------------------------------------------
    # This is the main simulation method of the cube. Pass in the time to simulate to
