@@ -175,7 +175,7 @@ class Cube():
         
         #used for idling cube moves
         self.lastIdleMove = 0.0
-        self.interval = IntervalGenerator( 10.0,  7.0 ) 
+        self.interval = IntervalGenerator(  8.0,  6.0 ) 
 
         # simulate one frame so we have a valid state to render on first frame
         # self.simulate()
@@ -326,9 +326,12 @@ class Cube():
             frameLerpedColors = []
             self.simTime = self.simTime + TARGET_FRAMETIME;            
 
+            # This instructs the clients to play rotation sounds
+            # Dont do this in UNBOUND (idle) mode, because it gets annoying.
             if rotationStep != self.lastRotationStep :          
                 self.lastRotationStep = rotationStep            
-                push_message(rotationStep, "rotationStep")
+                if self.grooviksCube.GetGameState() != "UNBOUND":
+                  push_message(rotationStep, "rotationStep")
 
             while ((self.simTime - time.time()) > (TARGET_FRAMETIME/3)):
                 # Here we will want to interpolate across the frames, or if there are none use current state.
