@@ -381,7 +381,7 @@ class GrooviksCube:
    def RandomUnboundIdleMove( self ):
       """Do a random move"""
       if self.GetGameState() in [GameState.UNBOUND]:
-        self.__normalMode.Randomize(self, 1)
+        self.__normalMode.Randomize(self, 1, 1.0)
 
    #-----------------------------------------------------------------------------
    # This is the main simulation method of the cube. Pass in the time to simulate to
