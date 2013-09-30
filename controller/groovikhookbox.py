@@ -78,6 +78,26 @@ def compress_datagram(datagram):
 last_datagram_sent = None
 last_datagram_sent_timestamp = datetime.datetime.now()
 
+class IntervalGenerator():
+  """Creates and manages an interval which has a mean and a flat random distribution 
+     around that mean with a width of width."""
+  
+  def __init__( self, mean, width ):
+    self.interval_mean = mean 
+    self.interval_width = width 
+    self.current_interval = self.generate_interval()
+  
+  def generate_interval( self ):
+    ## intervals can't be < 0 obviously
+    return max( self.interval_mean + (random.random()-0.5) * self.interval_width, 0 ) 
+  
+  def new_interval( self ):
+    self.current_interval = self.generate_interval()
+  
+  def get_interval( self ):
+    return self.current_interval
+
+
 def compress_rgbfloat(rgb):
     """Returns a JSON object to be sent through hookbox.
     """
@@ -153,6 +173,10 @@ class Cube():
         self.positionForUser = {}
         self.clientLastActivity = {}
         
+        #used for idling cube moves
+        self.lastIdleMove = 0.0
+        self.interval = IntervalGenerator( 10.0,  7.0 ) 
+
         # simulate one frame so we have a valid state to render on first frame
         # self.simulate()
 
@@ -236,6 +260,24 @@ class Cube():
                 del self.clientLastActivity[position]
                 for user, position_ignored in self.positionForUser.items():
                     del self.positionForUser[user]
+      
+    def executeIdlingMoves( self ):
+        '''
+        Check if there's been no activity for longer than a certain period. If so
+        execute random cube moves every so often such that the cube is animated while noone is playing
+        '''
+        now = time.time()
+        most_recent_activity = max(self.clientLastActivity.values() + [0.0])
+        #print self.clientLastActivity.values(), most_recent_activity, self.lastIdleMove 
+        ## should we be doing random idling moves ?
+        idlemoves_delay = 25.0 #seconds
+                
+        if (self.grooviksCube.GetGameState() == "UNBOUND" and
+            (now - most_recent_activity) > idlemoves_delay and 
+            (now - self.lastIdleMove) > self.interval.get_interval() ):
+          self.grooviksCube.RandomUnboundIdleMove()
+          self.lastIdleMove = now
+          self.interval.new_interval()
 
     def interpolateFrames( this, data, passedTime, dataLast ):
         if not data:
@@ -299,6 +341,7 @@ class Cube():
             lastFrameLerpedColors = data[-1][1];
             
             self.checkTimeouts()
+            self.executeIdlingMoves()
               
     def simulate(self):
         with cube_lock:
