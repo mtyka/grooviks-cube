@@ -30,10 +30,10 @@ class ModeNormal( ModeBase ):
          return False
       return True
 
-   def Randomize(self, grooviksCube, depth):
+   def Randomize(self, grooviksCube, depth, time = .5):
       self.__normalModeState = ModeNormalState.RANDOMIZING_AFTER_VICTORY_DANCE
       resetScript = GScript()
-      resetScript.CreateRandom(depth, .5)
+      resetScript.CreateRandom(depth, time)
       resetScript.ForceQueue( grooviksCube )
 
 
