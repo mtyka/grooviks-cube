@@ -81,25 +81,37 @@ soundManager.onload = function(){
         url: '/static/gear_003.mp3',
         autoLoad: true
     });
+    
+    soundManager.createSound({
+        id: 'victory1',
+        url: '/static/mario1.mp3',
+        autoLoad: true
+    });
 };
 
 function playFaceClickSound(frame){
 	var playerNumber = Math.floor(frame.payload[1]/ 3) + 1;
 	var columnNumber = (frame.payload[1] % 3) + 1;
-        var faceSound = soundManager.getSoundById('column'+ playerNumber  + '_' + columnNumber);
+  var faceSound = soundManager.getSoundById('column'+ playerNumber  + '_' + columnNumber);
 	faceSound.setVolume(masterVolume);
 	soundManager.stopAll();
 	faceSound.play();
 }
 
 function playRotationSound(rotationStep){
-	clog(rotationStep);
-        if(rotationStep ){
-            var gearSound = soundManager.getSoundById('gear' + rotationStep );
-	    gearSound.setVolume(masterVolume);
-	    //soundManager.stopAll();
-            gearSound.play();
-        }
+  clog(rotationStep);
+  if(rotationStep ){
+    var gearSound = soundManager.getSoundById('gear' + rotationStep );
+    gearSound.setVolume(masterVolume);
+    //soundManager.stopAll();
+    gearSound.play();
+  }
+}
+
+function playSound( soundid, stopall ){
+  var the_sound = soundManager.getSoundById(soundid)
+  if(stopall) soundManager.stopAll();
+  the_sound.play()
 }
 
 function setMasterVolumeLevel(volumeLevel){

@@ -79,10 +79,10 @@ class StateTetris( StateBase ):
       output[0][ pixel_id ] = color
 
   def Update( self, currentTime ):
-    print "Experimental.Update"
-    print currentTime
-    print self.__colors 
-    print "-----------"
+    #print "Experimental.Update"
+    #print currentTime
+    #print self.__colors 
+    #print "-----------"
     # Simulate to the next control point / current time, which ever comes first
     # Update returns a list; first element is a list containing colors, second element is time, 3rd element is whether the state is done
    # simTime = self.__ComputeNextSimTime( currentTime )
@@ -98,7 +98,7 @@ class StateTetris( StateBase ):
     self.__step += 1
     
     if self.__current_position == []:
-      print "MAKE NEW PIECE!"
+      #print "MAKE NEW PIECE!"
       ## set a position
       ri = random.randint(0,2)
       if ri == 0: self.__current_position = [0,6]
@@ -127,14 +127,14 @@ class StateTetris( StateBase ):
     
     ## undraw the piece
     old_position = copy.deepcopy(self.__current_position)
-    print old_position, self.__current_position
+    #print old_position, self.__current_position
     
 
     self.drawPosition( output, self.__current_position, [0.0, 0.0, 0.0] )
     
     is_free = self.checkPosition( output, self.__current_position )
     if not is_free:
-      print "Tetris is done!"
+      #print "Tetris is done!"
       return output
 
    
@@ -146,7 +146,7 @@ class StateTetris( StateBase ):
     
     is_free = self.checkPosition( output, self.__current_position )
     if not is_free:
-      print "NOT FREE AFTER MOVE1"
+      #print "NOT FREE AFTER MOVE1"
       self.__current_position = copy.deepcopy(old_position) 
       
       # Now try the other way to go
@@ -160,16 +160,16 @@ class StateTetris( StateBase ):
       # Is it free now ?
       is_free = self.checkPosition( output, self.__current_position )
       if not is_free:
-        print "NOT FREE AFTER MOVE2"
+        #print "NOT FREE AFTER MOVE2"
         self.__current_position = copy.deepcopy(old_position) 
 
 
-    print "Final: " , old_position, self.__current_position
+    #print "Final: " , old_position, self.__current_position
     self.drawPosition( output, self.__current_position, self.__current_color  )
     
     ## If we were stuck then make a new piece
     if not is_free:
-      print "MAKE: Is not free - we need to reset and make a  new piece"
+      #print "MAKE: Is not free - we need to reset and make a  new piece"
       self.__current_position = [] 
      
 
@@ -220,6 +220,7 @@ class StateTetris( StateBase ):
     
   
   def __ComputeNextSimTime( self, currentTime ):
+    return currentTime
     # keyframes should happen each time a pixel hits a control point
     if ( self.__strobeIndex >= self.__strobeControlPointCount - 1 ):
       return currentTime

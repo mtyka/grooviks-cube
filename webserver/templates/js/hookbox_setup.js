@@ -107,6 +107,14 @@ var HookboxConnection = (function(){
                   handle_vol(frame.payload);
               }
           }
+          if( channelName == 'playsound' ){
+              vol_subscription = _subscription;
+              vol_subscription.onPublish = function(frame) {
+                console.log("Here");
+                console.log(frame);
+                playSound(frame.payload["soundid"], false); 
+              }
+          }
         }
         catch(e){
           console.log(e)
@@ -124,6 +132,7 @@ var HookboxConnection = (function(){
      my.hookbox_conn.subscribe("cubemode");
      my.hookbox_conn.subscribe("colorcalib");
      my.hookbox_conn.subscribe("colorcalibrx");
+     my.hookbox_conn.subscribe("playsound");
   }
 
 
