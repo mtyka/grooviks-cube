@@ -8,6 +8,8 @@ from groovikconfig import *
 from groovikutils import *
 from GScript import GScript
 from modebase import ModeBase
+import json
+from hbclient import *
 
 class ModeNormalState:
    NORMAL = 0
@@ -48,6 +50,9 @@ class ModeNormal( ModeBase ):
             if ( self.__Solved( currentColors ) ):
                self.__normalModeState = ModeNormalState.VICTORY_DANCE
                grooviksCube.QueueEffect( "victory%d"%( random.randint(0,2)) )
+               gs_dict = { 'soundid':'victory1', 'stopall':False } 
+               print "Pushed: ", [ json.dumps(gs_dict), 'playsound']
+               push_message( json.dumps(gs_dict), 'playsound' )
                
       # We're done with the victory dance + randomization after we have no more queued states   
       elif ( self.__normalModeState == ModeNormalState.VICTORY_DANCE ):
@@ -55,8 +60,11 @@ class ModeNormal( ModeBase ):
             # Randomize the cube now we've finished with the victory dance
             self.__normalModeState = ModeNormalState.RANDOMIZING_AFTER_VICTORY_DANCE 
             resetScript = GScript()
-            resetScript.CreateRandom(30, .5)
+            resetScript.CreateRandom( 8, .3)
             resetScript.ForceQueue( grooviksCube )
+            ## also make all clients quit!
+            for position in [1,2,3]:
+              push_message( json.dumps({ 'position':position, 'command':ClientCommand.QUIT, }), 'clientcommand' )
       elif ( self.__normalModeState == ModeNormalState.RANDOMIZING_AFTER_VICTORY_DANCE ):
          if ( not grooviksCube.HasQueuedStates() ):
             self.__normalModeState = ModeNormalState.NORMAL
