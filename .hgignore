@@ -6,3 +6,4 @@ syntax: glob
 local_*
 .git
 *.orig
+.DS_Store

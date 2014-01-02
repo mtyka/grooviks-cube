@@ -6,6 +6,7 @@
     <link href="/static/cube_style.css" rel="stylesheet" type="text/css">
     <link href="/static/panel.css" rel="stylesheet" type="text/css">
     <link href="static/jquery.ui191.css" media="all"  rel="stylesheet" type="text/css"> 
+    
     <script src="/static/jquery.min.js"></script>
     <script src="/static/jquery-ui.min.js"></script>
     <script src="/static/jquery.svg.js"></script>
@@ -14,6 +15,7 @@
     <script src="/static/jquery.svgfilter.js" type="text/javascript"></script>
     <script src="/static/jquery.svggraph.js" type="text/javascript"></script>
     <script src="/static/jquery.svgplot.js" type="text/javascript"></script>
+    
     <script src="js/loadhookbox.js" type="text/javascript"></script>
     <script src="js/hookbox_setup.js" type="text/javascript"></script>
     <script src="js/checkie.js" type="text/javascript"></script>
@@ -28,17 +30,9 @@
     <script src="js/timeouts.js" type="text/javascript"></script>
     <script src="js/menus.js" type="text/javascript"></script>
     <script src="js/numpad.js" type="text/javascript"></script>
-    <script type="text/javascript">
-
-    $(document).ready(function() {
-        HookboxConnection.init( '/static/hookbox.js', function(){
-           goto_idle_screen();
-        });
-      goto_connecting_screen();
-      update_timeout( );
-      document.title = "P:" + position 
-    });
-    </script>
+    <script src="js/general.js" type="text/javascript"></script>   
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1" />
 </head>
 
 <body>
@@ -46,8 +40,8 @@
         <div id="svgholder">
             <canvas height="1100" id="canvas" width="1100"></canvas>
         </div>
-        <img alt="Restart" class="button_restart" id="button_restart" onclick="goto_queued_screen()" ondragstart="return false" src="/static/restart.png"> 
-        <img alt="Restart" class="button_quit" id="button_quit" onclick="clicked_quit()" ondragstart="return false" src="/static/quit.png"> 
+        <img alt="Restart" class="button_restart" id="button_restart" onclick="goto_queued_screen();" ontouchstart="goto_queued_screen();" ondragstart="return false" src="/static/restart.png"> 
+        <img alt="Restart" class="button_quit" id="button_quit" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" src="/static/quit.png"> 
         <img class="topborder" height="6" id="levelmenu_bgt" src="/static/line.png" width="2000">
 
         <div class="levelmenu_bg" id="levelmenu_bg"></div>
@@ -69,15 +63,16 @@
         </div>
 
         <div class="levelmenu" id="modemenu">
-            <h2>Select game mode:</h2><img id="single" onclick="clicked_alone()" ondragstart="return false" src="/static/alone.png">
-            <img id="multi" onclick="clicked_3player()" ondragstart="return false" src="/static/3player.png"><br>
+            <h2>Select game mode:</h2>
+            <img id="single" onclick="clicked_alone()"   ontouchstart="clicked_alone();" ondragstart="return false" src="/static/alone.png">
+            <img id="multi"  onclick="clicked_3player()" ontouchstart="clicked_3player();" ondragstart="return false" src="/static/3player.png"><br>
         </div>
 
         <div class="levelmenu" id="levelmenu">
             <h2>Select difficulty:</h2>
-            <img id="easy" ondragstart="return false" src="/static/easy.png"> 
+            <img id="easy"   ondragstart="return false" src="/static/easy.png"> 
             <img id="medium" ondragstart="return false" src="/static/medium.png"> 
-            <img id="hard" ondragstart="return false" src="/static/hard.png"> 
+            <img id="hard"   ondragstart="return false" src="/static/hard.png"> 
             <img id="master" ondragstart="return false" src="/static/master.png">
             <br>
             <br>
@@ -89,14 +84,14 @@
             <h2>Timeout! Press continue to return to game:</h2>
 
             <h1 id="timeout_display">50</h1>
-            <img id="continue" onclick="clicked_continue();" ondragstart="return false" src="/static/continue.png"><br>
+            <img id="continue" onclick="clicked_continue();" ontouchstart="clicked_continue();" ondragstart="return false" src="/static/continue.png"><br>
         </div>
 
         <div class="levelmenu" id="joinmenu"><br>
 
         <h2>Player X wants to play a 3-player game:</h2><br>
-        <img id="ignorebutton" onclick="clicked_ignore()" ondragstart="return false" src="/static/ignore.png"> &nbsp;&nbsp;&nbsp;&nbsp;
-        <img id="joinbutton" onclick="clicked_join()" ondragstart="return false" src="/static/join.png"></div>
+        <img id="ignorebutton" onclick="clicked_ignore()" ontouchstart="clicked_ignore()" ondragstart="return false" src="/static/ignore.png"> &nbsp;&nbsp;&nbsp;&nbsp;
+        <img id="joinbutton" onclick="clicked_join()" ontouchstart="clicked_join()" ondragstart="return false" src="/static/join.png"></div>
 
         <div class="levelmenu" id="queuedmenu">
             <br>
