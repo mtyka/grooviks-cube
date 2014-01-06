@@ -7,7 +7,7 @@
 from groovikconfig import *
 from groovikutils import *
 
-class ModeBase:	
+class ModeBase(object):	
 	# This is called whenever the mode starts. The mode must return two values (comma separated)
 	# First: a list of unique colors that will be visible on the cube (can be any length you want)
 	# Second: an array of 54 indices into that list of unique colors to use as an initial condition
