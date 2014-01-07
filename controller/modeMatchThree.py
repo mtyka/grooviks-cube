@@ -88,16 +88,18 @@ class ModeMatchThree( ModeNormal ):
 		return True
 		
 	def __Solved(self, colors):
+		#print "match 3 colors:  " + "".join(str(x) for x in colors)
 		if self.__currentDifficulty is "easy":
 			return self.__easyIsSolved(colors)
 		elif self.currentDifficulty is "medium":
 			return self.__mediumIsSolved(colors)
 			
 	def __easyIsSolved(self, colors):
-		solvedStates = [[0,0,0,6,6,6,6,6,6],
-						[0,6,6,0,6,6,0,6,6],
-						[6,6,6,6,6,6,0,0,0],
-						[6,6,0,6,6,0,6,6,0]]
+		solvedStates = self.__convertStickersToColors(
+						[[0,0,0,6,6,6,6,6,6],
+						 [0,6,6,0,6,6,0,6,6],
+						 [6,6,6,6,6,6,0,0,0],
+						 [6,6,0,6,6,0,6,6,0]])
 		
 		for i in solvedStates:
 			if (self.__findSide(i,colors) >= 0):
@@ -106,15 +108,17 @@ class ModeMatchThree( ModeNormal ):
 		return False
 	
 	def __mediumIsSolved(self, colors):
-		solvedStates1 = [[0,0,0,6,6,6,6,6,6],
+		solvedStates1 = self.__convertStickersToColors(
+						[[0,0,0,6,6,6,6,6,6],
 						 [0,6,6,0,6,6,0,6,6],
 						 [6,6,6,6,6,6,0,0,0],
-						 [6,6,0,6,6,0,6,6,0]]
+						 [6,6,0,6,6,0,6,6,0]])
 		
-		solvedStates2 = [[1,1,1,6,6,6,6,6,6],
+		solvedStates2 = self.__convertStickersToColors(
+						[[1,1,1,6,6,6,6,6,6],
 						 [1,6,6,1,6,6,1,6,6],
 						 [6,6,6,6,6,6,1,1,1],
-						 [6,6,1,6,6,1,6,6,1]]
+						 [6,6,1,6,6,1,6,6,1]])
 		
 		state1 = False
 		state2 = False
@@ -131,6 +135,16 @@ class ModeMatchThree( ModeNormal ):
 		
 		return state1 and state2
 	
+	def __convertStickersToColors(self, side):
+		ret = []
+		for stickers in side:
+			perm = []
+			for s in stickers:
+				perm.append(groovikConfig.standardFaceColors[s])
+		
+			ret.append(perm)
+		return ret
+
 	def __findSide(self, pattern, colors):
 		for i in range(6):
 			if colors[i*9:i*9+9] == pattern:
