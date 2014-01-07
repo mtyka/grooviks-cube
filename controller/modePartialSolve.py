@@ -22,19 +22,19 @@ class ModePartialSolveState(ModeNormalState):
 			  6,6,6,6, 4,6,6,6,6,
 			  6,6,6,6, 5,6,6,6,6]
 			  
-	hard   = [6, 0,6, 0, 0, 0,6, 0,6,
-			  6,6,6,6, 1,6,6,6,6,
-			  6,6,6, 2, 2,6,6,6,6,
-			  6,6,6,6, 3, 3,6,6,6,
-			  6,6,6,6, 4, 4,6,6,6,
-			  6,6,6, 5, 5,6,6,6,6]
+	hard   = [6,0,6, 0,0,0, 6,0,6,
+			  6,6,6, 6,1,6, 6,6,6,
+			  6,6,6, 2,2,6, 6,6,6,
+			  6,6,6, 6,3,3, 6,6,6,
+			  6,6,6, 6,4,4, 6,6,6,
+			  6,6,6, 5,5,6, 6,6,6]
 			  
-	harder = [ 0,  0,  0, 0, 0, 0, 0, 0, 0,	#R
-			  6, 6, 6,6, 1,6,6,6,6,	#L
-			   2, 6, 6, 2, 2,6, 2,6,6,	#F
-			  6, 6,  3,6, 3, 3,6,6, 3,	#B
-			  6, 6,  4,6, 4, 4,6,6, 4,	#U
-			   5, 6, 6, 5, 5,6, 5,6,6]
+	harder = [0, 0, 0, 0, 0, 0, 0, 0, 0,	#R
+			  6, 6, 6, 6, 1, 6, 6, 6, 6,	#L
+			  2, 6, 6, 2, 2, 6, 2, 6, 6,	#F
+			  6, 6, 3, 6, 3, 3, 6, 6, 3,	#B
+			  6, 6, 4, 6, 4, 4, 6, 6, 4,	#U
+			  5, 6, 6, 5, 5, 6, 5, 6, 6]
 
 class ModePartialSolve( ModeNormal ):
 
@@ -117,7 +117,7 @@ class ModePartialSolve( ModeNormal ):
 	
 	
 	def easyIsSolved(self, colors):
-		solvedSide = [6,0,6,0,0,0,6,0,6]
+		solvedSide = self.__convertStickersToColors([[6,0,6,0,0,0,6,0,6]])[0]
 		for i in range(6):
 			subset = colors[i*9:i*9+9]
 			if (subset == solvedSide):
@@ -127,7 +127,7 @@ class ModePartialSolve( ModeNormal ):
 	
 	
 	def mediumIsSolved(self, colors):
-		solvedSide = [0]*9
+		solvedSide = self.__convertStickersToColors([[0]*9])[0]
 		for i in range(6):
 			subset = colors[i*9:i*9+9]
 			if (subset == solvedSide):
@@ -136,7 +136,7 @@ class ModePartialSolve( ModeNormal ):
 		return False
 	
 	def hardIsSolved(self, colors):
-		pattern = [6,0,6,0,0,0,6,0,6]
+		pattern = self.__convertStickersToColors([[6,0,6,0,0,0,6,0,6]])[0]
 		location = self.findSide(pattern)
 		if (location < 0):
 			return False
@@ -150,7 +150,7 @@ class ModePartialSolve( ModeNormal ):
 	
 	
 	def harderIsSolved(self, colors):
-		pattern = [0]*9
+		pattern = self.__convertStickersToColors([[0]*9])[0]
 		location = self.findSide(pattern)
 		if (location < 0):
 			return False
@@ -162,6 +162,15 @@ class ModePartialSolve( ModeNormal ):
 		
 		return True
 	
+	def __convertStickersToColors(self, side):
+		ret = []
+		for stickers in side:
+			perm = []
+			for s in stickers:
+				perm.append(groovikConfig.standardFaceColors[s])
+		
+			ret.append(perm)
+		return ret
 	
 	def findSide (self, pattern, colors):
 		for i in range(6):
