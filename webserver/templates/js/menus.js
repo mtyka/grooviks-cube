@@ -17,6 +17,7 @@ $(document).ready(function(){
     $("#hard").click(   function() { select_difficulty(4);  } );
     $("#master").click( function() { select_difficulty(5);  } );
     $("#full").click(   function() { select_difficulty(20); } );
+    $("#noDifficulty").click(   function() { select_difficulty(0); } );
 
 //    //if (!position) {
         $("#buttonleft").click( function(){
@@ -45,9 +46,11 @@ function select_difficulty( difficulty ){
 
 	clog("ClientSentGameMode: " + selected_game_mode );
 	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
-  reset_gamestate(position, difficulty );
-
-	set_initial_position();
+  	if (difficulty > 0){
+  		reset_gamestate(position, difficulty );
+		set_initial_position();
+	}
+	
 	clear_game_timeout();
 	
 	// THis is somewhat hacky - but because of the order reversal in multiplayer mode compared to single player mode, 
