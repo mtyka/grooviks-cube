@@ -120,7 +120,7 @@ CubeControl = (function($){
      CubeControl.update_view();
 
      // add click events that control the cube.
-     $("body").click( function( eventObj ) {
+     $("body").bind( "click touchstart", function( eventObj ) {
        if(eventObj.shiftKey) {
              //Shift-Click
 

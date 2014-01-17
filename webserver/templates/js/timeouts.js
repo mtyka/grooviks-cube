@@ -32,7 +32,7 @@ var game_timeout_display = $( jQuery( '<div class="game_timeout"> <h1 id="game_t
 $( document ).ready( function(){
 		$( "body" ).append( game_timeout_display )
     // Add a click event that resets the timeouts
-    $("body").click( function( eventObj ) {
+    $("body").bind( "click touchstart", function( eventObj ) {
 			reset_timeout();
     });
 		

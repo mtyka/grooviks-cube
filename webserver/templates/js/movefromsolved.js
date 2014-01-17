@@ -64,7 +64,7 @@ function reset_flash_moves_timeout(){
 }
 
 
-$(window).click( function() {
+$(window).bind( "click touchstart", function() {
 	reset_flash_moves_timeout();
 	reset_timeout();
 	//touch screen to begin!

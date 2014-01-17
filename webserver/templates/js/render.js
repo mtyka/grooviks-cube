@@ -338,15 +338,14 @@ Renderer = (function($){
         return false;
       }
 
-      if ( client_state == "MULT" )  
-      {
-        if (arrowRotation[faceNum][2] != position)
-            return false;
-      }
+//       if ( client_state == "MULT" )  
+//       {
+//         if (arrowRotation[faceNum][2] != position)
+//             return false;
+//       }
 
       // Verify that this is a facet that deserves an arrow in any condition
       return (arrowRotation[faceNum][0] != 0);
-
   }
 
   //-----------------------------------------------------------------------------

@@ -12,18 +12,18 @@ var menustate = 0;
 
 // Set up the click handlers
 $(document).ready(function(){
-    $("#easy").click(   function() { select_difficulty(2);  } );
-    $("#medium").click( function() { select_difficulty(3);  } );
-    $("#hard").click(   function() { select_difficulty(4);  } );
-    $("#master").click( function() { select_difficulty(5);  } );
-    $("#full").click(   function() { select_difficulty(20); } );
-    $("#noDifficulty").click(   function() { select_difficulty(0); } );
+    $("#easy").bind( "click touchstart",   function() { select_difficulty(2);  } );
+    $("#medium").bind( "click touchstart", function() { select_difficulty(3);  } );
+    $("#hard").bind( "click touchstart",   function() { select_difficulty(4);  } );
+    $("#master").bind( "click touchstart", function() { select_difficulty(5);  } );
+    $("#full").bind( "click touchstart",   function() { select_difficulty(20); } );
+    $("#noDifficulty").bind( "click touchstart", function() { select_difficulty(0); } );
 
 //    //if (!position) {
-        $("#buttonleft").click( function(){
+        $("#buttonleft").bind( "click touchstart", function(){
            animate_spin( -Math.PI*2/3 );
         });
-        $("#buttonright").click( function(){
+        $("#buttonright").bind( "click touchstart", function(){
            animate_spin( Math.PI*2/3 );
         });
 //    } else {
