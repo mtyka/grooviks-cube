@@ -11,34 +11,34 @@ class GrooviksClient:
         self.__id = id
         self.__state = ClientState.IDLE
         self.__logger = logger
-    
+
     def LogEvent( self, str ):
         if ( self.__logger != None ):
             self.__logger.logLine( str )
 
     def GetCube(self):
         return self.__cube
-    
+
     def GetID(self):
         return self.__id
 
     def GetState(self):
         return self.__state
-    
+
     def GetPosition(self):
         return self.__id
-    
+
     def SetState(self, newState):
         self.__state = newState
-        
+
     def GetStart1PRequestTime(self):
         '''Return the time that this session requested a single player game'''
         return self.__singleRequestTime
-    
+
     def HandleCommand(self, command, parameters):
         '''
         Choose the appropriate action for the command, based on the current
-        client state.  If there is no mapping for the current state, the 
+        client state.  If there is no mapping for the current state, the
         command is treated as invalid and ignored.
         '''
         actionMap = GrooviksClient.COMMAND_MAP[command]
@@ -47,7 +47,7 @@ class GrooviksClient:
         except KeyError:
             self.LogEvent("Cannot execute command %s in state %s" % (command, self.GetState()))
             return
-            
+
         self.LogEvent("Exceuting command %s in client state %s; game state is %s" % (command, self.GetState(), self.GetCube().GetGameState()))
         try:
             action(self, parameters)
@@ -75,14 +75,14 @@ class GrooviksClient:
     def QuitFromSingle(self, parameters):
         self.SetState(ClientState.IDLE)
         self.GetCube().SinglePlayerExits(self)
-        
+
     def QuitFromMultiple(self, parameters):
         self.SetState(ClientState.IDLE)
         self.GetCube().MultiplePlayerExits()
-        
+
     def RestartFromSingle(self, parameters):
         raise NotImplementedError()
-        
+
     def RestartFromMultiple(self, parameters):
         # SINGLE_INVITE:
         #   If the third player is idle:
@@ -100,7 +100,7 @@ class GrooviksClient:
         #     cubeState <= MULTIPLE
         #
         raise NotImplementedError()
-        
+
     # TODO: it looks like Start1P and Start3P should probably be factored
     def Start1P(self, parameters):
         self.SetState(ClientState.SING)
@@ -110,10 +110,11 @@ class GrooviksClient:
     def Start3P(self, parameters):
         self.SetState(ClientState.MULT)
         self.GetCube().MultiplePlayerStarts()
-        
+
     def Join3P(self, parameters):
         self.SetState(ClientState.MULT)
         self.GetCube().SinglePlayerJoins(self)
+        push_message(json.dumps({'turn':str(self.currentTurn)}), "turns")
 
     def Scramble(self, parameters):
         difficulty = parameters['difficulty']
@@ -139,7 +140,7 @@ class GrooviksClient:
         },
         ClientCommand.SELECT_DIFFICULTY : {
             ClientState.SING :        Scramble,
-            ClientState.MULT :                 Scramble,
+            ClientState.MULT :        Scramble,
         },
     }
 

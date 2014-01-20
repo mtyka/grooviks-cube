@@ -48,11 +48,11 @@ class GScript:
 						self.moves.append( copy.deepcopy( subgroup[j] ) )
 				subgroupType = GScriptSubgroup.NORMAL
 				
-	def CreateRandom(self, depth, time):
+	def CreateRandom(self, depth, time, symmetric=False):
 		self.moves = [];
 		# These indicate the last rotated slice. THe default values are out of the range of possible values
 		# intentionally such that the first comparison (see below) will always fail.
-
+		oppositeMoves = {0:2, 2:0, 3:5, 5:3, 6:8, 8:6}
 		last_rot = -1
 		for i in range(depth):
 			# note... if we want to add more commands that this script can hit, we'll need to update this randint as well
@@ -67,6 +67,8 @@ class GScript:
 			last_rot = rot
 			# NOTE: The '2' is the enum for rotation
 			self.moves.append([2, rot, clockwise, time]);
+			if (symmetric and (rot != 1 and rot != 4 and rot != 7)):
+				self.moves.append([2, oppositeMoves[rot], abs(~clockwise), time])
 
 	def ForceQueue(self, cube):
 		for move in self.moves:
