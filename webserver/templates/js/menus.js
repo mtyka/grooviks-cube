@@ -50,10 +50,10 @@ function select_difficulty( difficulty ){
   		reset_gamestate(position, difficulty );
 		set_initial_position();
 	}
-	
+
 	clear_game_timeout();
-	
-	// THis is somewhat hacky - but because of the order reversal in multiplayer mode compared to single player mode, 
+
+	// THis is somewhat hacky - but because of the order reversal in multiplayer mode compared to single player mode,
 	// the select diff screen has to clear itself in multiplayer mode. But not in single player mode.
 	clog("Gamestate? " + game_state );
 	if( game_state == "MULT" ){
@@ -136,7 +136,6 @@ function flyin_idlemenu() {
 }
 
 function flyout_idlemenu() {
-
 }
 
 function goto_idle_screen(){
@@ -240,96 +239,105 @@ function goto_connecting_screen(){
 
 
 function remove_menu(){
-		if( menustate == 1 )   flyout_menu("#idlemenu");
-		if( menustate == 2 )   flyout_menu("#modemenu");
-		if( menustate == 3 )   flyout_menu("#levelmenu");
-		if( menustate == 4 )   flyout_menu("#timeoutmenu");
-		if( menustate == 5 )   flyout_menu("#joinmenu");
-		if( menustate == 6 )   flyout_menu("#queuedmenu");
-		if( menustate == 7 )   flyout_menu("#waitingmenu");
-		if( menustate == 8 )   flyout_menu("#connectingmenu");
+	if( menustate == 1 )   flyout_menu("#idlemenu");
+	else if( menustate == 2 )   flyout_menu("#modemenu");
+	else if( menustate == 3 )   flyout_menu("#levelmenu");
+	else if( menustate == 4 )   flyout_menu("#timeoutmenu");
+	else if( menustate == 5 )   flyout_menu("#joinmenu");
+	else if( menustate == 6 )   flyout_menu("#queuedmenu");
+	else if( menustate == 7 )   flyout_menu("#waitingmenu");
+	else if( menustate == 8 )   flyout_menu("#connectingmenu");
 
-		if( menustate == 1 ) {
-			$("#button_quit").animate( {
-				opacity:1.0
-			},{ duration: 1000 }
-			);
-		}
+	if( menustate == 1 ) {
+		$("#button_quit").animate( {
+			opacity:1.0
+		},{ duration: 1000 }
+		);
+	}
 }
 
-
 function show_instructions(){
-			$(".instructions").css("display", "inline")	
+	$(".instructions").css("display", "inline")
 }
 
 function hide_instructions(){
-			$(".instructions").css("display", "none")	
+	$(".instructions").css("display", "none")
 }
 
 function show_rotation_buttons(){
-	    $("#buttonleft, #buttonright").css('display', 'inline');
+	$("#buttonleft, #buttonright").css('display', 'inline');
 }
 
 function hide_rotation_buttons(){
-	    $("#buttonleft, #buttonright").css('display', 'none');
+	$("#buttonleft, #buttonright").css('display', 'none');
 }
 
 function clear_screen(){
-		remove_menu()
-		if( menustate != 0 ) flyout_menu_bg();
-    menustate=0
-		CubeControl.ignore_clicks=false;
-		set_initial_position();
+	remove_menu()
+	if( menustate != 0 )
+		flyout_menu_bg();
 
-		// trigger greeting flash
-		hide_rotation_buttons();
-		hide_instructions();
-		if( game_state == "MULTIPLE" ){
-			start_timeout();
-      flash_display("Welcome to the 3-Player Game", 8000);
-			show_instructions();
-		}
-		if( game_state == "SINGLE" ){
-			start_timeout();
-			flash_display("Welcome to the Single Player Game", 8000 );
-			show_rotation_buttons();
-		}
+	menustate=0
+	set_initial_position();
+
+	// trigger greeting flash
+	hide_rotation_buttons();
+	hide_instructions();
+	if( game_state == "MULTIPLE" ){
+		start_timeout();
+  		flash_display("Welcome to the 3-Player Game", 8000);
+		show_instructions();
+
+		if (position != currentTurn)
+			CubeControl.ignore_clicks = true;
+		else
+			CubeControl.ignore_clicks = false;
+	}
+	if( game_state == "SINGLE" ){
+		start_timeout();
+		flash_display("Welcome to the Single Player Game", 8000 );
+		show_rotation_buttons();
+	}
 }
 
 
 function clicked_quit(){
-		clog("ClientSent: QUIT ");
-		HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
+	clog("ClientSent: QUIT ");
+	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
 }
 
 function clicked_wake(){
-		clog("ClientSent: WAKE ");
-		HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
+	clog("ClientSent: WAKE ");
+	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
+
+	if (position != currentTurn)
+		CubeControl.ignore_clicks = true;
+	else
+		CubeControl.ignore_clicks = false;
 }
 
 function clicked_alone(){
-	  selected_game_mode = "START_1P";
-		goto_level_screen( )
+	selected_game_mode = "START_1P";
+	goto_level_screen( )
 }
 
 function clicked_3player(){
-	  selected_game_mode = "START_3P";
-		clog("ClientSentGameMode: " + selected_game_mode );
-		HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
-	  //goto_level_screen( )
+	selected_game_mode = "START_3P";
+	clog("ClientSentGameMode: " + selected_game_mode );
+	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
+	//goto_level_screen( )
 }
 
 function clicked_ignore(){
-	  interrupt_ok = false;
-	  clear_screen()
+	interrupt_ok = false;
+	clear_screen()
 }
 
 function clicked_join(){
-	  clear_screen()
+	clear_screen()
     //not implemented yet
     HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'JOIN_3P' } );
 }
-
 
 function clicked_continue(){
 	start_timeout();

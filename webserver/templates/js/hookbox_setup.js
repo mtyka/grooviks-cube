@@ -4,7 +4,7 @@
 // ####################################################################
 
 var HookboxConnection = (function(){
-  // public interface 
+  // public interface
   var my = {}
   my.hookbox_conn = null;
 
@@ -27,7 +27,7 @@ var HookboxConnection = (function(){
       console.log("HOOKBOX LOADED!");
       is_hookbox_loaded = true;
       establish_hookbox_connections();
-      if( success_func ) success_func(); 
+      if( success_func ) success_func();
     }
     oScript.onerror = function() {
       alert("Could not load library from hookbox server.");
@@ -35,7 +35,7 @@ var HookboxConnection = (function(){
     headelem.appendChild(oScript);
   }
 
-  function decompress_rgbfloat(rgb) { 
+  function decompress_rgbfloat(rgb) {
       var output = [];
       output = rgb.split(" ");
       var rgb_floats = [ parseFloat(output[2]), parseFloat(output[1]), parseFloat(output[0])] ;
@@ -56,17 +56,17 @@ var HookboxConnection = (function(){
       my.hookbox_conn.onSubscribed = function(channelName, _subscription) {
         try{
           if( channelName == 'iframe' ) {
-              subscription = _subscription;                
+              subscription = _subscription;
               subscription.onPublish = function(frame) {
                   CubeControl.update_cube_state_from_datagram( frame.payload );
-              };  
+              };
           }
           if( channelName == 'faceclick' ) {
-              faceclick_subscription = _subscription;                
+              faceclick_subscription = _subscription;
               faceclick_subscription.onPublish = function(frame) {
                   playFaceClickSound(frame);
                   clog('Heard about click on face ' + frame.payload);
-              };  
+              };
           }
 
           if( channelName == 'colorcalibrx') {
@@ -75,25 +75,25 @@ var HookboxConnection = (function(){
                       clog('Heard calibration message');
                       clog(frame.payload);
                       var rgb_floats = decompress_rgbfloat(frame.payload);
-                      
+
                       changeSlider ( rgb_floats );
                       clog('done with calibration message');
               };
           }
           if( channelName == 'movesfromsolved' ) {
-              movesfromsolved_subscription = _subscription;                
+              movesfromsolved_subscription = _subscription;
               movesfromsolved_subscription.onPublish = function(frame) {
                   clog('moves_from_solved has announced answer' + frame.payload);
                   moves_from_solved = frame.payload;
                   // start inactivity counter which will trigger the message to appear
-                  next_flash_moves_display = setTimeout("flash_moves_display()", 5000 ); 
-              };  
+                  next_flash_moves_display = setTimeout("flash_moves_display()", 5000 );
+              };
           }
           if( channelName == 'gameState' ) {
             gamestate_subscription = _subscription;
               gamestate_subscription.onPublish = function(frame) {
                   on_game_state_change(frame.payload["gamestate"], frame.payload["active_position"], frame.payload["clientstate"]);
-              };  
+              };
           }
           if( channelName == 'rotationStep' ) {
               rotation_subscription = _subscription;
@@ -110,9 +110,23 @@ var HookboxConnection = (function(){
           if( channelName == 'playsound' ){
               vol_subscription = _subscription;
               vol_subscription.onPublish = function(frame) {
-                console.log("Here");
                 console.log(frame);
-                playSound(frame.payload["soundid"], false); 
+                playSound(frame.payload["soundid"], false);
+              }
+          }
+          if( channelName == 'turns' ){
+              turn_subscription = _subscription;
+              turn_subscription.onPublish = function(frame) {
+            	currentTurn = frame.payload["turn"];
+
+				if (position != currentTurn)
+					CubeControl.ignore_clicks = true;
+				else
+					CubeControl.ignore_clicks = false;
+
+				CubeControl.update_view();
+
+                console.log("current turn: " + currentTurn);
               }
           }
         }
@@ -121,7 +135,7 @@ var HookboxConnection = (function(){
         }
       };
 
-     // Subscribe to all the channels we'll need 
+     // Subscribe to all the channels we'll need
      my.hookbox_conn.subscribe("iframe");
      my.hookbox_conn.subscribe("faceclick");
      my.hookbox_conn.subscribe("movesfromsolved");
@@ -133,6 +147,7 @@ var HookboxConnection = (function(){
      my.hookbox_conn.subscribe("colorcalib");
      my.hookbox_conn.subscribe("colorcalibrx");
      my.hookbox_conn.subscribe("playsound");
+     my.hookbox_conn.subscribe("turns");
   }
 
 
