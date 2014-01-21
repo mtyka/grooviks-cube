@@ -1,4 +1,5 @@
-
+// cube_spinning.js
+// Cube spin controller
 
 function set_initial_position(){
 	// using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
@@ -12,39 +13,39 @@ function set_initial_position(){
 }
 
 function animate_absolute_spin(radians) {
-		// do the boogie
-		var azimuth = $("#slide_azi").val()*1.0; // convert from string to number. javascript sucks
-		azimuth = azimuth % (100*Math.PI*2);  // Re-center
-		$("#slide_azi").attr("animate_val", azimuth); // prep temporary animation variable
+	// do the boogie
+	var azimuth = $("#slide_azi").val()*1.0; // convert from string to number. javascript sucks
+	azimuth = azimuth % (100*Math.PI*2);  // Re-center
+	$("#slide_azi").attr("animate_val", azimuth); // prep temporary animation variable
 
     clog("Animate_absolute_spin: " + azimuth + "    " + radians);
-		if( azimuth == radians ){
-			// we're already at solved position
-			clog("Already at solved position");
-			return;
+
+	if( azimuth == radians ){
+		// we're already at solved position
+		clog("Already at solved position");
+		return;
+	}
+
+	locked_buttons = true;
+	CubeControl.ignore_clicks = true;
+	azimuth = radians
+	$("#slide_azi").animate( {
+		animate_val: azimuth
+	},{ duration: 2000,
+		complete: function(){
+			locked_buttons = false;
+
+			global.turnCheck();
+
+			CubeControl.update_view();
+		},
+		step: function() {
+			//console.log($("#slide_azi").attr("animate_val") );
+			$("#slide_azi").val( $("#slide_azi").attr("animate_val") );
+			CubeControl.update_view();
 		}
-
-		locked_buttons = true;
-    	CubeControl.ignore_clicks = true;
-		azimuth = radians
-		$("#slide_azi").animate( {
-			animate_val: azimuth
-		},{ duration: 2000,
-		    complete: function(){
-				locked_buttons = false;
-
-				global.turnCheck();
-
-				CubeControl.update_view();
-			},
-			step: function() {
-				//console.log($("#slide_azi").attr("animate_val") );
-				$("#slide_azi").val( $("#slide_azi").attr("animate_val") );
-				CubeControl.update_view();
-		    }
-      });
+  	});
 }
-
 
 function animate_spin(delta_radians) {
 	// lock the buttons
@@ -73,7 +74,6 @@ function animate_spin(delta_radians) {
 		}
     });
 }
-
 
 var is_spinning = false;
 function start_spin( start_spin ){

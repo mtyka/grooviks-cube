@@ -1,3 +1,5 @@
+// client_state.js
+// client state manager
 
 var client_state = "IDLE";
 var game_state = "UNBOUND";
