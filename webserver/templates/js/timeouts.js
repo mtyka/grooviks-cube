@@ -14,7 +14,8 @@ function clear_game_timeout(){
 }
 
 function count_down_game_timeout(){
-	if( game_timeout > -2 ) game_timeout -= 1;
+	if( game_timeout > -2 )
+		game_timeout -= 1;
 
 	// timeout has occured!
 	if( game_timeout == -1 )
@@ -42,7 +43,7 @@ $( document ).ready( function(){
 	// start the timeout counters
 	//update_timeout();
 	count_down_game_timeout();
-} );
+});
 
 function clear_timeout(){
 	clog( "Clear inactivity timeout..." );
@@ -75,11 +76,11 @@ function update_timeout( ){
 	if( inactivity_timeout == 0 )
 		clicked_quit();
 
-	if( inactivity_timeout >= 0 ){
+	if( inactivity_timeout >= 0 )
 		$("#timeout_display").html( inactivity_timeout );
-	}else{
+	else
 		$("#timeout_display").html( 0 );
-	}
+
 
 	if( inactivity_timeout > -2 )
 		inactivity_timeout-=1;
