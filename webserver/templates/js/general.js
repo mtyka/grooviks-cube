@@ -26,13 +26,26 @@ var global = (function($){
 
 	//free rotation
 	$(document).bind("mousedown touchstart", function(e){
-		my.last_move = e.pageX;
-		$("#canvas").bind("mousemove touchmove", function(e){
-			my.delta_x += e.pageX - my.last_move;
+		if (e.type == "mousedown"){
 			my.last_move = e.pageX;
-			$("#slide_azi").val(my.delta_x < 0 ? my.delta_x % -630 : my.delta_x % 630);
-			CubeControl.update_view();
-		});
+
+			$("body").bind("mousemove", function(e){
+				my.delta_x += e.pageX - my.last_move;
+				my.last_move = e.pageX;
+				$("#slide_azi").val(my.delta_x < 0 ? my.delta_x % -630 : my.delta_x % 630);
+				CubeControl.update_view();
+			});
+		}
+		else if (e.type == "touchstart"){
+		 	my.last_move = e.originalEvent.targetTouches[0].pageX;
+
+			$("body").bind("touchmove", function(e){
+				my.delta_x += e.originalEvent.targetTouches[0].pageX - my.last_move;
+				my.last_move = e.originalEvent.targetTouches[0].pageX; //normal pageX was hidden sometimes...
+				$("#slide_azi").val(my.delta_x < 0 ? my.delta_x % -630 : my.delta_x % 630);
+				CubeControl.update_view();
+			});
+		}
 	});
 
 	$(document).bind("mouseup touchend", function(){
