@@ -18,8 +18,6 @@ CubeControl = (function($){
 	var enable_arrows_timeout = null;
 	var HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS = 700;	// ms
 
-
-
 	// Converts a long hex string into an array of 54 RGB-float-triples
 	function decompress_datagram(datagram) {
 		//console.log("decompressing...");
@@ -121,20 +119,7 @@ CubeControl = (function($){
 
 		// add click events that control the cube.
 		$("body").bind( "click touchstart", function( eventObj ) {
-			if(eventObj.shiftKey) {
-				//Shift-Click
-
-				var top_left_canvas_corner = $("#canvas").elementlocation();
-				var x = eventObj.pageX - top_left_canvas_corner.x;
-				var y = eventObj.pageY - top_left_canvas_corner.y;
-
-				console.log("local shift click at relative ("+x+","+y+")");
-
-				cube_got_shift_clicked_on(x,y);
-
-				return true;
-			}
-			else if( !my.ignore_clicks ){
+			if( !my.ignore_clicks ){
 				var top_left_canvas_corner = $("#canvas").elementlocation();
 				var x = eventObj.pageX - top_left_canvas_corner.x;
 				var y = eventObj.pageY - top_left_canvas_corner.y;

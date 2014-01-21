@@ -38,13 +38,6 @@ function display_framerate() {
   frame_cnt_reset_at = now;
 }
 
-$(document).ready(function() {
-    setInterval( display_framerate, HOW_OFTEN_DISPLAY_FRAMERATE );
-});
-
-
-
-
 // ####################################################################
 // ###################### jquery helpers ##############################
 // ####################################################################
@@ -66,11 +59,12 @@ jQuery.fn.elementlocation = function() {
 
   return ( {x:curleft, y:curtop} );
 };
-     
-     
+
+
  // Display debug stuff if URL snippet is #debug
  $(document).ready( function() {
     if( location.hash == "#debug" ) {
         $(".debug").css('display','block');
+        setInterval( display_framerate, HOW_OFTEN_DISPLAY_FRAMERATE );
     }
  });

@@ -95,9 +95,6 @@ function on_game_state_change(newState, activePosition, clientstate) {
 			} // close client_state != "SING"
 		} // close client_state != "HOME"
 	} //close client_state == "IDLE"
-	if (position != currentTurn)
-		CubeControl.ignore_clicks = true;
-	else
-		CubeControl.ignore_clicks = false;
+	global.turnCheck();
 	CubeControl.update_view();
 }

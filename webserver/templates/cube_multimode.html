@@ -5,8 +5,8 @@
     <title>One cube to rule them all</title>
     <link href="/static/cube_style.css" rel="stylesheet" type="text/css">
     <link href="/static/panel.css" rel="stylesheet" type="text/css">
-    <link href="static/jquery.ui191.css" media="all"  rel="stylesheet" type="text/css"> 
-    
+    <link href="static/jquery.ui191.css" media="all"  rel="stylesheet" type="text/css">
+
     <script src="/static/jquery.min.js"></script>
     <script src="/static/jquery-ui.min.js"></script>
     <script src="/static/jquery.svg.js"></script>
@@ -15,7 +15,7 @@
     <script src="/static/jquery.svgfilter.js" type="text/javascript"></script>
     <script src="/static/jquery.svggraph.js" type="text/javascript"></script>
     <script src="/static/jquery.svgplot.js" type="text/javascript"></script>
-    
+
     <script src="js/loadhookbox.js" type="text/javascript"></script>
     <script src="js/hookbox_setup.js" type="text/javascript"></script>
     <script src="js/checkie.js" type="text/javascript"></script>
@@ -30,8 +30,8 @@
     <script src="js/timeouts.js" type="text/javascript"></script>
     <script src="js/menus.js" type="text/javascript"></script>
     <script src="js/numpad.js" type="text/javascript"></script>
-    <script src="js/general.js" type="text/javascript"></script>   
-    
+    <script src="js/general.js" type="text/javascript"></script>
+
     <meta name="viewport" content="initial-scale=1, maximum-scale=1" />
 </head>
 
@@ -40,12 +40,12 @@
         <div id="svgholder">
             <canvas height="1100" id="canvas" width="1100"></canvas>
         </div>
-        <img alt="Restart" class="button_restart" id="button_restart" onclick="goto_queued_screen();" ontouchstart="goto_queued_screen();" ondragstart="return false" src="/static/restart.png"> 
-        <img alt="Restart" class="button_quit" id="button_quit" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" src="/static/quit.png"> 
+        <img alt="Restart" class="button_restart" id="button_restart" onclick="goto_queued_screen();" ontouchstart="goto_queued_screen();" ondragstart="return false" src="/static/restart.png">
+        <img alt="Restart" class="button_quit" id="button_quit" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" src="/static/quit.png">
         <img class="topborder" height="6" id="levelmenu_bgt" src="/static/line.png" width="2000">
 
         <div class="levelmenu_bg" id="levelmenu_bg"></div>
-        
+
         <img class="bottomborder" height="6" id="levelmenu_bgb" src="/static/line.png" width="2000">
 
         <div class="movesdisplay" id="movesdisplay">
@@ -70,9 +70,9 @@
 
         <div class="levelmenu" id="levelmenu">
             <h2>Select difficulty:</h2>
-            <img id="easy"   ondragstart="return false" src="/static/easy.png"> 
-            <img id="medium" ondragstart="return false" src="/static/medium.png"> 
-            <img id="hard"   ondragstart="return false" src="/static/hard.png"> 
+            <img id="easy"   ondragstart="return false" src="/static/easy.png">
+            <img id="medium" ondragstart="return false" src="/static/medium.png">
+            <img id="hard"   ondragstart="return false" src="/static/hard.png">
             <img id="master" ondragstart="return false" src="/static/master.png">
             <div id="noDifficulty" style="background-color: #ff00cc; padding: 12px; width:20%" ondragstart="return false">No Scramble</div>
             <br>
@@ -131,13 +131,13 @@
             <br>
             <br>
             <br>
-            <img alt="Left" class="button left" id="buttonleft" ondragstart="return false" src="/static/button_left.png"> 
+            <img alt="Left" class="button left" id="buttonleft" ondragstart="return false" src="/static/button_left.png">
             <img alt="Right" class="button right" id="buttonright" ondragstart="return false" src="/static/button_right.png">
 
             <div class="clear"></div><br>
         </div>
 
-        <div class="instructions">
+        <!-- <div class="instructions">
             <h3>This puzzle requires 3 people to solve.<br>
             There are 2 other stations. Each station controls one axis of the cube. Grab 2 friends and work cooperatively to gain control
             of the entire cube and solve!</h3><br>
@@ -146,7 +146,7 @@
         <div class="footer" id="footer" >
             Groovik's Cube by GroovLabs<br>
             www.groovik.com<br>
-        </div>
+        </div> -->
 
         <div class="debug" id="manual_rotate">
             Altitude: <input id="slide_alt" max="1000" min="-1000" onchange="CubeControl.update_view();" type="range" value="220"><br>
@@ -161,7 +161,7 @@
 
     <div id="admin_background">
       <div class="main_panel ui-state-default ui-corner-all" id="securitycode" >
-        <br /> 
+        <br />
         <center><input class="text_box" type="text" id="number" name="num" /></center>
         <br /><br />
         <div class="number_button ui-state-active ui-state-default ui-corner-all" onclick="Numpad.number_write(1);">       <div style="position:relative; top:50%; height:20px; margin-top:-23px">1</div></div>
