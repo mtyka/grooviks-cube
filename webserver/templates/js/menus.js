@@ -291,6 +291,7 @@ function clear_screen(){
 		start_timeout();
 		flash_display("Welcome to the Single Player Game", 8000 );
 		show_rotation_buttons();
+		global.currentTurn = position;
 	}
 }
 
