@@ -1,3 +1,5 @@
+// menu.js
+// menu state manager and functions
 
 var interrupt_ok=true;
 var menustate = 0;

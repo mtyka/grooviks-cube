@@ -1,8 +1,7 @@
+// GAME TIMOUT COUNTER & LOGIC
 
 var inactivity_timeout_length = 30;
 var inactivity_timeout = -1; // off by default
-
-// GAME TIMOUT COUNTER & LOGIC
 
 function game_timeout_occured() {
 	clicked_quit();

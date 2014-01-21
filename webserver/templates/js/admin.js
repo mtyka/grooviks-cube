@@ -36,8 +36,7 @@ $(function() {
 
 var calibrationFace = -1;
 
-function cube_got_shift_clicked_on(x,y)
-{
+function cube_got_shift_clicked_on(x,y){
     if ( CubeControl.current_mode == 1 ) {
         var facenum = Renderer.whichFaceIsPointIn(x,y);
         calibrationFace = facenum;
@@ -52,8 +51,7 @@ function calibrate(face, red, green, blue) {
 	HookboxConnection.hookbox_conn.publish('colorcalib', [face, blue, green, red]);
 }
 
-function calibrateEvent()
-{
+function calibrateEvent(){
 	if (calibrationFace == -1) {
 		clog("Escaping out of calibration because no face selected");
 		return;
@@ -66,6 +64,7 @@ function calibrateEvent()
 	blue = $( "#blue" ).slider( "value" );
 	calibrate(calibrationFace ,red/max_slider, green/max_slider, blue/max_slider);
 }
+
 function changeSlider(rgb_floats){
         clog("changing slider based on message" );
         $( "#red" ).slider( "value", rgb_floats[0]*max_slider);
