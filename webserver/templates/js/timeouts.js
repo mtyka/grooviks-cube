@@ -17,11 +17,14 @@ function count_down_game_timeout(){
 	if( game_timeout > -2 ) game_timeout -= 1;
 
 	// timeout has occured!
-	if( game_timeout == -1 ){
+	if( game_timeout == -1 )
 		game_timeout_occured();
-	}
-	if( game_timeout < 0 ) $("#game_timeout").css("display", "none" )
-	else                   $("#game_timeout").css("display", "inline" )
+
+	if( game_timeout < 0 )
+		$("#game_timeout").css("display", "none" );
+	else
+		$("#game_timeout").css("display", "inline" );
+
 	$("#game_timeout").html( game_timeout );
 
 	setTimeout( "count_down_game_timeout()", 1000 );
@@ -30,10 +33,10 @@ function count_down_game_timeout(){
 var game_timeout_display = $( jQuery( '<div class="game_timeout"> <h1 id="game_timeout" >Timeout</h1> </div>' ) )
 
 $( document ).ready( function(){
-	$( "body" ).append( game_timeout_display )
+	$( "body" ).append( game_timeout_display );
     // Add a click event that resets the timeouts
     $("body").bind( "click touchstart", function( eventObj ) {
-			reset_timeout();
+		reset_timeout();
     });
 
 	// start the timeout counters
@@ -45,6 +48,7 @@ function clear_timeout(){
 	clog( "Clear inactivity timeout..." );
 	inactivity_timeout = -1;
 }
+
 function start_timeout(){
 	clog( "Starting timeout: ", inactivity_timeout_length );
 	inactivity_timeout = inactivity_timeout_length;
@@ -65,12 +69,11 @@ function update_timeout( ){
 		goto_timeout_screen();
 	}
 
-	document.title = inactivity_timeout
+	document.title = inactivity_timeout;
 	// Fulltimeout
 
-	if( inactivity_timeout == 0 ){
+	if( inactivity_timeout == 0 )
 		clicked_quit();
-	}
 
 	if( inactivity_timeout >= 0 ){
 		$("#timeout_display").html( inactivity_timeout );
@@ -78,11 +81,10 @@ function update_timeout( ){
 		$("#timeout_display").html( 0 );
 	}
 
-	if( inactivity_timeout > -2 ){
+	if( inactivity_timeout > -2 )
 		inactivity_timeout-=1;
-	}
 
-	setTimeout("update_timeout()",1000) // call me again in 1000 ms
+	setTimeout("update_timeout()",1000); // call me again in 1000 ms
 }
 
 
