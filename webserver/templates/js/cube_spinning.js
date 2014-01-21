@@ -33,10 +33,7 @@ function animate_absolute_spin(radians) {
 		    complete: function(){
 				locked_buttons = false;
 
-				if (position != currentTurn)
-					CubeControl.ignore_clicks = true;
-				else
-					CubeControl.ignore_clicks = false;
+				global.turnCheck();
 
 				CubeControl.update_view();
 			},

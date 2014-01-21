@@ -19,17 +19,12 @@ $(document).ready(function(){
     $("#full").bind( "click touchstart",   function() { select_difficulty(20); } );
     $("#noDifficulty").bind( "click touchstart", function() { select_difficulty(0); } );
 
-//    //if (!position) {
-        $("#buttonleft").bind( "click touchstart", function(){
-           animate_spin( -Math.PI*2/3 );
-        });
-        $("#buttonright").bind( "click touchstart", function(){
-           animate_spin( Math.PI*2/3 );
-        });
-//    } else {
-//    $("#buttonleft, #buttonright").css('visibility', 'hidden');
-//    }
-
+	$("#buttonleft").bind( "click touchstart", function(){
+	   animate_spin( -Math.PI*2/3 );
+	});
+	$("#buttonright").bind( "click touchstart", function(){
+	   animate_spin( Math.PI*2/3 );
+	});
 });
 
 function reset_gamestate(position, difficulty) {
@@ -84,7 +79,7 @@ function flyin_menu_bg(){
 		CubeControl.ignore_clicks = true;
 
 		hide_rotation_buttons();
-		hide_instructions();
+		//hide_instructions();
 }
 
 function flyout_menu_bg(){
@@ -282,16 +277,13 @@ function clear_screen(){
 
 	// trigger greeting flash
 	hide_rotation_buttons();
-	hide_instructions();
+	//hide_instructions();
 	if( game_state == "MULTIPLE" ){
 		start_timeout();
   		flash_display("Welcome to the 3-Player Game", 8000);
-		show_instructions();
+		//show_instructions();
 
-		if (position != currentTurn)
-			CubeControl.ignore_clicks = true;
-		else
-			CubeControl.ignore_clicks = false;
+		global.turnCheck();
 	}
 	if( game_state == "SINGLE" ){
 		start_timeout();
@@ -310,10 +302,7 @@ function clicked_wake(){
 	clog("ClientSent: WAKE ");
 	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
 
-	if (position != currentTurn)
-		CubeControl.ignore_clicks = true;
-	else
-		CubeControl.ignore_clicks = false;
+	global.turnCheck();
 }
 
 function clicked_alone(){
