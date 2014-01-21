@@ -29,7 +29,7 @@ var global = (function($){
 		if (e.type == "mousedown"){
 			my.last_move = e.pageX;
 
-			$("body").bind("mousemove", function(e){
+			$("#container").bind("mousemove", function(e){
 				my.delta_x += e.pageX - my.last_move;
 				my.last_move = e.pageX;
 				$("#slide_azi").val(my.delta_x < 0 ? my.delta_x % -630 : my.delta_x % 630);
@@ -39,7 +39,7 @@ var global = (function($){
 		else if (e.type == "touchstart"){
 		 	my.last_move = e.originalEvent.targetTouches[0].pageX;
 
-			$("body").bind("touchmove", function(e){
+			$("#container").bind("touchmove", function(e){
 				my.delta_x += e.originalEvent.targetTouches[0].pageX - my.last_move;
 				my.last_move = e.originalEvent.targetTouches[0].pageX; //normal pageX was hidden sometimes...
 				$("#slide_azi").val(my.delta_x < 0 ? my.delta_x % -630 : my.delta_x % 630);
@@ -49,7 +49,7 @@ var global = (function($){
 	});
 
 	$(document).bind("mouseup touchend", function(){
-		$("#canvas").unbind();
+		$("#container").unbind();
 		if (my.delta_x < 0)
 			my.delta_x =  my.delta_x % -630
 		else
