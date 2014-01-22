@@ -232,7 +232,10 @@ class Cube():
 						self.grooviksCube.HandleInput( CubeInput.COLOR_CAL,command)
 
 				elif channel == 'settings':
-					print "settings recieved"
+					if str(payload['command']) == 'get':
+						groovikConfig.getSettings()
+					elif str(payload['command']) == 'set':
+						groovikConfig.setSettings(payload['vals'])
 
 			except KeyError:
 				#TODO: actually parse the error and log it

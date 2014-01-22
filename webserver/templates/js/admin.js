@@ -89,6 +89,17 @@ function set_cubemode(mode) {
     	$("#blankpixel").hide();
 }
 
+function sendSettings(form){
+	payload = {};
+	payload["mp-turn-duration"] = form["mp-turn-duration"].value;
+	payload["mp-timeout-limit"] = form["mp-timeout-limit"].value;
+	payload["sp-session-duration"] = form["sp-session-duration"].value;
+	payload["mp-session-duration"] = form["mp-session-duration"].value;
+	payload["menu-timeout"] = form["menu-timeout"].value;
+	console.log(payload);
+	HookboxConnection.hookbox_conn.publish('settings', {'command': 'set', 'vals':payload});
+}
+
 function map_blank_pixel() {
     HookboxConnection.hookbox_conn.publish('faceclick', [54, 0, 0] );
 }
