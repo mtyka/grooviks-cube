@@ -70,13 +70,13 @@ var HookboxConnection = (function(){
 
 				if( channelName == 'colorcalibrx') {
 					calib_subscription = _subscription;
-						calib_subscription.onPublish = function(frame) {
-							clog('Heard calibration message');
-							clog(frame.payload);
-							var rgb_floats = decompress_rgbfloat(frame.payload);
+					calib_subscription.onPublish = function(frame) {
+						clog('Heard calibration message');
+						clog(frame.payload);
+						var rgb_floats = decompress_rgbfloat(frame.payload);
 
-							changeSlider ( rgb_floats );
-							clog('done with calibration message');
+						changeSlider ( rgb_floats );
+						clog('done with calibration message');
 					};
 				}
 				if( channelName == 'movesfromsolved' ) {
@@ -97,21 +97,21 @@ var HookboxConnection = (function(){
 				if( channelName == 'rotationStep' ) {
 					rotation_subscription = _subscription;
 					rotation_subscription.onPublish = function(frame) {
-							playRotationSound(frame.payload);
-					}
+						playRotationSound(frame.payload);
+					};
 				}
 				if( channelName == 'volumeControl' ) {
 					vol_subscription = _subscription;
 					vol_subscription.onPublish = function(frame) {
-							handle_vol(frame.payload);
-					}
+						handle_vol(frame.payload);
+					};
 				}
 				if( channelName == 'playsound' ){
 					vol_subscription = _subscription;
 					vol_subscription.onPublish = function(frame) {
 						console.log(frame);
 						playSound(frame.payload["soundid"], false);
-					}
+					};
 				}
 				if( channelName == 'turns' ){
 					turn_subscription = _subscription;
@@ -128,8 +128,19 @@ var HookboxConnection = (function(){
 				if( channelName == 'settings' ){
 					settings_subscription = _subscription;
 					settings_subscription.onPublish = function(frame) {
-						console.log(frame);
-					}
+						var setVal = function(id, f){
+							$("#"+id).val(parseInt(f[id]));
+						}
+
+						console.log("Frame: ",frame);
+						if (CubeControl.admin_mode){
+							setVal("mp-turn-duration", frame.payload);
+							setVal("mp-timeout-limit", frame.payload);
+							setVal("sp-session-duration", frame.payload);
+							setVal("mp-session-duration", frame.payload);
+							setVal("menu-timeout", frame.payload);
+						}
+					};
 				}
 			}
 			catch(e){

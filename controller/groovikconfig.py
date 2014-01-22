@@ -2,9 +2,11 @@
 
 from GScript import GScriptLibrary;
 from GScript import GScript
+from hbclient import *
 import ConfigParser
 import json
 import string
+
 
 class GroovikConfig:
 	def __init__( self ):
@@ -38,7 +40,7 @@ class GroovikConfig:
 		config = ConfigParser.RawConfigParser()
 		config.read( self.__configFileName )
 
-		self.standardFaceColors = self.__ParseColorArray( config, 'CubeState', 'standard_face_colors' )
+		#self.standardFaceColors = self.__ParseColorArray( config, 'CubeState', 'standard_face_colors' )
 		self.calibrationColors = self.__ParseColorArray( config, 'ModeCalibration', 'calibration_colors' )
 		self.lightBoardMap = self.__ParseIntArray( config, 'Display', 'physical_cube_pixel_mapping' )
 		self.colorCorrection  = self.__ParseColorArray( config, 'Display', 'color_correction' )
@@ -52,6 +54,7 @@ class GroovikConfig:
 		# Config parser kind of sucks. It doesn't allow you to control formatting or
 		# order of output of sections or options. So I have to do a little string formatting
 		# myself to get something reasonably parseable + modifyable in a text mode
+
 		config = ConfigParser.RawConfigParser()
 
 		config.add_section( 'Display' )
@@ -68,11 +71,23 @@ class GroovikConfig:
 		self.__outputArray( config, 'ModeCalibration', 'calibration_colors', self.calibrationColors )
 
 		config.add_section( 'KioskSettings' )
-		self.__outputArray( config, 'KioskSettings', 'settings', str(self.kioskSettings))
+		config.set('KioskSettings', 'settings', json.dumps(self.kioskSettings))
 
-		configfile = open( self.__configFileName, "wt" )
+		print "Saving to " + self.__configFileName
+		configfile = open( self.__configFileName, "w")
 		config.write( configfile )
 		configfile.close()
+
+	def getSettings(self):
+		print "current settings: " + json.dumps(self.kioskSettings)
+		push_message(json.dumps(self.kioskSettings) + "", 'settings')
+
+	def setSettings(self, newValues):
+		print "sent settings: " + str(newValues)
+		self.kioskSettings = newValues.copy()
+		print "new kiosk settings: " + str(self.kioskSettings)
+		push_message(json.dumps(self.kioskSettings) + "", 'settings')
+		self.SaveConfig()
 
 	def __ParseIntArray( self, configParser, section, option ):
 		parsedString = configParser.get( section, option )

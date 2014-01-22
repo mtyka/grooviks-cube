@@ -81,8 +81,9 @@
 			//$("#calibration-sliders").hide();
 			$("#blankpixel").hide();
 			set_cubemode(0);
+
+			HookboxConnection.hookbox_conn.publish('settings', {'command': 'get'});
 		});
-		HookboxConnection.hookbox_conn.publish('settings', {'command' : 'get'} );
       });
 
       function restore_tabs_width(){
@@ -203,25 +204,25 @@
     	<dl>
     		<dt>Multiplayer turn Duration</dt>
     		<dd>How much time, in seconds, a player has to make a turn in multiplayer mode.</dd>
-			<dd><input type="text" name="mp-turn-duration"></dd>
+			<dd><input id="mp-turn-duration" type="text" name="mp-turn-duration"></dd>
 
 			<dt>Multiplayer turn timeout limit</dt>
 			<dd>How many times a player can timeout in a multiplayer game before they are kicked from the game.</dd>
-			<dd><input type="text" name="mp-timeout-limit"></dd>
+			<dd><input id="mp-timeout-limit" type="text" name="mp-timeout-limit"></dd>
 
 			<dt>Single player session duration</dt>
 			<dd>How long, in seconds, a player in single player mode has to solve the cube.</dd>
-			<dd><input type="text" name="sp-session-duration"></dd>
+			<dd><input id="sp-session-duration" type="text" name="sp-session-duration"></dd>
 
 			<dt>Multiplayer session duration</dt>
 			<dd>How long, in seconds, a team of players in multiplayer mode have to solve the cube.</dd>
-			<dd><input type="text" name="mp-session-duration"></dd>
+			<dd><input id="mp-session-duration" type="text" name="mp-session-duration"></dd>
 
 			<dt>Menu timeout</dt>
 			<dd>This is how long a user can be on a menu, that is in between the attract screen and actually playing.</dd>
-			<dd><input type="text" name="menu-timeout"></dd>
+			<dd><input id="menu-timeout" type="text" name="menu-timeout"></dd>
 		</dl>
-		<input type="button" value="Submit" onclick="alert('submitter');">
+		<input type="button" value="Submit" onclick="sendSettings(this.form);">
     </form>
   </div>
 
