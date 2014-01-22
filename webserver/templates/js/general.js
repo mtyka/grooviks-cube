@@ -57,6 +57,7 @@ var global = (function($){
 	});
 
 	$(document).ready(function() {
+
 		HookboxConnection.init( '/static/hookbox.js', function(){
 		   goto_idle_screen();
 		});

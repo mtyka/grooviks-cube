@@ -3,8 +3,8 @@
 <head>
     <title>Groovik's Cube Admin Panel</title>
     <link href="static/admin.css" media="all" rel="stylesheet" type="text/css">
-    <link href="static/jquery.ui191.css" media="all"  rel="stylesheet" type="text/css"> 
-    
+    <link href="static/jquery.ui191.css" media="all"  rel="stylesheet" type="text/css">
+
     <style>
     .ui-tabs-vertical { width: 55em; }
     .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
@@ -12,6 +12,8 @@
     .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
     .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; border-right-width: 1px; }
     .ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
+
+    dd{font-size: .75em;}
     </style>
 
     <script src="static/jquery.min.js"></script>
@@ -37,56 +39,57 @@
     <script src="js/menus.js" type="text/javascript"></script>
     <script src="js/admin.js" type="text/javascript"></script>
     <script src="js/volumecontrol.js" type="text/javascript"></script>
-    
-    
+
+
     <script type="text/javascript">
-      $(document).ready(function(){
-      HookboxConnection.init( '/static/hookbox.js', function(){ 
-        CubeControl.admin_mode = true;
+	$(document).ready(function(){
+		HookboxConnection.init( '/static/hookbox.js', function(){
+			CubeControl.admin_mode = true;
 
-        $("#screensaver").click(  function(){ set_cubemode(3);  restore_tabs_width(); } );
-        $("#pixelmapping").click(  function(){ set_cubemode(2); restore_tabs_width();} );
-        $("#colorcalibration").click(     function(){ set_cubemode(1); restore_tabs_width();} );
-        $("#normal").click(     function(){ set_cubemode(0); restore_tabs_width();} );
-        $("#power").click(  function(){ load_log( "/static/power.log", $("#powercontents") ); } );
-        $("#logs").click(  function(){ load_log( "/static/moves.log", $("#logcontents") ); } );
-        $("#volume").click(     function(){ set_cubemode(0); restore_tabs_width();} );
-        
-        $("#blankpixel").click(     function(){ map_blank_pixel(); } );
-        $( "#tabs" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
-        $( "#tabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
+			$("#screensaver").click(  function(){ set_cubemode(3);  restore_tabs_width(); } );
+			$("#pixelmapping").click(  function(){ set_cubemode(2); restore_tabs_width();} );
+			$("#colorcalibration").click(     function(){ set_cubemode(1); restore_tabs_width();} );
+			$("#normal").click(     function(){ set_cubemode(0); restore_tabs_width();} );
+			$("#power").click(  function(){ load_log( "/static/power.log", $("#powercontents") ); } );
+			$("#logs").click(  function(){ load_log( "/static/moves.log", $("#logcontents") ); } );
+			$("#volume").click(     function(){ set_cubemode(0); restore_tabs_width();} );
 
-        if (!position) {
-            $("#buttonleft").click( function(){ 
-               animate_spin( -Math.PI*2/3 );
-            });
-            $("#buttonright").click( function(){ 
-               animate_spin( Math.PI*2/3 );
-            });
-        } else {
-            $("#buttonleft, #buttonright").css('visibility', 'hidden');
+			$("#blankpixel").click(     function(){ map_blank_pixel(); } );
+			$( "#tabs" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
+			$( "#tabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
 
-            // using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
-            var start_azimuth = parseInt([ -Math.PI*2/3.1, 0, Math.PI*2/3.1 ][position-1] * 100);
-            clog('start azi: ' + start_azimuth);
-            $("#slide_azi").val(  start_azimuth );
-            CubeControl.update_view(); 
-        }
+			if (!position) {
+				$("#buttonleft").click( function(){
+				 animate_spin( -Math.PI*2/3 );
+				});
+				$("#buttonright").click( function(){
+				 animate_spin( Math.PI*2/3 );
+				});
+			} else {
+				$("#buttonleft, #buttonright").css('visibility', 'hidden');
 
-        // send out first ping for volume levels 
-        init_volume_control();
+				// using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
+				var start_azimuth = parseInt([ -Math.PI*2/3.1, 0, Math.PI*2/3.1 ][position-1] * 100);
+				clog('start azi: ' + start_azimuth);
+				$("#slide_azi").val(  start_azimuth );
+				CubeControl.update_view();
+			}
 
-        //$("#calibration-sliders").hide();
-        $("#blankpixel").hide();
-        set_cubemode(0);
-      });
+			// send out first ping for volume levels
+			init_volume_control();
+
+			//$("#calibration-sliders").hide();
+			$("#blankpixel").hide();
+			set_cubemode(0);
+		});
+		HookboxConnection.hookbox_conn.publish('settings', {'command' : 'get'} );
       });
 
       function restore_tabs_width(){
         $("#tabs").animate( { width: "40%" } );
       }
 
-      function load_log( url, container ){ 
+      function load_log( url, container ){
         console.log("Here?");
         $("#tabs").animate( { width: "98%" } );
         $.ajax({
@@ -102,8 +105,8 @@
 </head>
 
 <body>
-    
-<div id="tabs"> 
+
+<div id="tabs">
   <ul style="width: 150px">
     <li><a id="normal"           href="#tabs-1">Normal Mode</a></li>
     <li><a id="pixelmapping"     href="#tabs-2">Pixel Map</a></li>
@@ -112,17 +115,18 @@
     <li><a id="logs"             href="#tabs-5">Logs</a></li>
     <li><a id="screensaver"      href="#tabs-6">Color Cycle</a></li>
     <li><a id="volume"           href="#tabs-7">Sound Volume</a></li>
+    <li><a id="kiosk"            href="#tabs-8">Kiosk Settings</a></li>
   </ul>
-  
+
   <div id="tabs-1"  style=" width: 65%; ">
     To return to the normal game mode. You should return the cube to this state before leaving the admin interface.
-    <br><br>    
-    <a href="cube_multimode?position=1&grey=0">Cube Game - Station 1</a><br><br> 
-    <a href="cube_multimode?position=2&grey=0">Cube Game - Station 2</a><br><br> 
-    <a href="cube_multimode?position=3&grey=0">Cube Game - Station 3</a><br><br> 
+    <br><br>
+    <a href="cube_multimode?position=1&grey=0">Cube Game - Station 1</a><br><br>
+    <a href="cube_multimode?position=2&grey=0">Cube Game - Station 2</a><br><br>
+    <a href="cube_multimode?position=3&grey=0">Cube Game - Station 3</a><br><br>
     <a href="admin_cube">Admin Interface</a><br>
   </div>
-  
+
   <div id="tabs-2"  style=" width: 65%; ">
     Pixelmapping. DO NOT change this unless you know what you're doing. Once you start calibration you must complete it or the mapping will
     wrong! Any changes are *permanent*. <br><br>
@@ -131,38 +135,40 @@
     Red squares have already been mapped.<br>
     The blue square is the currently selected facet:<br>
     If its location on the screen and its location on the real cube are:<br>
-    - identical, it is mapped correctly. Click on the blue square to go to the next facet.<br>
-    - different, its not mapped correctly. Click on the square that matches the location of the blue facet on the real cube.<br>
-    - if there is no blue square on the *real* cube, this facet is inactive. Click on "Skip facet" button.<br>
+    <ul>
+    <li>Identical, it is mapped correctly. Click on the blue square to go to the next facet.</li>
+    <li>Different, its not mapped correctly. Click on the square that matches the location of the blue facet on the real cube.</li>
+    <li>if there is no blue square on the <strong>real</strong> cube, this facet is inactive. Click on "Skip facet" button.</li>
+    </ul>
     <br>
     Once complete, verify mapping by going to the normal game mode, make some rotations and compare the logical screen state with the real state.<br>
   </div>
-  
+
   <div id="tabs-3"  style=" width:  65%" >
     <ul>
     <li>Left click on cube rotates colors through R,G,B and white.
     Typically you want to just calibrate white.
     </li>
     <li>
-    Shift-Click selects a facet for calibration. Adjust the sliders to 
+    Shift-Click selects a facet for calibration. Adjust the sliders to
     balance the hue. Note that the color will <b>only</b> change on the real cube, not on the screen!
     </li>
     </ul>
 
     TIP: Try only color balance one of the 6 faces at a time.
     <br>
-    
+
     <br>
-    
+
     Calibration Color sliders
     <div id="red"></div>
     <div id="green"></div>
     <div id="blue"></div>
     <div id="facenum">
-        No facet selected 
+        No facet selected
     </div>
   </div>
-  
+
   <div id="tabs-4"  style=" width: 85%; ">
    Log of power supply status (chronological). Values in the 170-255 range indicate Power is ok. Below that, there appears to be dropping voltage and a powersupply may be broken.
    The ID (a-m) is equivalent to the controler box label written on the box inside the cube. The LED indicator lights will help you figure out which  of the two supplies (PW1 or PW2) is broken.
@@ -176,13 +182,13 @@
      <!-- filled by AJAX request -->
    </div>
   </div>
-  
+
   <div id="tabs-6"  style=" width: 65%; ">
      This mode is useful to quickly inspect color channels. Also
      it is entertaining - think of it a screen saver when you don't
      want to be in game mode.
   </div>
-  
+
   <div id="tabs-7"  style=" width: 65%; ">
     <div class="volume">
       <h1>Volume Control</h1>
@@ -191,14 +197,42 @@
     </div>
   </div>
 
+  <div id="tabs-8"	style=" width: 65%; ">
+    <h1>Kiosk Settings</h1>
+    <form>
+    	<dl>
+    		<dt>Multiplayer turn Duration</dt>
+    		<dd>How much time, in seconds, a player has to make a turn in multiplayer mode.</dd>
+			<dd><input type="text" name="mp-turn-duration"></dd>
+
+			<dt>Multiplayer turn timeout limit</dt>
+			<dd>How many times a player can timeout in a multiplayer game before they are kicked from the game.</dd>
+			<dd><input type="text" name="mp-timeout-limit"></dd>
+
+			<dt>Single player session duration</dt>
+			<dd>How long, in seconds, a player in single player mode has to solve the cube.</dd>
+			<dd><input type="text" name="sp-session-duration"></dd>
+
+			<dt>Multiplayer session duration</dt>
+			<dd>How long, in seconds, a team of players in multiplayer mode have to solve the cube.</dd>
+			<dd><input type="text" name="mp-session-duration"></dd>
+
+			<dt>Menu timeout</dt>
+			<dd>This is how long a user can be on a menu, that is in between the attract screen and actually playing.</dd>
+			<dd><input type="text" name="menu-timeout"></dd>
+		</dl>
+		<input type="button" value="Submit" onclick="alert('submitter');">
+    </form>
+  </div>
+
 </div>
 
-    
+
     <div id="container">
         <div id="svgholder"></div><canvas height="750" id="canvas" width="750"></canvas>
 
         <div class="bottomrow">
-          <img alt="Left" class="button left" id="buttonleft" src="/static/button_left.png"> 
+          <img alt="Left" class="button left" id="buttonleft" src="/static/button_left.png">
           <img alt="Right" class= "button right" id="buttonright" src="/static/button_right.png">
           <br>
           <br>

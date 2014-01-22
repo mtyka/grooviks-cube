@@ -35,6 +35,8 @@ class HookClient:
 		self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'clientcommand' }))
 		self.frame_id += 1
 		self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'turns' }))
+		self.frame_id += 1
+		self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'settings' }))
 
 	def on_message(self, m):
 		self.callback(core.deserialize_frame(m))
@@ -45,7 +47,7 @@ class HookClient:
 def push_message(message, channel):
 	"""Pushes a message out onto a hookbox channel
 	"""
-	# assume the hookbox server is on localhost:2974	
+	# assume the hookbox server is on localhost:2974
 	url = "http://127.0.0.1:2974/rest/publish"
 
 	values = { "secret" : "bakonv8",
