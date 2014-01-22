@@ -125,25 +125,47 @@ var HookboxConnection = (function(){
 						console.log("current turn: " + global.currentTurn);
 					}
 				}
+				if( channelName == 'settings' ){
+					settings_subscription = _subscription;
+					settings_subscription.onPublish = function(frame) {
+						console.log(frame);
+					}
+				}
 			}
 			catch(e){
 				console.log(e)
 			}
 		};
 
-		// Subscribe to all the channels we'll need
-		my.hookbox_conn.subscribe("iframe");
-		my.hookbox_conn.subscribe("faceclick");
-		my.hookbox_conn.subscribe("movesfromsolved");
-		my.hookbox_conn.subscribe("gamemode");
-		my.hookbox_conn.subscribe("gameState");
-		my.hookbox_conn.subscribe("rotationStep");
-		my.hookbox_conn.subscribe("volumeControl");
-		my.hookbox_conn.subscribe("cubemode");
-		my.hookbox_conn.subscribe("colorcalib");
-		my.hookbox_conn.subscribe("colorcalibrx");
-		my.hookbox_conn.subscribe("playsound");
-		my.hookbox_conn.subscribe("turns");
+		// Subscribe to just the channels we'll need
+		if (document.location.pathname == "/admin_cube"){
+			console.log("----- IS ADMIN -----");
+			my.hookbox_conn.subscribe("iframe");
+			my.hookbox_conn.subscribe("faceclick");
+			my.hookbox_conn.subscribe("gamemode");
+			my.hookbox_conn.subscribe("gameState");
+			my.hookbox_conn.subscribe("rotationStep");
+			my.hookbox_conn.subscribe("volumeControl");
+			my.hookbox_conn.subscribe("cubemode");
+			my.hookbox_conn.subscribe("colorcalib");
+			my.hookbox_conn.subscribe("colorcalibrx");
+			my.hookbox_conn.subscribe("playsound");
+			my.hookbox_conn.subscribe("settings");
+		}
+		else{
+			console.log("----- IS MULTIMODE -----");
+			my.hookbox_conn.subscribe("iframe");
+			my.hookbox_conn.subscribe("faceclick");
+			my.hookbox_conn.subscribe("movesfromsolved");
+			my.hookbox_conn.subscribe("gamemode");
+			my.hookbox_conn.subscribe("gameState");
+			my.hookbox_conn.subscribe("rotationStep");
+			my.hookbox_conn.subscribe("volumeControl");
+			my.hookbox_conn.subscribe("cubemode");
+			my.hookbox_conn.subscribe("playsound");
+			my.hookbox_conn.subscribe("turns");
+			my.hookbox_conn.subscribe("settings");
+		}
 	}
 
 	// return public interface

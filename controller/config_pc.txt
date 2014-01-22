@@ -1,5 +1,5 @@
 [ModeCalibration]
-calibration_colors = 
+calibration_colors =
 	[
 	[1.0, 0.0, 0.0],
 	[0.0, 1.0, 0.0],
@@ -8,7 +8,7 @@ calibration_colors =
 	]
 
 [CubeState]
-standard_face_colors = 
+standard_face_colors =
 	[
 	[0.0, 1.0, 0.0],
 	[1.0, 0.0, 0.0],
@@ -22,7 +22,7 @@ standard_face_colors =
 idle_pulse_dim_factor = 1.0
 
 [Display]
-color_correction = 
+color_correction =
 	[
 	[1.0, 1.0, 1.0],
 	[1.0, 1.0, 1.0],
@@ -79,7 +79,7 @@ color_correction =
 	[1.0, 1.0, 1.0],
 	[1.0, 1.0, 1.0]
 	]
-physical_cube_pixel_mapping = 
+physical_cube_pixel_mapping =
 	[
 	0,
 	1,
@@ -137,3 +137,12 @@ physical_cube_pixel_mapping =
 	53
 	]
 
+[KioskSettings]
+settings =
+	{
+	'mp-turn-duration': '20',
+	'mp-timeout-limit': '2',
+	'sp-session-duration': '180',
+	'mp-session-duration': '180',
+	'menu-timeout': '20'
+	}
