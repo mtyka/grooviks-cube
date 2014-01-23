@@ -15,11 +15,11 @@ var menustate = 0;
 // Set up the click handlers
 $(document).ready(function(){
     $("#easy").bind( "click touchstart",   function() { select_difficulty(2);  } );
-    $("#medium").bind( "click touchstart", function() { select_difficulty(3);  } );
-    $("#hard").bind( "click touchstart",   function() { select_difficulty(4);  } );
-    $("#master").bind( "click touchstart", function() { select_difficulty(5);  } );
-    $("#full").bind( "click touchstart",   function() { select_difficulty(20); } );
-    $("#noDifficulty").bind( "click touchstart", function() { select_difficulty(0); } );
+    $("#medium").bind( "click touchstart", function() { select_difficulty(4);  } );
+    $("#hard").bind( "click touchstart",   function() { select_difficulty(20);  } );
+    //$("#master").bind( "click touchstart", function() { select_difficulty(5);  } );
+    //$("#full").bind( "click touchstart",   function() { select_difficulty(20); } );
+    //$("#noDifficulty").bind( "click touchstart", function() { select_difficulty(0); } );
 
 	$("#buttonleft").bind( "click touchstart", function(){
 	   animate_spin( -Math.PI*2/3 );
@@ -143,6 +143,7 @@ function goto_idle_screen(){
    	menustate = 1
 		flyin_menu("#idlemenu");
 		$("#button_quit").animate( { opacity:0.0 },{ duration: 1000 });
+		$("#button_perspective").animate( { opacity:0.0 },{ duration: 1000 });
 
 		interrupt_ok = true;
 
@@ -248,7 +249,7 @@ function remove_menu(){
 	if( menustate == 1 ) {
 		$("#button_quit").animate( {
 			opacity:1.0
-		},{ duration: 1000 }
+			},{ duration: 1000 }
 		);
 	}
 }
@@ -293,6 +294,8 @@ function clear_screen(){
 		show_rotation_buttons();
 		global.currentTurn = position;
 	}
+
+	$("#button_perspective").animate( { opacity:1.0 },{ duration: 1000 });
 }
 
 

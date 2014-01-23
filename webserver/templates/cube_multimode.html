@@ -40,8 +40,9 @@
         <div id="svgholder">
             <canvas height="1100" id="canvas" width="1100"></canvas>
         </div>
-        <img alt="Restart" class="button_restart" id="button_restart" onclick="goto_queued_screen();" ontouchstart="goto_queued_screen();" ondragstart="return false" src="/static/restart.png">
-        <img alt="Restart" class="button_quit" id="button_quit" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" src="/static/quit.png">
+        <img alt="Quit" class="button_quit" id="button_quit" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" src="/static/quit.png">
+    	<input type="button" id="button_perspective" onclick="set_initial_position();" ontouchstart="set_initial_position();" ondragstart="return false" value="View from your perspective">
+
         <img class="topborder" height="6" id="levelmenu_bgt" src="/static/line.png" width="2000">
 
         <div class="levelmenu_bg" id="levelmenu_bg"></div>
@@ -73,11 +74,6 @@
             <img id="easy"   ondragstart="return false" src="/static/easy.png">
             <img id="medium" ondragstart="return false" src="/static/medium.png">
             <img id="hard"   ondragstart="return false" src="/static/hard.png">
-            <img id="master" ondragstart="return false" src="/static/master.png">
-            <div id="noDifficulty" style="background-color: #ff00cc; padding: 12px; width:20%" ondragstart="return false">No Scramble</div>
-            <br>
-            <br>
-            <img id="full" ondragstart="return false" src="/static/full.png">
             <br>
         </div>
 
