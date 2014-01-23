@@ -174,6 +174,7 @@ var HookboxConnection = (function(){
 			my.hookbox_conn.subscribe("volumeControl");
 			my.hookbox_conn.subscribe("cubemode");
 			my.hookbox_conn.subscribe("playsound");
+			my.hookbox_conn.subscribe("clientcommand");
 			my.hookbox_conn.subscribe("turns");
 			my.hookbox_conn.subscribe("settings");
 		}

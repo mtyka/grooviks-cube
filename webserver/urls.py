@@ -15,8 +15,8 @@ urlpatterns = patterns('',
     (r'^cube_multimode$', direct_to_template, {'template': 'cube_multimode.html'} ),
 
     (r'^static/(?P<path>[-\w]+.[-\w]+)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
-    (r'^static/(?P<path>[-\w]+.[-\w]+.[-\w]+)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),                   
-    
+    (r'^static/(?P<path>[-\w]+.[-\w]+.[-\w]+)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
+
     (r'^js/(?P<path>[-\w]+.[-\w]+)$', 'django.views.static.serve', {'document_root': settings.JS_ROOT}),
-    (r'^js/(?P<path>[-\w]+.[-\w]+.[-\w]+)$', 'django.views.static.serve', {'document_root': settings.JS_ROOT}),                   
+    (r'^js/(?P<path>[-\w]+.[-\w]+.[-\w]+)$', 'django.views.static.serve', {'document_root': settings.JS_ROOT}),
 )

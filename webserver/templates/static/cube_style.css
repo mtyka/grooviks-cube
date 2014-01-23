@@ -1,167 +1,194 @@
-    .debug {
-        display:none;
-    }
+.debug {
+	display:none;
+}
 
-    body {
-        font-family: verdana, sans-serif;
-        background: black;
-        color: #ffffdd;
-        overflow: hidden;
-		}
+body {
+	font-family: verdana, sans-serif;
+	background: black;
+	color: #ffffdd;
+	overflow: hidden;
+}
 
-    h1 {
-        text-shadow: 0px 0px 5px #ff8888; 
-    }
+h1 {
+	text-shadow: 0px 0px 5px #ff8888;
+}
 
-    #container {
-      text-align: center;
-			margin: 0px auto;
-		}
-		
-		.leftmenu{
-			margin-left: auto;
-			margin-right: auto;
-			width: 1000px;
-			position: relative;
-			top: 30px;
-		}
+#container {
+	text-align: center;
+	margin: 0px auto;
+}
 
-		.toprow{
-			margin-left: auto;
-			margin-right: auto;
-			width: 1000px;
-			position: relative;
-			top: 30px;
-		}
-		.bottomrow{
-			clear: both;
-			position: fixed;
-			width: 600px;
-		  bottom: 200px;
-			left: 50%;
-			margin-left: -300px;
-		}
-		.instructions{
-			clear: both;
-			position: fixed;
-			width: 900px;
-		  bottom: 80px;
-			left: 50%;
-			margin-left: -450px;
-		}
-		.footer{
-			clear: both;
-			position: fixed;
-			width: 600px;
-		  bottom: 20px;
-			left: 50%;
-			margin-left: -300px;
-		}
-    
-		.topborder,
-		.bottomborder,
-		.levelmenu_bg{
-		  clear: both;
-			position: fixed;
-			left: 0;
-			top: 50%;
-			margin-top: -200px;
-			z-index: 6	
-		}
-		.bottomborder{
-		  margin-top:  200px;	
-		}
-		.levelmenu_bg{
-			background-color:#000000;
-			opacity:0.6;
-			filter:alpha(opacity=60); /* For IE8 and earlier */
-			width: 100%;
-		  height: 400px;
-			left:-100%;
-			z-index: 5	
-		}
-		.levelmenu{
-			display: none;
-			clear: both;
-			position: fixed;
-			width: 800px;
-		  height: 400px;
-			left: -25%;
-			top: 50%;
-			margin-left: -400px;
-			margin-top: -160px;
-			z-index: 8	
-		}
-		.game_timeout {
-			clear: both;
-			position: fixed;
-			width: 300px;
-		  height: 100px;
-			left:  80px;
-			top: 30px;
-			z-index: 4	
-		}
-    .game_timeout h1{
-        color: #ffffff;
-        font-size: 80px; 
-				text-shadow: 0px 0px 5px #ffffff; 
-    }
+.leftmenu{
+	margin-left: auto;
+	margin-right: auto;
+	width: 1000px;
+	position: relative;
+	top: 30px;
+}
 
-		.movesdisplay{
-			clear: both;
-			position: fixed;
-			width: 900px;
-		  height: 200px;
-			left:  50%;
-			top: 30px;
-			margin-left: -450px;
-			z-index: 3
-		}
-		.button_restart {
-			display: none;
-			position: fixed;
-			opacity:0.0;
-			bottom: 100px;
-			right: 100px;
-			z-index: 3;
-    }
-		.button_quit {
-			position: fixed;
-			opacity:0.0;
-			bottom: 100px;
-			left: 100px;
-			z-index: 20;
-    }
-		
-		.button {
-			position: fixed;
-			bottom: 35%;
-			z-index: 13;
-    }
-		.button.left{
-		  left: 15%;
-		  float:left; 
-		}
-		.button.right{
-		  right: 15%;
-		  float:right; 
-		}
-		.clear{ clear: both; }
+.toprow{
+	margin-left: auto;
+	margin-right: auto;
+	width: 1000px;
+	position: relative;
+	top: 30px;
+}
+.bottomrow{
+	clear: both;
+	position: fixed;
+	width: 600px;
+  bottom: 200px;
+	left: 50%;
+	margin-left: -300px;
+}
+.instructions{
+	clear: both;
+	position: fixed;
+	width: 900px;
+	bottom: 80px;
+	left: 50%;
+	margin-left: -450px;
+}
+.footer{
+	clear: both;
+	position: fixed;
+	width: 600px;
+	  bottom: 20px;
+	left: 50%;
+	margin-left: -300px;
+}
 
-		#canvas{
-			width: 1100px;
-			height: 1100px;
-			position: fixed;
-			top: 45%;
-			left: 50%;
-			margin-top: -550px;
-			margin-left: -550px;
-			z-index:   -1;	
-		}
+.topborder,
+.bottomborder,
+.levelmenu_bg{
+	clear: both;
+	position: fixed;
+	left: 0;
+	top: 50%;
+	margin-top: -200px;
+	z-index: 6
+}
+.bottomborder{
+  	margin-top:  200px;
+}
+.levelmenu_bg{
+	background-color:#000000;
+	opacity:0.6;
+	filter:alpha(opacity=60); /* For IE8 and earlier */
+	width: 100%;
+  	height: 400px;
+	left:-100%;
+	z-index: 5
+}
+.levelmenu{
+	display: none;
+	clear: both;
+	position: fixed;
+	width: 800px;
+  	height: 400px;
+	left: -25%;
+	top: 50%;
+	margin-left: -400px;
+	margin-top: -160px;
+	z-index: 8
+}
+.game_timeout {
+	clear: both;
+	position: fixed;
+	width: 300px;
+  	height: 100px;
+	left:  80px;
+	top: 30px;
+	z-index: 4
+}
+.game_timeout h1{
+	color: #ffffff;
+	font-size: 80px;
+	text-shadow: 0px 0px 5px #ffffff;
+}
 
-		#manual_rotate {
-			position: relative;
-			top: -400px;
-		}
+.movesdisplay{
+	clear: both;
+	position: fixed;
+	width: 900px;
+	height: 200px;
+	left:  50%;
+	top: 30px;
+	margin-left: -450px;
+	z-index: 3
+}
+.button_restart {
+	display: none;
+	position: fixed;
+	opacity:0.0;
+	bottom: 100px;
+	right: 100px;
+	z-index: 3;
+}
+.button_quit {
+	position: fixed;
+	opacity:0.0;
+	bottom: 100px;
+	left: 100px;
+	z-index: 20;
+}
 
+.button {
+	position: fixed;
+	bottom: 35%;
+	z-index: 13;
+}
+
+.button.left{
+	left: 15%;
+	float:left;
+}
+.button.right{
+	right: 15%;
+	float:right;
+}
+
+.clear{ clear: both; }
+
+#canvas{
+	width: 1100px;
+	height: 1100px;
+	position: fixed;
+	top: 45%;
+	left: 50%;
+	margin-top: -550px;
+	margin-left: -550px;
+	z-index:   -1;
+}
+
+#manual_rotate {
+	position: relative;
+	top: -400px;
+}
+
+#player-list{
+	top: 0;
+	right: 0;
+	width: 150px;
+	height: auto;
+}
+
+#p1, #p2, #p3{
+	color: gray;
+}
+
+#p1.active{
+	color: rgb(255, 0, 0);
+	text-shadow: 0 0 3px rgb(255, 0, 0), 0 0 2px white;
+}
+
+#p2.active{
+	color: rgb(248, 151, 29);
+	text-shadow: 0 0 3px rgb(248, 151, 29), 0 0 2px white;
+}
+
+#p3.active{
+	color: rgb(0, 121, 193);
+	text-shadow: 0 0 3px rgb(0,121,194), 0 0 2px white;
+}
 
