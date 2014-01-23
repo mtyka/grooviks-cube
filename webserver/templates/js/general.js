@@ -1,6 +1,14 @@
 /* general.js
  * To prevent inline-js pileup in the html page
  */
+var kiosk = function(){
+	this.spSessionDuration = 100;
+	this.mpSessionDuration = 100;
+	this.mpTurnDuration = 50;
+	this.mpTimeoutLimit = 2;
+	this.menuTimeout = 20;
+}
+
 var global = (function($){
 	var my = {};
 	my.last_move = 0;
@@ -8,10 +16,33 @@ var global = (function($){
 	my.delta_x = parseInt([ -Math.PI*2/3.01, 0, Math.PI*2/3.01 ][position-1] * 100);
 
 	my.turnCheck = function(){
-		if (position != my.currentTurn)
+		if (position != my.currentTurn){
 			CubeControl.ignore_clicks = true;
-		else if (menustate == 0)
+		}
+		else if (menustate == 0){
 			CubeControl.ignore_clicks = false;
+		}
+
+		switch (parseInt(my.currentTurn)){
+			case 1:
+				$("#p1").addClass("active");
+				$("#p2").removeClass("active");
+				$("#p3").removeClass("active");
+				break;
+			case 2:
+				$("#p1").removeClass("active");
+				$("#p2").addClass("active");
+				$("#p3").removeClass("active");
+				break;
+			case 3:
+				$("#p1").removeClass("active");
+				$("#p2").removeClass("active");
+				$("#p3").addClass("active");
+				break;
+			default:
+				console.log(my.currentTurn);
+				break;
+		}
 	}
 
 	//prevent scrolling on mobile pages
