@@ -1,6 +1,6 @@
 // GAME TIMOUT COUNTER & LOGIC
 
-var inactivity_timeout_length = 30;
+var inactivity_timeout_length = 40;
 var inactivity_timeout = -1; // off by default
 
 function game_timeout_occured() {
@@ -25,7 +25,7 @@ function count_down_game_timeout(){
 	else
 		$("#game_timeout").css("display", "inline" );
 
-	$("#game_timeout").html( game_timeout );
+	$("#game_timeout").html( normalizeTime(game_timeout) );
 
 	setTimeout( "count_down_game_timeout()", 1000 );
 }
@@ -35,12 +35,12 @@ var game_timeout_display = $( jQuery( '<div class="game_timeout"> <h1 id="game_t
 $( document ).ready( function(){
 	$( "body" ).append( game_timeout_display );
     // Add a click event that resets the timeouts
-    $("body").bind( "click touchstart", function( eventObj ) {
+    $(window).bind( "click touchstart", function( eventObj ) {
 		reset_timeout();
     });
 
 	// start the timeout counters
-	//update_timeout();
+	// update_timeout();
 	count_down_game_timeout();
 });
 
@@ -63,13 +63,18 @@ function reset_timeout(){
 }
 
 function update_timeout( ){
-	//clog("Update_timeout: " + inactivity_timeout );
+
+	//ignore inactivity timeout when it's not your turn.
+	if (global.currentTurn != position){
+		return;
+	}
+
 	if( inactivity_timeout >= 0 && inactivity_timeout <= 10 &&  menustate == 0 ){
 		//Only show timeout menu when we're not already in some menu
 		goto_timeout_screen();
 	}
 
-	document.title = inactivity_timeout;
+	//document.title = inactivity_timeout;
 	// Fulltimeout
 
 	if( inactivity_timeout == 0 )
@@ -87,5 +92,7 @@ function update_timeout( ){
 	setTimeout("update_timeout()",1000); // call me again in 1000 ms
 }
 
-
+function normalizeTime(t){
+	return Math.floor(t/60).toString() + ":" + (t%60 < 10 ? ("0" + t%60).toString() : (t%60).toString());
+}
 

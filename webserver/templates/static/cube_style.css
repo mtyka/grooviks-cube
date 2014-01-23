@@ -95,15 +95,16 @@ h1 {
 .game_timeout {
 	clear: both;
 	position: fixed;
-	width: 300px;
+	width: 250px;
   	height: 100px;
-	left:  80px;
-	top: 30px;
-	z-index: 4
+	right:  100px;
+	bottom: 130px;
+	z-index: 4;
 }
 .game_timeout h1{
 	color: #ffffff;
-	font-size: 80px;
+	font-size: 2em;
+	text-align: center;
 	text-shadow: 0px 0px 5px #ffffff;
 }
 
@@ -117,14 +118,7 @@ h1 {
 	margin-left: -450px;
 	z-index: 3
 }
-.button_restart {
-	display: none;
-	position: fixed;
-	opacity:0.0;
-	bottom: 100px;
-	right: 100px;
-	z-index: 3;
-}
+
 .button_quit {
 	position: fixed;
 	opacity:0.0;
@@ -167,8 +161,9 @@ h1 {
 }
 
 #player-list{
-	top: 0;
-	right: 0;
+	position: fixed;
+	top: 50px;
+	right: 100px;
 	width: 150px;
 	height: auto;
 }
