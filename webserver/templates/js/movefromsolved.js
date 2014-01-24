@@ -59,14 +59,12 @@ function flash_moves_display(){
 
 function reset_flash_moves_timeout(){
 	clog( "Clear Flash Moves Timeout" );
-	clearTimeout( next_flash_moves_display )
 	$("#movestext").html("");
 }
 
 
 $(window).bind( "click touchstart", function() {
-	reset_flash_moves_timeout();
-	reset_timeout();
+	timeout.reset_timeout();
 	//touch screen to begin!
 	if( menustate == 1 ){
 		clicked_wake();

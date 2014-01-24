@@ -21,19 +21,19 @@ function on_game_state_change(newState, activePosition, clientstate) {
 	clog("Server: NewState:" + new_client_state + "OldState: " + client_state );
 	clog("Server: NewGameState:" + new_game_state + "OldGameState: " + game_state );
 
-	reset_timeout();
+	timeout.reset_timeout();
 
 	var old_game_state = game_state;
 	game_state = new_game_state;
 
 	client_state = new_client_state;
 	if ( client_state == "IDLE" ){
-		clear_game_timeout();
+		timeout.clear_game_timeout();
 		goto_idle_screen();
 	}
 	else{
 		if ( client_state == "HOME" ){
-			clear_game_timeout();
+			timeout.clear_game_timeout();
 			goto_mode_screen();
 		}
 		else {
@@ -55,7 +55,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
 				}
 				else{
 					if( game_state == "VICTORY" ){
-						clear_game_timeout();
+						timeout.clear_game_timeout();
 						clear_screen();
 					}
 				}
@@ -63,7 +63,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
 			else {
 				if ( client_state == "MULT" ){
 					if( game_state == "SINGLE_INVITE" ){
-						clear_game_timeout();
+						timeout.clear_game_timeout();
 						goto_waiting_screen();
 					}
 					else {
@@ -78,7 +78,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
 									goto_level_screen( )   // create level screen
 								}
 								else {
-									clear_game_timeout();  // no timeout in 3 player mode
+									timeout.clear_game_timeout();  // no timeout in 3 player mode
 									clear_screen();        // got to game
 								}
 							}

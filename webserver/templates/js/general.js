@@ -96,7 +96,7 @@ var global = (function($){
 		my.currentTurn = position;
 
 		goto_connecting_screen();
-		update_timeout( );
+		timeout.update_timeout( );
 		document.title = "P:" + position
 	});
 
