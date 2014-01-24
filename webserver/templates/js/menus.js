@@ -148,7 +148,7 @@ function goto_idle_screen(){
 		interrupt_ok = true;
 
 		clog("setting client state to home-restart");
-		clear_timeout();
+		timeout.clear_timeout();
 		start_spin( true );
 }
 
@@ -161,7 +161,7 @@ function goto_mode_screen(){
 		flyin_menu("#modemenu");
 
 		interrupt_ok = true;
-		clear_timeout();
+		timeout.clear_timeout();
 		start_spin( true );
 }
 
@@ -173,7 +173,7 @@ function goto_level_screen(){
 		if( menustate == 0 ) flyin_menu_bg();
    	menustate = 3
 		flyin_menu("#levelmenu");
-		clear_timeout();
+		timeout.clear_timeout();
 		start_spin( true );
 }
 
@@ -196,7 +196,7 @@ function goto_join_screen(){
 			menustate = 5
 			flyin_menu("#joinmenu");
 		}
-		clear_timeout();
+		timeout.clear_timeout();
 		start_spin( true );
 }
 
@@ -208,7 +208,7 @@ function goto_queued_screen(){
 		if( menustate == 0 ) flyin_menu_bg();
    	menustate = 6
 		flyin_menu("#queuedmenu");
-		clear_timeout();
+		timeout.clear_timeout();
 		start_spin( true );
 }
 
@@ -220,7 +220,7 @@ function goto_waiting_screen(){
 		if( menustate == 0 ) flyin_menu_bg();
    	menustate = 7
 		flyin_menu("#waitingmenu");
-		clear_timeout();
+		timeout.clear_timeout();
 		start_spin( true );
 }
 
@@ -231,7 +231,7 @@ function goto_connecting_screen(){
 		if( menustate == 0 ) flyin_menu_bg();
    	menustate = 8
 		flyin_menu("#connectingmenu");
-		clear_timeout();
+		timeout.clear_timeout();
 		start_spin( true );
 }
 
@@ -282,14 +282,14 @@ function clear_screen(){
 	hide_rotation_buttons();
 	//hide_instructions();
 	if( game_state == "MULTIPLE" ){
-		start_timeout();
+		timeout.start_timeout();
   		flash_display("Welcome to the 3-Player Game", 8000);
 		//show_instructions();
 
 		global.turnCheck();
 	}
 	if( game_state == "SINGLE" ){
-		start_timeout();
+		timeout.start_timeout();
 		flash_display("Welcome to the Single Player Game", 8000 );
 		show_rotation_buttons();
 		global.currentTurn = position;
@@ -335,7 +335,7 @@ function clicked_join(){
 }
 
 function clicked_continue(){
-	start_timeout();
+	timeout.start_timeout();
 	clear_screen();
 }
 
