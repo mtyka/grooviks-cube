@@ -48,7 +48,7 @@ function select_difficulty( difficulty ){
 		set_initial_position();
 	}
 
-	clear_game_timeout();
+	timeout.clear_game_timeout();
 
 	// THis is somewhat hacky - but because of the order reversal in multiplayer mode compared to single player mode,
 	// the select diff screen has to clear itself in multiplayer mode. But not in single player mode.
@@ -283,14 +283,14 @@ function clear_screen(){
 	//hide_instructions();
 	if( game_state == "MULTIPLE" ){
 		timeout.start_timeout();
-  		flash_display("Welcome to the 3-Player Game", 8000);
+  		//flash_display("Welcome to the 3-Player Game", 8000);
 		//show_instructions();
 
 		global.turnCheck();
 	}
 	if( game_state == "SINGLE" ){
 		timeout.start_timeout();
-		flash_display("Welcome to the Single Player Game", 8000 );
+		//flash_display("Welcome to the Single Player Game", 8000 );
 		show_rotation_buttons();
 		global.currentTurn = position;
 	}
@@ -320,7 +320,7 @@ function clicked_3player(){
 	selected_game_mode = "START_3P";
 	clog("ClientSentGameMode: " + selected_game_mode );
 	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
-	//goto_level_screen( )
+	goto_level_screen( )
 }
 
 function clicked_ignore(){
