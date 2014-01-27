@@ -34,7 +34,11 @@ function on_game_state_change(newState, activePosition, clientstate) {
 	else{
 		if ( client_state == "HOME" ){
 			timeout.clear_game_timeout();
-			goto_mode_screen();
+			if (global.isKiosk() && global.activePlayers.length >= 0)
+				clicked_3player()
+			else{	//for web version.
+				clicked_alone();
+			}
 		}
 		else {
 			if ( client_state == "SING" ){
