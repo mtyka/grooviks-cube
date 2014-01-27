@@ -117,11 +117,22 @@ var HookboxConnection = (function(){
 					turn_subscription = _subscription;
 					turn_subscription.onPublish = function(frame) {
 						global.currentTurn = frame.payload["turn"];
-						global.activePlayers = parseInt(frame.payload["active"]);
+						global.activePlayers = [];
+
+						var tmpActive = frame.payload["active"].replace(/(\[|\])/g, "").split(",").slice(0);
+
+						for (var i=0; i < tmpActive.length; i++){
+							if (tmpActive[0] == "")
+								global.activePlayers = [];
+							else
+								global.activePlayers.push(parseInt(tmpActive[i]));
+						}
+
 						global.turnCheck();
 
 						CubeControl.update_view();
 
+						console.log("active players: " + global.activePlayers);
 						console.log("current turn: " + global.currentTurn);
 					}
 				}

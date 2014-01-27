@@ -144,7 +144,8 @@ class GrooviksCube:
 	#-----------------------------------------------------------------------------
 	def HandleClientCommand( self, position, command, parameters ):
 		print "ClientCommand: ", position, command, parameters
-		ret;
+
+		ret = False
 		with self.__gameStateLock:
 			client = self.GetClient( position )
 			ret = client.HandleCommand( command, parameters )
@@ -160,7 +161,7 @@ class GrooviksCube:
 			if len(active) == 0:
 				self.currentTurn = position
 
-			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(len(active))}), "turns")
+			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
 
 		# on quit the turn gets passed to the next active player.
 		elif str(command) == ClientCommand.QUIT:
@@ -172,7 +173,7 @@ class GrooviksCube:
 			if len(active) > 0:
 				self.currentTurn = active[0]
 
-			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(len(active))}), "turns")
+			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
 
 		print "active length: " + str(len(active))
 		return ret
@@ -187,11 +188,11 @@ class GrooviksCube:
 		return self.__clientdict.values()
 
 	def GetActiveClientsForState(self, state):
-		count = 0
+		ret = []
 		for k in self.__clientdict.keys():
 			if self.__clientdict[k].GetState() == state:
-				count += 1
-		return count;
+				ret.append(k)
+		return ret;
 
 	def ChangeGameState( self, gameStateMap ):
 		newState = gameStateMap[self.GetGameState()]
@@ -382,7 +383,7 @@ class GrooviksCube:
 				self.currentTurn = (self.currentTurn % 3) + 1
 
 			print "Current Turn: " + str(self.currentTurn)
-			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(len(active))}), "turns")
+			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
 
 		if ( self.__CanQueueState( CubeState.ROTATING ) ):
 			self.__AppendState( [ CubeState.ROTATING, actualRotations, -1, True ] )

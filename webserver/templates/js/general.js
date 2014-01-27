@@ -14,7 +14,7 @@ var global = (function($){
 	my.last_move = 0;
 	my.delta_x = parseInt([ -Math.PI*2/3.01, 0, Math.PI*2/3.01 ][position-1] * 100);
 	my.currentTurn = 0;
-	my.activePlayers = 0;
+	my.activePlayers = [];
 
 	var wasSpinning = false;
 
@@ -26,34 +26,45 @@ var global = (function($){
 			CubeControl.ignore_clicks = false;
 		}
 
-		var className = "active"; //just to avoid a ton of hardcoding.
+		//just to avoid a ton of hardcoding.
+		var activeClass = "active";
+		var onlineClass = "online";
 
-		if (my.activePlayers == 0){
-			$("#p1").removeClass(className);
-			$("#p2").removeClass(className);
-			$("#p3").removeClass(className);
+		if (my.activePlayers.length == 0){
+			$("#p1").removeClass(activeClass + " " + onlineClass);
+			$("#p2").removeClass(activeClass + " " + onlineClass);
+			$("#p3").removeClass(activeClass + " " + onlineClass);
 		}
 		else{
+			for (var i=1; i <= 3; i++){
+				if (my.activePlayers.indexOf(i) >= 0)
+					$("#p"+i.toString()).addClass(onlineClass);
+				else{
+					$("#p"+i.toString()).removeClass(onlineClass);
+					$("#p"+i.toString()).removeClass(activeClass)
+				}
+			}
+
 			switch (parseInt(my.currentTurn)){
 				case 1:
-					$("#p1").addClass(className);
-					$("#p2").removeClass(className);
-					$("#p3").removeClass(className);
+					$("#p1").addClass(activeClass);
+					$("#p2").removeClass(activeClass);
+					$("#p3").removeClass(activeClass);
 					break;
 				case 2:
-					$("#p1").removeClass(className);
-					$("#p2").addClass(className);
-					$("#p3").removeClass(className);
+					$("#p1").removeClass(activeClass);
+					$("#p2").addClass(activeClass);
+					$("#p3").removeClass(activeClass);
 					break;
 				case 3:
-					$("#p1").removeClass(className);
-					$("#p2").removeClass(className);
-					$("#p3").addClass(className);
+					$("#p1").removeClass(activeClass);
+					$("#p2").removeClass(activeClass);
+					$("#p3").addClass(activeClass);
 					break;
 				default:
-					$("#p1").removeClass(className);
-					$("#p2").removeClass(className);
-					$("#p3").removeClass(className);
+					$("#p1").removeClass(activeClass + " " + onlineClass);
+					$("#p2").removeClass(activeClass + " " + onlineClass);
+					$("#p3").removeClass(activeClass + " " + onlineClass);
 					console.log(my.currentTurn);
 					break;
 			}
@@ -81,6 +92,8 @@ var global = (function($){
 			wasSpinning = true;
 			stop_spin();
 		}
+
+		$("#slide_azi").stop();
 
 		if (e.type == "mousedown"){
 			my.last_move = e.pageX;
