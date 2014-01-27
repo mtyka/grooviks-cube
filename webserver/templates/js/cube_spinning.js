@@ -92,7 +92,8 @@ function start_spin( start_spin ){
 		return;
 
 	if( start_spin ){
-		if( is_spinning ) return; // cube is already spinning - dont start another thread.
+		if( is_spinning )
+			return; // cube is already spinning - dont start another thread.
 		// otherwise set the state variable and go!
 		is_spinning = true;
   	}

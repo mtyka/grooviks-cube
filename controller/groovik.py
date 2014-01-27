@@ -144,6 +144,10 @@ class GrooviksCube:
 	#-----------------------------------------------------------------------------
 	def HandleClientCommand( self, position, command, parameters ):
 		print "ClientCommand: ", position, command, parameters
+		ret;
+		with self.__gameStateLock:
+			client = self.GetClient( position )
+			ret = client.HandleCommand( command, parameters )
 
 		active = []
 
@@ -155,7 +159,8 @@ class GrooviksCube:
 
 			if len(active) == 0:
 				self.currentTurn = position
-				push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(len(active))}), "turns")
+
+			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(len(active))}), "turns")
 
 		# on quit the turn gets passed to the next active player.
 		elif str(command) == ClientCommand.QUIT:
@@ -166,13 +171,11 @@ class GrooviksCube:
 
 			if len(active) > 0:
 				self.currentTurn = active[0]
-				push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(len(active))}), "turns")
+
+			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(len(active))}), "turns")
 
 		print "active length: " + str(len(active))
-
-		with self.__gameStateLock:
-			 client = self.GetClient( position )
-			 return client.HandleCommand( command, parameters )
+		return ret
 
 	def GetClient(self, position):
 		if position in self.__clientdict:

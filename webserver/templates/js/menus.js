@@ -3,6 +3,8 @@
 
 var interrupt_ok=true;
 var menustate = 0;
+var quitClicked = false;
+
 // 0 = no menu
 // 1 = mode menu
 // 2 = level menu
@@ -277,6 +279,8 @@ function clear_screen(){
 function clicked_quit(){
 	clog("ClientSent: QUIT ");
 	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
+	quitClicked = true;
+	setTimeout(function(){quitClicked = false;}, 1400);
 }
 
 function clicked_wake(){
