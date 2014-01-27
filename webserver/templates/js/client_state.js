@@ -39,7 +39,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
 		else {
 			if ( client_state == "SING" ){
 				if( game_state == "SINGLE_INVITE" ){
-				goto_join_screen();
+					goto_join_screen();
 				}
 				else
 				if( game_state == "SINGLE" ){

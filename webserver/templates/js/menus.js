@@ -9,25 +9,7 @@ var menustate = 0;
 // 3 = timeout menu
 // 4 = join    menu
 // 5 = queued  menu
-// 5 = waiting menu
-
-
-// Set up the click handlers
-$(document).ready(function(){
-    $("#easy").bind( "click touchstart",   function() { select_difficulty(2);  } );
-    $("#medium").bind( "click touchstart", function() { select_difficulty(4);  } );
-    $("#hard").bind( "click touchstart",   function() { select_difficulty(20);  } );
-    //$("#master").bind( "click touchstart", function() { select_difficulty(5);  } );
-    //$("#full").bind( "click touchstart",   function() { select_difficulty(20); } );
-    //$("#noDifficulty").bind( "click touchstart", function() { select_difficulty(0); } );
-
-	$("#buttonleft").bind( "click touchstart", function(){
-	   animate_spin( -Math.PI*2/3 );
-	});
-	$("#buttonright").bind( "click touchstart", function(){
-	   animate_spin( Math.PI*2/3 );
-	});
-});
+// 5 = waiting menu //is that supposed to be 6?
 
 function reset_gamestate(position, difficulty) {
     console.log("Resetting gamestate: " + difficulty);
@@ -66,13 +48,9 @@ function flyin_menu_bg(){
 		// animate all the opacities and positions to bring in the background of the menu
 		$("#levelmenu_bg").css("opacity", "-2.0");
 		$("#levelmenu_bg").css("left", "0");
-		$("#levelmenu_bgb").css("opacity", "-2.0");
-		$("#levelmenu_bgt").css("opacity", "-2.0");
 
-		$("#levelmenu_bgb").animate( { opacity:1.0 },{ duration: 1000 });
-		$("#levelmenu_bgt").animate( { opacity:1.0 },{ duration: 1000 });
 		$("#levelmenu_bg").css("display", "inline");
-    $("#levelmenu_bg").animate( { opacity:0.6 },{ duration: 1000 });
+   		$("#levelmenu_bg").animate( { opacity:0.6 },{ duration: 1000 });
 
 		$("#button_restart").animate( {
 			opacity:0.0
@@ -85,9 +63,14 @@ function flyin_menu_bg(){
 }
 
 function flyout_menu_bg(){
-		$("#levelmenu_bgb").animate( { opacity:-1.0 },{ duration:  600 });
-		$("#levelmenu_bgt").animate( { opacity:-1.0 },{ duration:  600 });
-		$("#levelmenu_bg").animate( { opacity:-1.0 },{ duration:  600, complete: function(){ $("#levelmenu_bg").css("display", "none") }  } );
+		$("#levelmenu_bg").animate(
+			{ opacity: -1.0 },
+			{ duration:  600,
+			complete: function(){
+				$("#levelmenu_bg").css("display", "none")
+			}
+		});
+
 		$("#button_restart").animate( {
 			opacity:1.0
 		},{ duration: 1000 }
@@ -101,15 +84,7 @@ function flyin_menu( id ){
 		  left: "50%",
 		},{ duration: 1000 }
 		);
-		//$("#levelmenu_bg").css("left", "0");
-		$("#levelmenu_bgb").animate( {
-			opacity:1.0
-		},{ duration: 1000 }
-		);
-		$("#levelmenu_bgt").animate( {
-			opacity:1.0
-		},{ duration: 1000 }
-		);
+
 		$("#levelmenu_bg").animate( {
 			opacity:0.6
 		},{ duration: 1000 }
