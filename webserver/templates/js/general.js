@@ -2,19 +2,21 @@
  * To prevent inline-js pileup in the html page
  */
 var kiosk = function(){
-	this.spSessionDuration = 100;
-	this.mpSessionDuration = 100;
-	this.mpTurnDuration = 50;
-	this.mpTimeoutLimit = 2;
-	this.menuTimeout = 20;
+	spSessionDuration: 100;
+	mpSessionDuration: 100;
+	mpTurnDuration	:	50;
+	mpTimeoutLimit	:	2;
+	menuTimeout		: 	20;
 }
 
 var global = (function($){
 	var my = {};
 	my.last_move = 0;
-	my.currentTurn = 0;
 	my.delta_x = parseInt([ -Math.PI*2/3.01, 0, Math.PI*2/3.01 ][position-1] * 100);
+	my.currentTurn = 0;
 	my.activePlayers = 0;
+
+	var wasSpinning = false;
 
 	my.turnCheck = function(){
 		if (position != my.currentTurn){
@@ -24,25 +26,37 @@ var global = (function($){
 			CubeControl.ignore_clicks = false;
 		}
 
-		switch (parseInt(my.currentTurn)){
-			case 1:
-				$("#p1").addClass("active");
-				$("#p2").removeClass("active");
-				$("#p3").removeClass("active");
-				break;
-			case 2:
-				$("#p1").removeClass("active");
-				$("#p2").addClass("active");
-				$("#p3").removeClass("active");
-				break;
-			case 3:
-				$("#p1").removeClass("active");
-				$("#p2").removeClass("active");
-				$("#p3").addClass("active");
-				break;
-			default:
-				console.log(my.currentTurn);
-				break;
+		var className = "active"; //just to avoid a ton of hardcoding.
+
+		if (my.activePlayers == 0){
+			$("#p1").removeClass(className);
+			$("#p2").removeClass(className);
+			$("#p3").removeClass(className);
+		}
+		else{
+			switch (parseInt(my.currentTurn)){
+				case 1:
+					$("#p1").addClass(className);
+					$("#p2").removeClass(className);
+					$("#p3").removeClass(className);
+					break;
+				case 2:
+					$("#p1").removeClass(className);
+					$("#p2").addClass(className);
+					$("#p3").removeClass(className);
+					break;
+				case 3:
+					$("#p1").removeClass(className);
+					$("#p2").removeClass(className);
+					$("#p3").addClass(className);
+					break;
+				default:
+					$("#p1").removeClass(className);
+					$("#p2").removeClass(className);
+					$("#p3").removeClass(className);
+					console.log(my.currentTurn);
+					break;
+			}
 		}
 	}
 
@@ -63,6 +77,11 @@ var global = (function($){
 
 	//free rotation
 	$(document).bind("mousedown touchstart", function(e){
+		if (is_spinning){
+			wasSpinning = true;
+			stop_spin();
+		}
+
 		if (e.type == "mousedown"){
 			my.last_move = e.pageX;
 
@@ -92,12 +111,15 @@ var global = (function($){
 			my.delta_x =  my.delta_x % -630
 		else
 			my.delta_x % 630; //uncertain why it's 630. /// it's close to 100*Math.PI*2
+
+		if (wasSpinning)
+			start_spin(true);
 	});
 
 	$(window).bind( "click touchstart", function() {
 		timeout.reset_timeout();
 		//touch screen to begin!
-		if( menustate == 1 ){
+		if( menustate == 1 && !quitClicked){
 			clicked_wake();
 		}
 	});
@@ -152,7 +174,6 @@ var global = (function($){
 			$(".debug").css('display','block');
 			setInterval( display_framerate, HOW_OFTEN_DISPLAY_FRAMERATE );
 		}
-
 
 		//--------Timeouts on Ready-----------
 		// Add a click event that resets the timeouts
