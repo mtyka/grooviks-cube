@@ -117,7 +117,7 @@ var HookboxConnection = (function(){
 					turn_subscription = _subscription;
 					turn_subscription.onPublish = function(frame) {
 						global.currentTurn = frame.payload["turn"];
-
+						global.activePlayers = parseInt(frame.payload["active"]);
 						global.turnCheck();
 
 						CubeControl.update_view();

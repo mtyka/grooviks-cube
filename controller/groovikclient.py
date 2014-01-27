@@ -114,7 +114,9 @@ class GrooviksClient:
     def Join3P(self, parameters):
         self.SetState(ClientState.MULT)
         self.GetCube().SinglePlayerJoins(self)
-        push_message(json.dumps({'turn':str(self.currentTurn)}), "turns")
+        push_message(json.dumps({
+        	'turn':str(self.currentTurn),
+        	'active': self.GetCube().GetActiveClientsForState(ClientState.Mult)}), "turns")
 
     def Scramble(self, parameters):
         difficulty = parameters['difficulty']

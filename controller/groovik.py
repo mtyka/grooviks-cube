@@ -145,6 +145,8 @@ class GrooviksCube:
 	def HandleClientCommand( self, position, command, parameters ):
 		print "ClientCommand: ", position, command, parameters
 
+		active = []
+
 		if str(command) == ClientCommand.START_3P:
 			active = []
 			for k in self.__clientdict.keys():
@@ -153,16 +155,20 @@ class GrooviksCube:
 
 			if len(active) == 0:
 				self.currentTurn = position
-				push_message(json.dumps({'turn':str(self.currentTurn)}), "turns")
+				push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(len(active))}), "turns")
 
+		# on quit the turn gets passed to the next active player.
 		elif str(command) == ClientCommand.QUIT:
 			active = []
 			for k in self.__clientdict.keys():
 				if self.__clientdict[k].GetState() == ClientState.MULT and k != position:
 					active.append(k)
+
 			if len(active) > 0:
 				self.currentTurn = active[0]
-				push_message(json.dumps({'turn':str(self.currentTurn)}), "turns")
+				push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(len(active))}), "turns")
+
+		print "active length: " + str(len(active))
 
 		with self.__gameStateLock:
 			 client = self.GetClient( position )
@@ -170,12 +176,19 @@ class GrooviksCube:
 
 	def GetClient(self, position):
 		if position in self.__clientdict:
-			 return self.__clientdict[position]
+			return self.__clientdict[position]
 		else:
-			 self.LogEvent( "Client " + position + " requested but does not exist!" )
+			self.LogEvent( "Client " + position + " requested but does not exist!" )
 
 	def GetAllClients(self):
 		return self.__clientdict.values()
+
+	def GetActiveClientsForState(self, state):
+		count = 0
+		for k in self.__clientdict.keys():
+			if self.__clientdict[k].GetState() == state:
+				count += 1
+		return count;
 
 	def ChangeGameState( self, gameStateMap ):
 		newState = gameStateMap[self.GetGameState()]
@@ -366,7 +379,7 @@ class GrooviksCube:
 				self.currentTurn = (self.currentTurn % 3) + 1
 
 			print "Current Turn: " + str(self.currentTurn)
-			push_message(json.dumps({'turn':str(self.currentTurn)}), "turns")
+			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(len(active))}), "turns")
 
 		if ( self.__CanQueueState( CubeState.ROTATING ) ):
 			self.__AppendState( [ CubeState.ROTATING, actualRotations, -1, True ] )

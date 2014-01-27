@@ -90,21 +90,11 @@ var timeout = (function($){
 	}
 
 	my.update_timeout = self.update_timeout;
+	my.count_down_game_timeout = self.count_down_game_timeout;
 
 	function normalizeTime(t){
 		return Math.floor(t/60).toString() + ":" + (t%60 < 10 ? ("0" + t%60).toString() : (t%60).toString());
 	}
-
-	$(document).ready(function(){
-		// Add a click event that resets the timeouts
-		$(window).bind( "click touchstart", function( eventObj ) {
-			my.reset_timeout();
-		});
-
-		// start the timeout counters
-		// update_timeout();
-		self.count_down_game_timeout();
-	});
 
 	return my;
 }(jQuery))

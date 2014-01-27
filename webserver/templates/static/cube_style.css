@@ -144,6 +144,12 @@ h1 {
 
 .clear{ clear: both; }
 
+#levelmenu_bg{
+	border-width: 4px 0;
+	border-color: white;
+	border-style: solid;
+}
+
 #canvas{
 	width: 1100px;
 	height: 1100px;

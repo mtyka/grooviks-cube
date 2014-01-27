@@ -55,7 +55,7 @@ CubeControl = (function($){
 	}
 
 
-	function cube_got_clicked_on(x,y) {
+	my.cube_got_clicked_on = function(x,y) {
 		if ( my.ignore_clicks)
 			return;
 
@@ -110,28 +110,6 @@ CubeControl = (function($){
 		}
 		my.update_view();	// calls into the renderer code
 	}
-
-
-	// set up events
-	$(document).ready( function() {
-		// Draw the cube in its default state when the page first loads
-		CubeControl.update_view();
-
-		// add click events that control the cube.
-		$("body").bind( "click touchstart", function( eventObj ) {
-			if( !my.ignore_clicks ){
-				var top_left_canvas_corner = $("#canvas").elementlocation();
-				var x = eventObj.pageX - top_left_canvas_corner.x;
-				var y = eventObj.pageY - top_left_canvas_corner.y;
-
-				console.log("local click at relative ("+x+","+y+")");
-
-				cube_got_clicked_on(x,y);
-
-				return true;
-			}
-		});
-	});
 
 	return my; // return public members
 }(jQuery))
