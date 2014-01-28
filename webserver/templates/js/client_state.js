@@ -35,7 +35,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
 		if ( client_state == "HOME" ){
 			timeout.clear_game_timeout();
 			if (global.isKiosk() && global.activePlayers.length >= 0)
-				clicked_3player()
+				clicked_3player();
 			else{	//for web version.
 				clicked_alone();
 			}
@@ -74,12 +74,12 @@ function on_game_state_change(newState, activePosition, clientstate) {
 						if( game_state == "MULTIPLE" ){
 							// active player gets to select difficulty mode.
 							if ( new_client_state == "MULT" && old_client_state == "HOME" ){
-								goto_level_screen( )   // create level screen
+								goto_level_screen();   // create level screen
 							}
 							else {
 								// active player comes from a waiting screen
 								if ( new_client_state == "MULT" && old_client_state == "MULT" && old_game_state == "SINGLE_INVITE"  ){
-									goto_level_screen( )   // create level screen
+									goto_level_screen();   // create level screen
 								}
 								else {
 									timeout.clear_game_timeout();  // no timeout in 3 player mode
