@@ -47,66 +47,38 @@ function select_difficulty( difficulty ){
 
 
 function flyin_menu_bg(){
-		// background is in place - thus ignore clicks on canvas
-		CubeControl.ignore_clicks=true;
+	// background is in place - thus ignore clicks on canvas
+	CubeControl.ignore_clicks=true;
 
-		// animate all the opacities and positions to bring in the background of the menu
-		$("#levelmenu_bg").css("opacity", "-2.0");
-		$("#levelmenu_bg").css("left", "0");
-
-		$("#levelmenu_bg").css("display", "inline");
-   		$("#levelmenu_bg").animate( { opacity:0.6 },{ duration: 1000 });
-
-		$("#button_restart").animate( {
-			opacity:0.0
-		},{ duration: 1000 }
-		);
-		CubeControl.ignore_clicks = true;
-
-		hide_rotation_buttons();
-		//hide_instructions();
+	hide_rotation_buttons();
+	//hide_instructions();
 }
 
 function flyout_menu_bg(){
-		$("#levelmenu_bg").animate(
-			{ opacity: -1.0 },
-			{ duration:  600,
-			complete: function(){
-				$("#levelmenu_bg").css("display", "none")
-			}
-		});
 
-		$("#button_restart").animate( {
-			opacity:1.0
-		},{ duration: 1000 }
-		);
 }
 
 function flyin_menu( id ){
-		$(id).css("left", "-25%");
-		$(id).css("display", "inline");
-		$(id).animate( {
-		  left: "50%",
-		},{ duration: 1000 }
-		);
+	$(id).css("left", "-25%");
+	$(id).css("display", "inline");
+	$(id).animate( {
+	  left: "0%",
+	},{ duration: 1000 }
+	);
 
-		$("#levelmenu_bg").animate( {
-			opacity:0.6
-		},{ duration: 1000 }
-		);
-		CubeControl.ignore_clicks = true;
+	CubeControl.ignore_clicks = true;
 }
 
 function flyout_menu( id ){
-		$(id).animate( {
-		  left: "125%"
-		},{ duration: 1000,
-		    complete: function(){
-				 	$(id).css("left", "-25%");
-					$(id).css("display", "none");
-				}
-		  }
-		);
+	$(id).animate( {
+	  left: "125%"
+	},{ duration: 1000,
+		complete: function(){
+				$(id).css("left", "-25%");
+				$(id).css("display", "none");
+			}
+	  }
+	);
 }
 
 function flyin_idlemenu() {
@@ -238,7 +210,7 @@ function voteNo(){
 	clear_screen();
 }
 
-function goto_alert_screen(text){
+function goto_alert_screen(text, subtext, timeup){
 	CubeControl.ignore_clicks = true;
    	if( menustate == 10 ) return;
 		remove_menu();
@@ -247,10 +219,17 @@ function goto_alert_screen(text){
    	menustate = 10;
 
 	$("#alertmenu h2").html(text);
+	$("#alertmenu h4").html(subtext);
 
 	flyin_menu("#alertmenu");
 	timeout.clear_timeout();
 	start_spin( true );
+
+	setTimeout(function(){
+		clear_screen();
+		$("#alertmenu h2").empty();
+		$("#alertmenu h4").empty();
+	}, timeup);
 }
 
 function remove_menu(){
