@@ -173,8 +173,7 @@ var HookboxConnection = (function(){
 									clear_screen();
 								}
 								else if (global.activePlayers.indexOf(parseInt(position)) >= 0){
-									goto_alert_screen("Player "+pos+" has joined the Game!");
-									setTimeout(function(){clear_screen();});
+									goto_alert_screen("Player "+pos+" has joined the Game!", "", 1500);
 								}
 							}
 							else{ //vote fail, alert joiner

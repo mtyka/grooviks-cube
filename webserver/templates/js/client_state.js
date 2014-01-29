@@ -104,6 +104,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
 			} // close client_state != "SING"
 		} // close client_state != "HOME"
 	} //close client_state == "IDLE"
+
 	temp_lock = true;
 	setTimeout(function(){temp_lock = false;}, 100);
 	global.turnCheck();
