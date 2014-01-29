@@ -46,6 +46,7 @@ from modecalibration import ModeCalibration
 from modelightboardconfiguration import ModeLightBoardConfiguration
 from modescreensaver import ModeScreenSaver
 
+from voteTracker import *
 
 from groovikconfig import *
 from groovikclient import GrooviksClient
@@ -158,7 +159,7 @@ class GrooviksCube:
 				if self.__clientdict[k].GetState() == ClientState.MULT:
 					active.append(k)
 
-			if len(active) == 0:
+			if len(active) == 1:
 				self.currentTurn = position
 
 			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
@@ -280,7 +281,6 @@ class GrooviksCube:
 			# Always fade out before switching modes
 			self.__AppendState( [ CubeState.FADE, 0.5, False, [0.0, 0.0, 0.0] ] )
 			self.__AppendState( [ CubeState.SWITCH_MODE, mode ] )
-
 
 	#-----------------------------------------------------------------------------
 	# Methods related to queueing cube state changes.
@@ -447,6 +447,38 @@ class GrooviksCube:
 		 self.__normalMode.Randomize(self, 1, 1.0)
 
 	#-----------------------------------------------------------------------------
+	# Vote management, handles adding a new player to the game through voting
+	#-----------------------------------------------------------------------------
+	def startVote(self, position):
+		self.__voter = voteTracker(len(self.GetActiveClientsForState(ClientState.MULT))-1, position)
+		self.__voter.startVote()
+		push_message(json.dumps({'vote-for': str(position)}), "vote")
+		print "Vote initiated with population of: " + str(self.__voter.population)
+
+	def submitVote(self, position, vote):
+		print "adding vote", position, vote
+		self.__voter.handleVote(position, vote)
+		self.processVote(self.__voter.voteStatus())
+
+	def processVote(self, status):
+		print "vote stat: " + status
+		if status == "success":
+			push_message(json.dumps({'vote-result': 1, 'position': self.__voter.candidate}), "vote")
+			self.__voter = None
+		elif status == "failure":
+			push_message(json.dumps({'vote-result': 0, 'position': self.__voter.candidate}), "vote")
+			self.__voter = None
+		elif status == "waiting":
+			pass
+
+	def isVoteOpen(self):
+		return self.__voter.voteOpen
+
+	def closeVote(self):
+		self.__voter.closeVote()
+		self.__voter = None
+
+	#-----------------------------------------------------------------------------
 	# This is the main simulation method of the cube. Pass in the time to simulate to
 	#-----------------------------------------------------------------------------
 	def Update( self, currentTime ):
@@ -539,7 +571,7 @@ class GrooviksCube:
 		self.__spiralFadeState = StateSpiralFade()
 		self.__delayState = StateDelay()
 
-			## hard coded for now
+		## hard coded for now
 		self.__movelibrary = MoveLibrary( "states" )
 
 		# create all modes
@@ -560,6 +592,9 @@ class GrooviksCube:
 		self.__gameStateLock = threading.RLock()
 		self.__currentGameState = GameState.UNBOUND
 		self.__currentActivePosition = None
+
+		# Voter
+		self.__voter = None
 
 		# Initialize the three GroovikClients
 		self.__clientdict = {}

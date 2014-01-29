@@ -194,6 +194,15 @@ h1 {
 	text-shadow: 0 0 5px white, 0 0 5px white;
 }
 
+#decisionButton{
+	padding: 15px;
+	width: 250px;
+	font-size: 1em;
+	border-radius: 30px;
+	border-width: 0px;
+	z-index: 20;
+}
+
 #button_perspective{
 	bottom: 100px;
 	right: 100px;
@@ -205,4 +214,12 @@ h1 {
 	font-size: 1em;
 	border-radius: 30px;
 	border-width: 0px;
+}
+
+.redButton{
+	background-color: red;
+}
+
+.greenButton{
+	background-color: green;
 }

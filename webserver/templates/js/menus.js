@@ -5,13 +5,16 @@ var interrupt_ok=true;
 var menustate = 0;
 var quitClicked = false;
 
-// 0 = no menu
-// 1 = mode menu
-// 2 = level menu
-// 3 = timeout menu
-// 4 = join    menu
-// 5 = queued  menu
-// 5 = waiting menu //is that supposed to be 6?
+// 1 = no menu
+// 2 = mode menu
+// 3 = level menu
+// 4 = timeout menu
+// 5 = join    menu
+// 6 = queued  menu
+// 7 = waiting menu
+// 8 = connecting menu;
+// 9 = vote menu
+// 10= alert screen, a menu style alert that enters and dismisses quickly.
 
 function reset_gamestate(position, difficulty) {
     console.log("Resetting gamestate: " + difficulty);
@@ -34,7 +37,7 @@ function select_difficulty( difficulty ){
 
 	timeout.clear_game_timeout();
 
-	// THis is somewhat hacky - but because of the order reversal in multiplayer mode compared to single player mode,
+	// This is somewhat hacky - but because of the order reversal in multiplayer mode compared to single player mode,
 	// the select diff screen has to clear itself in multiplayer mode. But not in single player mode.
 	clog("Gamestate? " + game_state );
 	if( game_state == "MULT" ){
@@ -212,6 +215,43 @@ function goto_connecting_screen(){
 		start_spin( true );
 }
 
+function goto_vote_screen(){
+	CubeControl.ignore_clicks = true;
+   	if( menustate == 9 ) return;
+		remove_menu();
+
+	flyin_menu_bg(); //there is never a menu up before this one
+   	menustate = 9;
+
+	flyin_menu("#votemenu");
+	timeout.clear_timeout();
+	start_spin( true );
+}
+
+function voteYes(){
+	HookboxConnection.hookbox_conn.publish('vote', {'position':position, 'vote':1});
+	clear_screen();
+}
+
+function voteNo(){
+	HookboxConnection.hookbox_conn.publish('vote', {'position':position, 'vote':0});
+	clear_screen();
+}
+
+function goto_alert_screen(text){
+	CubeControl.ignore_clicks = true;
+   	if( menustate == 10 ) return;
+		remove_menu();
+
+	flyin_menu_bg(); //there is never a menu up before this one
+   	menustate = 10;
+
+	$("#alertmenu h2").html(text);
+
+	flyin_menu("#alertmenu");
+	timeout.clear_timeout();
+	start_spin( true );
+}
 
 function remove_menu(){
 	if( menustate == 1 )   flyout_menu("#idlemenu");
@@ -222,6 +262,8 @@ function remove_menu(){
 	else if( menustate == 6 )   flyout_menu("#queuedmenu");
 	else if( menustate == 7 )   flyout_menu("#waitingmenu");
 	else if( menustate == 8 )   flyout_menu("#connectingmenu");
+	else if( menustate == 9 )   flyout_menu("#votemenu");
+	else if( menustate == 10 )  flyout_menu("#alertmenu");
 
 	if( menustate == 1 ) {
 		$("#button_quit").animate( {
@@ -275,7 +317,6 @@ function clear_screen(){
 	$("#button_perspective").animate( { opacity:1.0 },{ duration: 1000 });
 }
 
-
 function clicked_quit(){
 	clog("ClientSent: QUIT ");
 	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
@@ -300,6 +341,11 @@ function clicked_3player(){
 	clog("ClientSentGameMode: " + selected_game_mode );
 	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
 	goto_level_screen( )
+}
+
+function clicked_send_join_request(){
+	HookboxConnection.hookbox_conn.publish('vote', {'vote-initiate' : position} );
+	goto_waiting_screen();
 }
 
 function clicked_ignore(){

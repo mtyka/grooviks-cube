@@ -85,9 +85,21 @@
 
         <div class="levelmenu" id="joinmenu"><br>
 
-        <h2>Player X wants to play a 3-player game:</h2><br>
-        <img id="ignorebutton" onclick="clicked_ignore()" ontouchstart="clicked_ignore()" ondragstart="return false" src="/static/ignore.png"> &nbsp;&nbsp;&nbsp;&nbsp;
-        <img id="joinbutton" onclick="clicked_join()" ontouchstart="clicked_join()" ondragstart="return false" src="/static/join.png"></div>
+        	<h2>Join Game?</h2><br>
+			<input type="button" id="decisionButton"  class="greenButton" onclick="clicked_send_join_request();" ontouchstart="clicked_send_join_request();" ondragstart="return false" value="Yes">
+    		<input type="button" id="decisionButton"  class="redButton" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="No">
+        </div>
+
+		<div class="levelmenu" id="votemenu"><br>
+
+        	<h2>Add player <span id="new-player"></span> to game?</h2><br>
+			<input type="button" id="decisionButton"  class="greenButton" onclick="voteYes();" ontouchstart="voteYes();" ondragstart="return false" value="Yes">
+    		<input type="button" id="decisionButton"  class="redButton" onclick="voteNo();" ontouchstart="voteNo();" ondragstart="return false" value="No">
+        </div>
+
+		<div class="levelmenu" id="alertmenu"><br>
+			<h2></h2>
+		</div>
 
         <div class="levelmenu" id="queuedmenu">
             <br>
@@ -106,7 +118,7 @@
             <br>
             <br>
 
-            <h1>Waiting for other players to join the game!</h1><br>
+            <h1>Waiting for other players let you join.</h1><br>
             <br>
             <img src="/static/waiting.gif"><br>
         </div>

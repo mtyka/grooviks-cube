@@ -153,6 +153,38 @@ var HookboxConnection = (function(){
 						}
 					};
 				}
+				if( channelName == 'vote' ){
+					vote_subscription = _subscription;
+					vote_subscription.onPublish = function(frame) {
+						console.log(frame);
+						if (typeof(frame.payload["vote-for"]) != 'undefined' &&
+								frame.payload["vote-for"] != position &&
+			 					global.activePlayers.indexOf(parseInt(position)) >= 0){
+							console.log("vote to add player " + frame.payload["vote-for"] + " to game");
+							$("#player-add").html(frame.payload["vote-for"]);
+							goto_vote_screen();
+						}
+						else if (typeof(frame.payload["vote-result"]) != 'undefined'){
+							var res = frame.payload["vote-result"];
+							var pos = frame.payload["position"];
+							console.log("vote result: " + res + " for position " + pos);
+							if (res == 1){ //vote success, alert in game clients,
+								if (pos == position){
+									clear_screen();
+								}
+								else if (global.activePlayers.indexOf(parseInt(position)) >= 0){
+									goto_alert_screen("Player "+pos+" has joined the Game!");
+									setTimeout(function(){clear_screen();});
+								}
+							}
+							else{ //vote fail, alert joiner
+								if (pos == position){
+									console.log("vote fail");
+								}
+							}
+						}
+					};
+				}
 			}
 			catch(e){
 				console.log(e)
@@ -188,6 +220,7 @@ var HookboxConnection = (function(){
 			my.hookbox_conn.subscribe("clientcommand");
 			my.hookbox_conn.subscribe("turns");
 			my.hookbox_conn.subscribe("settings");
+			my.hookbox_conn.subscribe("vote");
 		}
 	}
 

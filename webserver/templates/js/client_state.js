@@ -6,20 +6,24 @@ var game_state = "UNBOUND";
 var active_position = 0;
 var locked_buttons=false;
 var game_timeout = -2;
+var temp_lock = false;
 
 function on_game_state_change(newState, activePosition, clientstate) {
 	//     game_state = newState
 	$('#game_state').val( newState )
 	$('#active_position').val( activePosition )
 
+	if (temp_lock)
+		return;
+
 	active_position = activePosition;
 	var old_client_state = client_state;
 	new_client_state = clientstate[position-1];
 	new_game_state = newState;
 
-	clog("ActivePlayer: " + active_position + "MyPosition: " + position );
-	clog("Server: NewState:" + new_client_state + "OldState: " + client_state );
-	clog("Server: NewGameState:" + new_game_state + "OldGameState: " + game_state );
+	clog("ActivePlayer: " + active_position + " MyPosition: " + position );
+	clog("Server: NewState: " + new_client_state + " OldState: " + client_state );
+	clog("Server: NewGameState: " + new_game_state + " OldGameState: " + game_state );
 
 	timeout.reset_timeout();
 
@@ -81,9 +85,8 @@ function on_game_state_change(newState, activePosition, clientstate) {
 								if ( new_client_state == "MULT" && old_client_state == "MULT" && old_game_state == "SINGLE_INVITE"  ){
 									goto_level_screen();   // create level screen
 								}
-								else {
-									timeout.clear_game_timeout();  // no timeout in 3 player mode
-									clear_screen();        // got to game
+								else if (old_client_state == "IDLE"){
+									goto_join_screen();
 								}
 							}
 						}
@@ -101,6 +104,8 @@ function on_game_state_change(newState, activePosition, clientstate) {
 			} // close client_state != "SING"
 		} // close client_state != "HOME"
 	} //close client_state == "IDLE"
+	temp_lock = true;
+	setTimeout(function(){temp_lock = false;}, 100);
 	global.turnCheck();
 	CubeControl.update_view();
 }

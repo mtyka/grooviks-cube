@@ -12,12 +12,8 @@ function clog(msg) {
 }
 
 // some global url parameters
-
 var position = get_querystring_parameter('position') || null;
 var grey = get_querystring_parameter('grey') || 0;
-
-
-
 
 // ####################################################################
 // #################### Framerate calculation #########################
