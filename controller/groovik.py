@@ -450,6 +450,7 @@ class GrooviksCube:
 	# Vote management, handles adding a new player to the game through voting
 	#-----------------------------------------------------------------------------
 	def startVote(self, position):
+		# len(active clients)-1 due to the candidate being in the set.
 		self.__voter = voteTracker(len(self.GetActiveClientsForState(ClientState.MULT))-1, position)
 		self.__voter.startVote()
 		push_message(json.dumps({'vote-for': str(position)}), "vote")
