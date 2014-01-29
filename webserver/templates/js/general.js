@@ -88,6 +88,10 @@ var global = (function($){
 
 	//free rotation
 	$(document).bind("mousedown touchstart", function(e){
+		//rotation only available when there are no menus
+		if (menustate > 0)
+			return;
+
 		if (is_spinning){
 			wasSpinning = true;
 			stop_spin();
@@ -106,7 +110,7 @@ var global = (function($){
 			});
 		}
 		else if (e.type == "touchstart"){
-			//pageX is hidden in touches sometimes...
+			//pageX is hidden in touches...?
 		 	my.last_move = e.originalEvent.targetTouches[0].pageX;
 
 			$("#container").bind("touchmove", function(e){
@@ -125,8 +129,11 @@ var global = (function($){
 		else
 			my.delta_x % 630; //uncertain why it's 630. /// it's close to 100*Math.PI*2
 
-		if (wasSpinning)
+		if (wasSpinning){
 			start_spin(true);
+			wasSpinning = false;
+		}
+
 	});
 
 	$(window).bind( "click touchstart", function() {
@@ -157,6 +164,11 @@ var global = (function($){
 		// add click events that control the cube.
 		$("body").bind( "click touchstart", function( eventObj ) {
 			if( !CubeControl.ignore_clicks ){
+				if (menustate > 0){
+					CubeControl.ignore_clicks = true;
+					return true;
+				}
+
 				var top_left_canvas_corner = $("#canvas").elementlocation();
 				var x = eventObj.pageX - top_left_canvas_corner.x;
 				var y = eventObj.pageY - top_left_canvas_corner.y;
@@ -170,9 +182,9 @@ var global = (function($){
 		});
 
 		//--------menus on Ready-----------
-		$("#easy").bind( "click touchstart",   function() { select_difficulty(2);  } );
-		$("#medium").bind( "click touchstart", function() { select_difficulty(4);  } );
-		$("#hard").bind( "click touchstart",   function() { select_difficulty(20); } );
+		$("#easy").bind( "click touchstart",   function() { select_difficulty(2);  clear_screen();} );
+		$("#medium").bind( "click touchstart", function() { select_difficulty(4);  clear_screen();} );
+		$("#hard").bind( "click touchstart",   function() { select_difficulty(20); clear_screen();} );
 
 		$("#buttonleft").bind( "click touchstart", function(){
 			animate_spin( -Math.PI*2/3 );

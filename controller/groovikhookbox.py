@@ -191,7 +191,7 @@ class Cube():
 
 		if action == "PUBLISH":
 			channel, payload, user = params['channel_name'], params['payload'], params['user']
-
+			print "Recv stuff: ", channel, payload, user
 			try:
 				if channel == 'faceclick':
 					face, rot_command = payload[0], payload[1:]
@@ -236,6 +236,12 @@ class Cube():
 						groovikConfig.getSettings()
 					elif str(payload['command']) == 'set':
 						groovikConfig.setSettings(payload['vals'])
+
+				elif channel == 'vote':
+					if 'vote' in payload and self.grooviksCube.isVoteOpen():
+						self.grooviksCube.submitVote(int(payload['position']), int(payload['vote']))
+					elif 'vote-initiate' in payload:
+						self.grooviksCube.startVote(int(payload['vote-initiate']))
 
 			except KeyError:
 				#TODO: actually parse the error and log it
