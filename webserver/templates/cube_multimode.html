@@ -40,8 +40,8 @@
         <div id="svgholder">
             <canvas height="1100" id="canvas" width="1100"></canvas>
         </div>
-        <img alt="Quit" class="button_quit" id="button_quit" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" src="/static/quit.png">
-    	<input type="button" id="button_perspective" onclick="set_initial_position();" ontouchstart="set_initial_position();" ondragstart="return false" value="View from your perspective">
+    	<input type="button" id="button_perspective" class="blueButton decisionButton" onclick="set_initial_position();" ontouchstart="set_initial_position();" ondragstart="return false" value="View from your perspective">
+    	<input type="button" id="button_quit" class="button_quit blueButton decisionButton" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="Quit">
 
 		<div class="game_timeout">
 			<h1 id="game_timeout" ></h1>
@@ -58,7 +58,7 @@
             <br>
             <br>
             <br>
-            <h1>Touch screen to start playing!</h1>
+            <h2>Touch screen to start playing!</h2>
             <br>
         </div>
 
@@ -69,15 +69,15 @@
         </div>
 
         <div class="levelmenu" id="levelmenu">
-            <h2>Select difficulty:</h2>
-            <img id="easy"   ondragstart="return false" src="/static/easy.png">
-            <img id="medium" ondragstart="return false" src="/static/medium.png">
-            <img id="hard"   ondragstart="return false" src="/static/hard.png">
+            <h1>Select difficulty:</h1>
+            <input id="easy" type="button" class="blueButton decisionButton" ondragstart="return false" value="Easy">
+            <input id="medium" type="button" class="blueButton decisionButton" ondragstart="return false" value="Medium">
+            <input id="hard" type="button" class="blueButton decisionButton" ondragstart="return false" value="Hard">
             <br>
         </div>
 
         <div class="levelmenu" id="timeoutmenu">
-            <h2>Timeout! Press continue to return to game:</h2>
+            <h1>Timeout! Press continue to return to game:</h1>
 
             <h1 id="timeout_display">50</h1>
             <img id="continue" onclick="clicked_continue();" ontouchstart="clicked_continue();" ondragstart="return false" src="/static/continue.png"><br>
@@ -85,20 +85,20 @@
 
         <div class="levelmenu" id="joinmenu"><br>
 
-        	<h2>Join Game?</h2><br>
-			<input type="button" id="decisionButton"  class="greenButton" onclick="clicked_send_join_request();" ontouchstart="clicked_send_join_request();" ondragstart="return false" value="Yes">
-    		<input type="button" id="decisionButton"  class="redButton" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="No">
+        	<h1>Join Game?</h1><br>
+			<input type="button" class="blueButton decisionButton" onclick="clicked_send_join_request();" ontouchstart="clicked_send_join_request();" ondragstart="return false" value="Yes">
+    		<input type="button" class="blueButton decisionButton" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="No">
         </div>
 
 		<div class="levelmenu" id="votemenu"><br>
 
-        	<h2>Add player <span id="new-player"></span> to game?</h2><br>
-			<input type="button" id="decisionButton"  class="greenButton" onclick="voteYes();" ontouchstart="voteYes();" ondragstart="return false" value="Yes">
-    		<input type="button" id="decisionButton"  class="redButton" onclick="voteNo();" ontouchstart="voteNo();" ondragstart="return false" value="No">
+        	<h1>Add player <span id="new-player"></span> to game?</h1><br>
+			<input type="button" class="blueButton decisionButton" onclick="voteYes();" ontouchstart="voteYes();" ondragstart="return false" value="Yes">
+    		<input type="button" class="blueButton decisionButton" onclick="voteNo();" ontouchstart="voteNo();" ondragstart="return false" value="No">
         </div>
 
 		<div class="levelmenu" id="alertmenu"><br>
-			<h2></h2>
+			<h1></h1>
 			<h4></h4>
 		</div>
 
@@ -107,9 +107,9 @@
             <br>
             <br>
 
-            <h2>Another player is currently playing Groovik's cube.</h2>
+            <h1>Another player is currently playing Groovik's cube.</h1>
 
-            <h2>Please wait - you will be connected as soon as the cube is available.</h2><br>
+            <h1>Please wait - you will be connected as soon as the cube is available.</h1><br>
             <br>
             <img src="/static/waiting.gif"><br>
         </div>

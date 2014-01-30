@@ -182,9 +182,9 @@ var global = (function($){
 		});
 
 		//--------menus on Ready-----------
-		$("#easy").bind( "click touchstart",   function() { select_difficulty(2);  clear_screen();} );
-		$("#medium").bind( "click touchstart", function() { select_difficulty(4);  clear_screen();} );
-		$("#hard").bind( "click touchstart",   function() { select_difficulty(20); clear_screen();} );
+		$("#easy").bind( "click touchstart",   function() { select_difficulty(2);  clear_screen(); set_initial_position();} );
+		$("#medium").bind( "click touchstart", function() { select_difficulty(4);  clear_screen(); set_initial_position();} );
+		$("#hard").bind( "click touchstart",   function() { select_difficulty(20); clear_screen(); set_initial_position();} );
 
 		$("#buttonleft").bind( "click touchstart", function(){
 			animate_spin( -Math.PI*2/3 );
