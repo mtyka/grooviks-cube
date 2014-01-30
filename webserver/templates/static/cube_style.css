@@ -2,15 +2,51 @@
 	display:none;
 }
 
+@font-face {
+	font-family: 'Rubik';
+	src: url('fonts/Rubik.eot');
+	src: url('fonts/Rubik.woff') format('woff'),
+			url('fonts/Rubik.ttf') format('truetype'),
+			url('fonts/Rubik.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gotham-Medium';
+	src: url('fonts/Gotham-Medium.eot');
+	src: url('fonts/Gotham-Medium.woff') format('woff'),
+			url('fonts/Gotham-Medium.ttf') format('truetype'),
+			url('fonts/Gotham-Medium.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gotham-Book';
+	src: url('fonts/Gotham-Book.eot');
+	src: url('fonts/Gotham-Book.woff') format('woff'),
+			url('fonts/Gotham-Book.ttf') format('truetype'),
+			url('fonts/Gotham-Book.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
 body {
-	font-family: verdana, sans-serif;
+	font-family: Gotham-Medium;
 	background: black;
 	color: #ffffdd;
 	overflow: hidden;
 }
 
 h1 {
-	text-shadow: 0px 0px 5px #ff8888;
+	font-family: Rubik;
+	text-transform: uppercase;
+	font-size: 3em;
+}
+
+h2 {
+	text-transform: uppercase;
 }
 
 #container {
@@ -113,6 +149,7 @@ h1 {
 }
 
 .movesdisplay{
+	display: none;
 	clear: both;
 	position: fixed;
 	width: 900px;
@@ -192,11 +229,11 @@ h1 {
 	text-shadow: 0 0 5px white, 0 0 5px white;
 }
 
-#decisionButton{
+.decisionButton{
 	padding: 15px;
 	width: 250px;
 	font-size: 1em;
-	border-radius: 30px;
+	border-radius: 15px;
 	border-width: 0px;
 	z-index: 20;
 }
@@ -206,7 +243,6 @@ h1 {
 	right: 100px;
 	z-index: 20;
 	position: fixed;
-	background-color: #ff00cc;
 	padding: 15px;
 	width: 250px;
 	font-size: 1em;
@@ -218,6 +254,19 @@ h1 {
 	background-color: red;
 }
 
+.orangeButton{
+	background-color: rgb(248, 151, 29);
+}
+
+.blueButton{
+	background-color: rgb(0, 121, 193);
+	color: white;
+}
+
 .greenButton{
 	background-color: green;
+}
+
+.pinkButton{
+	background-color: #ff00cc;
 }
