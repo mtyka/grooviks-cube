@@ -37,29 +37,25 @@
 
 <body>
     <div id="container">
+    	<div id="bar"></div>
+
         <div id="svgholder">
             <canvas height="1100" id="canvas" width="1100"></canvas>
         </div>
-    	<input type="button" id="button_perspective" class="blueButton decisionButton" onclick="set_initial_position();" ontouchstart="set_initial_position();" ondragstart="return false" value="View from your perspective">
-    	<input type="button" id="button_quit" class="button_quit blueButton decisionButton" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="Quit">
 
 		<div class="game_timeout">
 			<h1 id="game_timeout" ></h1>
 		</div>
 
         <div class="movesdisplay" id="movesdisplay">
-            <h1 id="movestext"></h1><br>
+            <h1 id="movestext"></h1>
         </div>
 
         <div class="levelmenu" id="idlemenu">
             <br>
             <br>
             <br>
-            <br>
-            <br>
-            <br>
-            <h2>Touch screen to start playing!</h2>
-            <br>
+            <h1 class="blackTitle">Touch screen to play</h1>
         </div>
 
         <div class="levelmenu" id="modemenu">
@@ -74,62 +70,56 @@
             <input id="medium" type="button" class="blueButton decisionButton" ondragstart="return false" value="Medium">
             <input id="hard" type="button" class="blueButton decisionButton" ondragstart="return false" value="Hard">
             <br>
+            <input type="button" class="button_back" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="Back">
         </div>
 
         <div class="levelmenu" id="timeoutmenu">
-            <h1>Timeout! Press continue to return to game:</h1>
+            <h1>Timeout</h1>
 
-            <h1 id="timeout_display">50</h1>
+			<h2>Press continue to return to game:<h2>
+            <h2 id="timeout_display">50</h2>
             <img id="continue" onclick="clicked_continue();" ontouchstart="clicked_continue();" ondragstart="return false" src="/static/continue.png"><br>
         </div>
 
-        <div class="levelmenu" id="joinmenu"><br>
-
-        	<h1>Join Game?</h1><br>
+        <div class="levelmenu" id="joinmenu">
+        	<h1>Multiplayer</h1>
+        	<h2>Join game already in progress?</h2>
 			<input type="button" class="blueButton decisionButton" onclick="clicked_send_join_request();" ontouchstart="clicked_send_join_request();" ondragstart="return false" value="Yes">
     		<input type="button" class="blueButton decisionButton" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="No">
         </div>
 
-		<div class="levelmenu" id="votemenu"><br>
-
-        	<h1>Add player <span id="new-player"></span> to game?</h1><br>
+		<div class="levelmenu" id="votemenu">
+			<h1>Multiplayer</h1>
+        	<h2>Add player <span id="new-player"></span> to game?</h2>
 			<input type="button" class="blueButton decisionButton" onclick="voteYes();" ontouchstart="voteYes();" ondragstart="return false" value="Yes">
     		<input type="button" class="blueButton decisionButton" onclick="voteNo();" ontouchstart="voteNo();" ondragstart="return false" value="No">
         </div>
 
-		<div class="levelmenu" id="alertmenu"><br>
-			<h1></h1>
-			<h4></h4>
+		<div class="levelmenu" id="alertmenu">
+			<h1>Multiplayer</h1>
+			<h2></h2>
 		</div>
 
         <div class="levelmenu" id="queuedmenu">
+        	<h1>Multiplayer</h1>
+            <h2>Please wait <br>
+            	your turn will start in
+            	<span id="timeUntilTurn"></span>
+            </h2>
             <br>
-            <br>
-            <br>
-
-            <h1>Another player is currently playing Groovik's cube.</h1>
-
-            <h1>Please wait - you will be connected as soon as the cube is available.</h1><br>
-            <br>
-            <img src="/static/waiting.gif"><br>
+            <input type="button" class="button_back" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="Back">
         </div>
 
         <div class="levelmenu" id="waitingmenu">
-            <br>
-            <br>
-            <br>
-
-            <h1>Waiting for other players let you join.</h1><br>
-            <br>
-            <img src="/static/waiting.gif"><br>
+            <h1>Multiplayer</h1>
+            <h2>Waiting for other players let you join.</h2>
+            <input type="button" class="button_back" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="Back">
         </div>
 
         <div class="levelmenu" id="connectingmenu">
             <br>
-            <br>
-            <br>
 
-            <h1>Connecting to Groovik's Cube's central brain.<br>
+            <h1>Connecting to Groovik's Cube.<br>
             Please wait..</h1><br>
             <br>
             <img src="/static/waiting.gif"><br>
@@ -153,16 +143,13 @@
 			</ul>
 		</div>
 
-        <!-- <div class="instructions">
-            <h3>This puzzle requires 3 people to solve.<br>
-            There are 2 other stations. Each station controls one axis of the cube. Grab 2 friends and work cooperatively to gain control
-            of the entire cube and solve!</h3><br>
-        </div>
+		<div id="bottomBar" class="orangeButton">
+			<input type="button" id="button_about" 		 class="bottomBarButton" onclick="global.unimplemented();" ontouchstart="unimplemented();" ondragstart="return false" value="About">
+			<input type="button" id="button_leaderboard" class="bottomBarButton" onclick="global.unimplemented();" ontouchstart="unimplemented();" ondragstart="return false" value="Leaderboard">
 
-        <div class="footer" id="footer" >
-            Groovik's Cube by GroovLabs<br>
-            www.groovik.com<br>
-        </div> -->
+			<input type="button" id="button_perspective" class="bottomBarButton" onclick="set_initial_position();" ontouchstart="set_initial_position();" ondragstart="return false" value="View from my perspective">
+    		<input type="button" id="button_quit" 		 class="bottomBarButton" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="Quit">
+		</div>
 
         <div class="debug" id="manual_rotate">
             Altitude: <input id="slide_alt" max="1000" min="-1000" onchange="CubeControl.update_view();" type="range" value="220"><br>

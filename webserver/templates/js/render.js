@@ -18,6 +18,11 @@ Renderer = (function($){
 	var SVG_ANIMATION_SPEED = 65;	// how many ms to blend color transitions over
 	var svg_polygons = [];
 	var current_cube_colors = new Array( 54 );
+
+	var corners = [0,2,6,8, 9,11,15,17,
+				   18,20,24,26, 27,29,33,35,
+				   36,38,42,44, 45,47,51,53]
+
 	// Show SVG element if configured.
 	var svg;
 	function store_svg_obj(new_svg) {
@@ -119,8 +124,21 @@ Renderer = (function($){
 			ctx.lineTo(vp3.v[0], vp3.v[1]);
 			ctx.lineTo(vp4.v[0], vp4.v[1]);
 			ctx.closePath();
+
+			ctx.strokeStyle = "#000000";
+			ctx.lineWidth = 8;
+			ctx.lineJoin = "round";
+			ctx.stroke();
+
 			ctx.fill();
 		}
+
+		// if(corners.indexOf(ndx) >=0 ){
+//  			ctx.beginPath();
+//  			ctx.arc(vp1.v[0], vp1.v[1], 4, 0, 2 * Math.PI, false);
+//  			ctx.fillStyle = 'red';
+//  			ctx.fill();
+//  		}
 
 		if( RENDER_WITH_SVG ) {
 			if( svg ) {
@@ -197,7 +215,7 @@ Renderer = (function($){
 
 		var height = $('#canvas').attr('height');
 		var width = $('#canvas').attr('width');
-		var distance = 15;
+		var distance = 13;
 
 
 		// Build the projection matrix
@@ -212,6 +230,7 @@ Renderer = (function($){
 		up.v[0] = up.v[1] = up.v[2] = 1.0;
 		var start = new vec4;
 		start.v[0] = start.v[1] = 1.0; start.v[2] = -1.0; start.v[3] = 0.0;
+
 		var eyeUnnormalized = rotateVectorAboutAxisAndAngle( start, up, azimuth );
 		var eye = vectorMultiplyScalar( vectorNormalize( eyeUnnormalized ), distance );
 
@@ -259,12 +278,12 @@ Renderer = (function($){
 		// This code generates the 54 quads representing the 54 pixels of the cube
 		var crossAxis = [ [1, 2], [0, 2], [0, 1] ];
 		var invertAxis = [ [false, false], [true, false], [true, false], [false, false], [false, false], [true, false] ];
-		var gapSize = 0.08;
+		var gapSize = 0.00;
 		var p = new vec4;
 		var d = [ 0.0, 0.0, 0.0 ];
 		var g = [ 0.0, 0.0, 0.0 ];
 
-		var black = [ 0.0, 0.0, 0.0, 0.0 ];
+		//var black = [ 0.0, 0.0, 0.0, 0.0 ]; //unused
 		var quadlist = [];
 		for ( var i = 0; i < 6; ++i )
 		{
@@ -278,7 +297,7 @@ Renderer = (function($){
 
 			var a0 = crossAxis[ axis ][ 0 ];
 			var a1 = crossAxis[ axis ][ 1 ];
-			var s0 = 1.0;
+			var s0 = global.insideout ? -1.0 : 1.0;
 			var s1 = 1.0;
 			if ( invertAxis[ i ][ 0 ] )
 			{
@@ -325,8 +344,7 @@ Renderer = (function($){
 	//	This determines whether an arrow should be drawn, and/or should be
 	//	 available for click
 	//-----------------------------------------------------------------------------
-	my.shouldDrawArrow = function( faceNum )
-	{
+	my.shouldDrawArrow = function( faceNum ){
 			// If we're in single player mode, verify that this arrow is intended for this player
 			if ( CubeControl.ignore_clicks ){
 				return false;
@@ -351,8 +369,7 @@ Renderer = (function($){
 	// p1-p4: the 4 quad points to render in
 	// orientation: a number 0-3 indicating the orientation
 	//-----------------------------------------------------------------------------
-	function drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, orientation, color )
-	{
+	function drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, orientation, color ){
 			// Backface cull first
 			var b1 = vectorMultiplyProjective( viewProj, p1 );
 			var b2 = vectorMultiplyProjective( viewProj, p2 );
@@ -448,8 +465,8 @@ Renderer = (function($){
 	// x[],y[],z[] then
 	// +x,-x,+y,-y,+z,-z
 	rotToOrient = [[ -1, -1, 1, 3, 1, 1 ],
-								 [ 1, 1, -1, -1, 0, 0 ],
-								 [ 2, 2, 2, 0, -1, -1 ]];
+				   [ 1, 1, -1, -1, 0, 0 ],
+				   [ 2, 2, 2, 0, -1, -1 ]];
 
 
 	function clear_svg() {
@@ -461,8 +478,7 @@ Renderer = (function($){
 			svg_polygons = [];
 	}
 
-	function drawCube( ctx, viewProj, viewProjViewport, colors, grey_mode )
-	{
+	function drawCube( ctx, viewProj, viewProjViewport, colors, grey_mode ){
 		var red = [ 0.0, 0.7, 1.0 ];
 		var quadlist = buildQuadList( ctx, viewProj, viewProjViewport );
 		for( ndx=0; ndx<54; ndx++) {
@@ -471,10 +487,10 @@ Renderer = (function($){
 			// draw the arrow slightly darker than the actual color
 			var darkcolor;
 			if( !grey_mode ){
-				darkcolor = [ colors[ndx][0]*.6, colors[ndx][1]*.6, colors[ndx][2]*.6 ]
+				darkcolor = [ colors[ndx][0]*.6, colors[ndx][1]*.6, colors[ndx][2]*.6 ];
 				drawQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], colors[ndx], ndx );
 			} else {
-				darkcolor = [ 0 , 0,	0 ]
+				darkcolor = [0,0,0];
 				drawQuad( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], [0.8, 0.8, 0.8], ndx );
 			}
 
@@ -514,18 +530,13 @@ Renderer = (function($){
 		}
 	}
 
-	my.render_view = function( width, height, altitude, azimuth, distance )
-	{
+	my.render_view = function( width, height, altitude, azimuth, distance ){
 			var canvas = document.getElementById("canvas");
 			var ctx = canvas.getContext("2d");
 
 
-
-			// Clear to black
-			ctx.save();
-			ctx.fillStyle = "black";
-			ctx.fillRect( 0, 0, width, height );
-			ctx.restore();
+			// Clear canvas
+			canvas.width = canvas.width;
 
 			var view_context = build_view_context();
 

@@ -244,11 +244,11 @@ function remove_menu(){
 	else if( menustate == 9 )   flyout_menu("#votemenu");
 	else if( menustate == 10 )  flyout_menu("#alertmenu");
 
-	if( menustate == 1 ) {
-		$("#button_quit").animate( {
-			opacity:1.0
-			},{ duration: 1000 }
-		);
+	if (menustate == 0){
+		show_rotation_buttons();
+	}
+	else{
+		hide_rotation_buttons();
 	}
 }
 
@@ -283,7 +283,7 @@ function clear_screen(){
 		timeout.start_timeout();
   		//flash_display("Welcome to the 3-Player Game", 8000);
 		//show_instructions();
-
+		show_rotation_buttons();
 		global.turnCheck();
 	}
 	if( game_state == "SINGLE" ){
@@ -293,6 +293,7 @@ function clear_screen(){
 		global.currentTurn = position;
 	}
 
+	$("#button_quit").animate( {opacity:1.0},{ duration: 1000 });
 	$("#button_perspective").animate( { opacity:1.0 },{ duration: 1000 });
 }
 

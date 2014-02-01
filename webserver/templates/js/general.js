@@ -76,6 +76,10 @@ var global = (function($){
 		return true;
 	}
 
+	my.unimplemented = function(){
+		alert("Unimplemented");
+	}
+
 	//prevent scrolling on mobile pages
 	$(document).bind("touchmove", function(e){
 		e.preventDefault();
@@ -97,7 +101,7 @@ var global = (function($){
 			stop_spin();
 		}
 
-		$("#slide_azi").stop();
+		$("#slide_azi").stop(true, true);
 
 		if (e.type == "mousedown"){
 			my.last_move = e.pageX;
@@ -144,6 +148,20 @@ var global = (function($){
 		}
 	});
 
+// 	my.colors = ['rgb(237,27,36)', 'rgb(247,150,27)', 'rgb(36,27,192)'];
+// 	my.colorIndex = 0;
+ 	my.insideout = false;
+// 	my.animate = function(newColor){
+// 		my.colorIndex++;
+// 		$("#bar").animate(
+// 			{backgroundColor: newColor},
+// 			3000,
+// 			"linear",
+// 			function(){
+// 				setTimeout('global.animate(global.colors[global.colorIndex % global.colors.length])', 5000);
+// 			});
+// 	}
+
 	$(document).ready(function() {
 
 		HookboxConnection.init( '/static/hookbox.js', function(){
@@ -155,6 +173,9 @@ var global = (function($){
 		goto_connecting_screen();
 		timeout.update_timeout( );
 		document.title = "P:" + position
+
+// 		$("#bar").css('background-color', my.colors[0]);
+// 		my.animate(my.colors[my.colorIndex]);
 
 		//--------CubeControl on Ready-----------
 
@@ -187,10 +208,12 @@ var global = (function($){
 		$("#hard").bind( "click touchstart",   function() { select_difficulty(20); clear_screen(); set_initial_position();} );
 
 		$("#buttonleft").bind( "click touchstart", function(){
+			console.log("button left click");
 			animate_spin( -Math.PI*2/3 );
 		});
 
 		$("#buttonright").bind( "click touchstart", function(){
+			console.log("button left click");
 			animate_spin( Math.PI*2/3 );
 		});
 
