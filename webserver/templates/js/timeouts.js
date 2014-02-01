@@ -5,7 +5,7 @@ var timeout = (function($){
 
 	var my = {};
 
-	my.inactivity_timeout_length = 40;
+	my.inactivity_timeout_length = 40000000;
 	my.inactivity_timeout = -1; // off by default
 
 	my.mp_timeout_limit = 2;

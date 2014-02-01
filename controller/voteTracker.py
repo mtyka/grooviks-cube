@@ -12,9 +12,6 @@ class voteTracker:
 	def startVote(self):
 		self.voteOpen = True
 
-	def closeVote(self):
-		self.voteOpen = False
-
 	def handleVote(self, position, vote):
 		if type(vote) is not int:
 			print "something wrong with the vote."

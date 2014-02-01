@@ -42,6 +42,13 @@ function animate_absolute_spin(radians) {
 				$("#slide_azi").val() % 630 :
 				$("#slide_azi").val() % -630);
 		},
+		fail: function() {
+			locked_buttons = false;
+			CubeControl.ignore_clicks = false;
+			global.delta_x = parseFloat($("#slide_azi").val() > 0 ?
+				$("#slide_azi").val() % 630 :
+				$("#slide_azi").val() % -630);
+		},
 		step: function() {
 			//console.log($("#slide_azi").attr("animate_val") );
 			$("#slide_azi").val( $("#slide_azi").attr("animate_val") );
@@ -71,6 +78,13 @@ function animate_spin(delta_radians) {
 		animate_val: azimuth
 	},{ duration: 1500,
 		complete: function(){
+			locked_buttons = false;
+			CubeControl.ignore_clicks = false;
+			global.delta_x = parseFloat($("#slide_azi").val() > 0 ?
+				$("#slide_azi").val() % 630 :
+				$("#slide_azi").val() % -630);
+		},
+		fail: function (){
 			locked_buttons = false;
 			CubeControl.ignore_clicks = false;
 			global.delta_x = parseFloat($("#slide_azi").val() > 0 ?
