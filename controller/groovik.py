@@ -351,6 +351,11 @@ class GrooviksCube:
 	# 6-8 represent rotations around the Z axis of the 1st, 2nd, and 3rd rows, respectively.
 	# clockwise is a bool indicating whether the rotation should be clockwise
 	def QueueRotation( self, rotations ):
+		if rotations[0][0] == -1:
+			print "null rotation, turn was passed on to next player"
+			self.pushNextTurn();
+			return;
+
 		for r in rotations:
 			print "rotation: " + str(r)
 
@@ -369,21 +374,7 @@ class GrooviksCube:
 					continue
 				validRotations[ i ] = False
 
-		active = []
-		for k in self.__clientdict.keys():
-			if self.__clientdict[k].GetState() == ClientState.MULT:
-				active.append(k)
-				print k
-
-		print "mult: " + str(active)
-
-		if len(active) > 0:
-			self.currentTurn = (self.currentTurn % 3) + 1
-			while self.currentTurn not in active:
-				self.currentTurn = (self.currentTurn % 3) + 1
-
-			print "Current Turn: " + str(self.currentTurn)
-			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
+		self.pushNextTurn()
 
 		if ( self.__CanQueueState( CubeState.ROTATING ) ):
 			self.__AppendState( [ CubeState.ROTATING, actualRotations, -1, True ] )
@@ -478,6 +469,25 @@ class GrooviksCube:
 	def closeVote(self):
 		self.__voter.closeVote()
 		self.__voter = None
+
+	#-----------------------------------------------------------------------------
+	# Pushes the next turn signal
+	#-----------------------------------------------------------------------------
+	def pushNextTurn(self):
+		active = []
+		for k in self.__clientdict.keys():
+			if self.__clientdict[k].GetState() == ClientState.MULT:
+				active.append(k)
+
+		print "mult: " + str(active)
+
+		if len(active) > 0:
+			self.currentTurn = (self.currentTurn % 3) + 1
+			while self.currentTurn not in active:
+				self.currentTurn = (self.currentTurn % 3) + 1
+
+			print "Current Turn: " + str(self.currentTurn)
+			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
 
 	#-----------------------------------------------------------------------------
 	# This is the main simulation method of the cube. Pass in the time to simulate to
