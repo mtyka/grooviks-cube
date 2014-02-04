@@ -5,92 +5,118 @@ var timeout = (function($){
 
 	var my = {};
 
-	my.inactivity_timeout_length = 40000000;
-	my.inactivity_timeout = -1; // off by default
-
 	my.mp_timeout_limit = 2;
 	my.mp_turn_duration	= 30;
 	my.sp_session_duration = 240;
 	my.mp_session_duration = 240;
 	my.menu_timeout = 10;
 
-	function game_timeout_occured() {
-		clicked_quit();
+	var turn_timeleft = -1;
+	var timeout_count =  0;
+	var game_timeleft = -1;
+
+	my.getTimeleft = function(){
+		return [turn_timeleft, timeout_count, game_timeleft];
 	}
 
 	my.clear_game_timeout = function(){
-		game_timeout = -2;
+		console.log( "Clear game timeout..." );
+		game_timeleft = turn_timeleft = -1;
 		$("#game_timeout").css("display", "none" );
 	}
 
-	self.count_down_game_timeout = function(){
-		if( game_timeout > -2 )
-			game_timeout -= 1;
+	my.clear_turn_timeout = function (){
+		console.log( "Clear turn timeout..." );
+		turn_timeleft = -1;
+	}
+
+	my.start_timeout = function(){
+		if (client_state == "MULT"){
+			game_timeleft = my.mp_session_duration;
+
+			if (global.currentTurn == position)
+				turn_timeleft = my.mp_turn_duration;
+
+			timeout_count = 0;
+			console.log("Starting timers...", game_timeleft);
+
+			my.update_game_timeout();
+			my.update_turn_timeout();
+		}
+		else
+			game_timeleft = my.sp_session_duration;
+	}
+
+	my.reset_timeout = function(){
+		return;
+	}
+
+	self.update_game_timeout = function(){
+		//console.log("game timeout: ", game_timeleft);
+
+		if( game_timeleft < 0 )
+			return;
+
+		if( game_timeleft > 0 )
+			game_timeleft -= 1;
 
 		// timeout has occured!
-		if( game_timeout == -1 )
-			game_timeout_occured();
+		if( game_timeleft == 0 ){
+			clicked_quit();
+			goto_alert_screen("Session Timout!", "Sorry! Your time is up.", 3500);
+		}
 
-		if( game_timeout < 0 )
+		if( my.inactivity_timeout < 0 )
 			$("#game_timeout").css("display", "none" );
 		else
 			$("#game_timeout").css("display", "inline" );
 
-		$("#game_timeout").html( normalizeTime(game_timeout) );
+		$("#game_timeout").html( "Session time remaining: " + normalizeTime(game_timeleft));
 
-		setTimeout( "self.count_down_game_timeout()", 1000 );
+		setTimeout( "self.update_game_timeout()", 1000 );
 	}
 
-	my.clear_timeout = function (){
-		clog( "Clear inactivity timeout..." );
-		my.inactivity_timeout = -1;
-	}
-
-	my.start_timeout = function(){
-		clog( "Starting timeout: ", my.inactivity_timeout_length );
-		my.inactivity_timeout = my.inactivity_timeout_length;
-	}
-
-	my.reset_timeout = function (){
-		// dont allow resets when you're already in the menu that asks you to continue
-		// also dont allow resets when the timer is off (i.e. inactivity_timeout < 0 )
-		// otherwise this call will erroneously switch on the timer when that's not desired.
-		if ( menustate != 4 && timeout.inactivity_timeout >= 0 )
-			my.inactivity_timeout = my.inactivity_timeout_length;
-	}
-
-	self.update_timeout = function(){
+	self.update_turn_timeout = function(){
+		//console.log("turn timeout: ", turn_timeleft);
+		if( turn_timeleft < 0 || global.activePlayers.length > 1){
+			$("#turn_timeout").css("display", "none" );
+			return;
+		}
+		else
+			$("#turn_timeout").css("display", "inline" );
 
 		//ignore inactivity timeout when it's not your turn.
 		if (global.currentTurn != position){
+			$("#turn_timeout").css("display", "none" );
 			return;
 		}
 
-		if( my.inactivity_timeout >= 0 && my.inactivity_timeout <= 10 &&  menustate == 0 ){
-			//Only show timeout menu when we're not already in some menu
-			goto_timeout_screen();
+		if( turn_timeleft > 0 )
+			turn_timeleft -= 1;
+
+		if( my.turn_timeleft == 0 ){
+			timeout_count++;
+			HookboxConnection.hookbox_conn.publish('faceclick', [-1, -1] );
+			goto_alert_screen("Timeout!", "You have not made a move in time. Your turn has gone to another player.", 3500);
 		}
 
-		//document.title = inactivity_timeout;
-		// Fulltimeout
-
-		if( my.inactivity_timeout == 0 )
+		if (timeout_count == my.mp_timeout_limit){
 			clicked_quit();
+			turn_timeleft = -1;
+			goto_alert_screen("Timeout!", "", 3500);
+		}
 
-		if( my.inactivity_timeout >= 0 )
-			$("#timeout_display").html( my.inactivity_timeout );
-		else
-			$("#timeout_display").html( 0 );
+		if( turn_timeleft < 0 )
 
 
-		if( my.inactivity_timeout > -2 )
-			my.inactivity_timeout-=1;
 
-		setTimeout("self.update_timeout()",1000); // call me again in 1000 ms
+		$("#turn_timeout").html( "Time remaining for your turn " + normalizeTime(turn_timeleft) );
+
+		setTimeout("self.update_turn_timeout()",1000); // call me again in 1000 ms
 	}
 
-	my.update_timeout = self.update_timeout;
-	my.count_down_game_timeout = self.count_down_game_timeout;
+	my.update_game_timeout = self.update_game_timeout;
+	my.update_turn_timeout = self.update_turn_timeout;
 
 	function normalizeTime(t){
 		return Math.floor(t/60).toString() + ":" + (t%60 < 10 ? ("0" + t%60).toString() : (t%60).toString());

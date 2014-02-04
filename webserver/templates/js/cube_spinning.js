@@ -1,13 +1,13 @@
 // cube_spinning.js
 // Cube spin controller
 
+var is_spinning = false;
+
 function set_initial_position(){
 	// using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
-    var start_azimuth = parseFloat([ -Math.PI*2/3.01, 0, Math.PI*2/3.01 ][position-1] * 100);
-	//clog('start azi: ' + start_azimuth);
-    //$("#slide_azi").val(  start_azimuth );
-    //CubeControl.update_view();
-    clog("Resetting proper position: " + position + "  (" + start_azimuth + ")" );
+    var start_azimuth = Math.floor([ -Math.PI*2/3.01, 0, Math.PI*2/3.01 ][parseInt(position)-1] * 100);
+
+    console.log("Resetting proper position: " + position + "  (" + start_azimuth + ")" );
 	stop_spin();
 	animate_absolute_spin( start_azimuth );
 }
@@ -18,7 +18,7 @@ function animate_absolute_spin(radians) {
 	azimuth = azimuth % (100*Math.PI*2);  // Re-center
 	$("#slide_azi").attr("animate_val", azimuth); // prep temporary animation variable
 
-    clog("Animate_absolute_spin: " + azimuth + "    " + radians);
+    console.log("Animate_absolute_spin: " + azimuth + "    " + radians);
 
 	if( azimuth == radians ){
 		// we're already at solved position
@@ -34,7 +34,9 @@ function animate_absolute_spin(radians) {
 	},{ duration: 1500,
 		complete: function(){
 			locked_buttons = false;
-			CubeControl.ignore_clicks = false;
+
+			if (menustate == 0)
+				CubeControl.ignore_clicks = false;
 
 			global.turnCheck();
 
@@ -44,7 +46,10 @@ function animate_absolute_spin(radians) {
 		},
 		fail: function() {
 			locked_buttons = false;
-			CubeControl.ignore_clicks = false;
+
+			if (menustate == 0)
+				CubeControl.ignore_clicks = false;
+
 			global.delta_x = parseFloat($("#slide_azi").val() > 0 ?
 				$("#slide_azi").val() % 630 :
 				$("#slide_azi").val() % -630);
@@ -79,14 +84,16 @@ function animate_spin(delta_radians) {
 	},{ duration: 1500,
 		complete: function(){
 			locked_buttons = false;
-			CubeControl.ignore_clicks = false;
+			if (menustate == 0)
+				CubeControl.ignore_clicks = false;
 			global.delta_x = parseFloat($("#slide_azi").val() > 0 ?
 				$("#slide_azi").val() % 630 :
 				$("#slide_azi").val() % -630);
 		},
 		fail: function (){
 			locked_buttons = false;
-			CubeControl.ignore_clicks = false;
+			if (menustate == 0)
+				CubeControl.ignore_clicks = false;
 			global.delta_x = parseFloat($("#slide_azi").val() > 0 ?
 				$("#slide_azi").val() % 630 :
 				$("#slide_azi").val() % -630);
@@ -102,7 +109,6 @@ function animate_spin(delta_radians) {
     });
 }
 
-var is_spinning = false;
 function start_spin( start_spin ){
   	if ( position == 0 )
   		return;

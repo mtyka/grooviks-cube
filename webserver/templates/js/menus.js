@@ -22,27 +22,33 @@ function reset_gamestate(position, difficulty) {
 }
 
 var selected_game_mode = "START_3P"
+
 function select_difficulty( difficulty ){
 
 	last_moves_from_solved = difficulty
 	moves_from_solved = difficulty
 	next_flash_moves_display = setTimeout("flash_moves_display()", 5000 );
 
-	clog("ClientSentGameMode: " + selected_game_mode );
-	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
+	console.log("diff etc: ", difficulty, game_state);
+	//HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
+
   	if (difficulty > 0){
-  		reset_gamestate(position, difficulty );
-		set_initial_position();
+  		reset_gamestate(position, difficulty);
 	}
 
 	timeout.clear_game_timeout();
 
 	// This is somewhat hacky - but because of the order reversal in multiplayer mode compared to single player mode,
 	// the select diff screen has to clear itself in multiplayer mode. But not in single player mode.
-	clog("Gamestate? " + game_state );
-	if( game_state == "MULT" ){
+	console.log("Gamestate? " + game_state );
+	if( game_state == "MULTIPLE" ){
 		clear_screen();
 	}
+	else{
+		console.log("single?");
+	}
+	timeout.start_timeout();
+	setTimeout(function(){set_initial_position();}, 400);
 }
 
 
@@ -94,14 +100,25 @@ function goto_idle_screen(){
 		if( menustate == 0 ) flyin_menu_bg();
    	menustate = 1
 		flyin_menu("#idlemenu");
-		$("#button_quit").animate( { opacity:0.0 },{ duration: 1000 });
-		$("#button_perspective").animate( { opacity:0.0 },{ duration: 1000 });
+
+		$("#button_quit, #button_perspective").css( "opacity", 0.5);
+		disableButton("#button_quit, #button_perspective", true);
+
+		$("#turn_notice").animate( { opacity:0.0 },{ duration: 1000 });
 
 		interrupt_ok = true;
 
-		clog("setting client state to home-restart");
-		timeout.clear_timeout();
+		console.log("setting client state to home-restart");
+		timeout.clear_game_timeout();
 		start_spin( true );
+}
+
+function disableButton(which, disabled){
+	if (disabled)
+		$(which).attr("disabled", "disabled");
+		$(which).
+	else
+		$(which).removeAttr("disabled");
 }
 
 function goto_mode_screen(){
@@ -113,19 +130,19 @@ function goto_mode_screen(){
 		flyin_menu("#modemenu");
 
 		interrupt_ok = true;
-		timeout.clear_timeout();
+		timeout.clear_game_timeout();
 		start_spin( true );
 }
 
 function goto_level_screen(){
-    clog("goto_level_screen()");
+    console.log("goto_level_screen()");
 		CubeControl.ignore_clicks = true;
    	if( menustate == 3 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();
    	menustate = 3
 		flyin_menu("#levelmenu");
-		timeout.clear_timeout();
+		timeout.clear_game_timeout();
 		start_spin( true );
 }
 
@@ -148,31 +165,31 @@ function goto_join_screen(){
 			menustate = 5
 			flyin_menu("#joinmenu");
 		}
-		timeout.clear_timeout();
+		timeout.clear_game_timeout();
 		start_spin( true );
 }
 
 function goto_queued_screen(){
-    clog("goto_queued_screen()");
+    console.log("goto_queued_screen()");
 		CubeControl.ignore_clicks = true;
    	if( menustate == 6 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();
    	menustate = 6
 		flyin_menu("#queuedmenu");
-		timeout.clear_timeout();
+		timeout.clear_game_timeout();
 		start_spin( true );
 }
 
 function goto_waiting_screen(){
-    clog("goto_waiting_screen()");
+    console.log("goto_waiting_screen()");
     CubeControl.ignore_clicks = true;
    	if( menustate == 7 ) return;
 		remove_menu();
 		if( menustate == 0 ) flyin_menu_bg();
    	menustate = 7
 		flyin_menu("#waitingmenu");
-		timeout.clear_timeout();
+		timeout.clear_game_timeout();
 		start_spin( true );
 }
 
@@ -183,7 +200,7 @@ function goto_connecting_screen(){
 		if( menustate == 0 ) flyin_menu_bg();
    	menustate = 8
 		flyin_menu("#connectingmenu");
-		timeout.clear_timeout();
+		timeout.clear_game_timeout();
 		start_spin( true );
 }
 
@@ -196,7 +213,7 @@ function goto_vote_screen(){
    	menustate = 9;
 
 	flyin_menu("#votemenu");
-	timeout.clear_timeout();
+	timeout.clear_game_timeout();
 	start_spin( true );
 }
 
@@ -218,17 +235,17 @@ function goto_alert_screen(text, subtext, timeup){
 	flyin_menu_bg(); //there is never a menu up before this one
    	menustate = 10;
 
-	$("#alertmenu h2").html(text);
-	$("#alertmenu h4").html(subtext);
+	$("#alertmenu h1").html(text);
+	$("#alertmenu h2").html(subtext);
 
 	flyin_menu("#alertmenu");
-	timeout.clear_timeout();
+	timeout.clear_game_timeout();
 	start_spin( true );
 
 	setTimeout(function(){
 		clear_screen();
+		$("#alertmenu h1").empty();
 		$("#alertmenu h2").empty();
-		$("#alertmenu h4").empty();
 	}, timeup);
 }
 
@@ -269,43 +286,40 @@ function hide_rotation_buttons(){
 }
 
 function clear_screen(){
-	remove_menu()
-	if( menustate != 0 )
-		flyout_menu_bg();
+	remove_menu();
 
-	menustate=0
-	set_initial_position();
-
-	// trigger greeting flash
-	hide_rotation_buttons();
 	//hide_instructions();
 	if( game_state == "MULTIPLE" ){
 		timeout.start_timeout();
-  		//flash_display("Welcome to the 3-Player Game", 8000);
-		//show_instructions();
 		show_rotation_buttons();
 		global.turnCheck();
 	}
 	if( game_state == "SINGLE" ){
 		timeout.start_timeout();
-		//flash_display("Welcome to the Single Player Game", 8000 );
 		show_rotation_buttons();
 		global.currentTurn = position;
 	}
 
-	$("#button_quit").animate( {opacity:1.0},{ duration: 1000 });
-	$("#button_perspective").animate( { opacity:1.0 },{ duration: 1000 });
+	$("#button_quit, #button_perspective").css("opacity", 1.0);
+	disableButton("#button_quit, #button_perspective", false);
+
+	$("#turn_notice").animate( { opacity:1.0 },{ duration: 500 });
+
+	menustate = 0;
+	console.log("menu state set to 0");
+	set_initial_position();
 }
 
 function clicked_quit(){
-	clog("ClientSent: QUIT ");
+	console.log("ClientSent: QUIT ");
 	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
 	quitClicked = true;
 	setTimeout(function(){quitClicked = false;}, 1400);
+	global.turnCheck();
 }
 
 function clicked_wake(){
-	clog("ClientSent: WAKE ");
+	console.log("ClientSent: WAKE ");
 	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'WAKE' } );
 
 	global.turnCheck();
@@ -318,7 +332,7 @@ function clicked_alone(){
 
 function clicked_3player(){
 	selected_game_mode = "START_3P";
-	clog("ClientSentGameMode: " + selected_game_mode );
+	console.log("ClientSentGameMode: " + selected_game_mode );
 	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
 	goto_level_screen( )
 }

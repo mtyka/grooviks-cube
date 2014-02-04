@@ -5,7 +5,6 @@ var client_state = "IDLE";
 var game_state = "UNBOUND";
 var active_position = 0;
 var locked_buttons=false;
-var game_timeout = -2;
 var temp_lock = false;
 
 function on_game_state_change(newState, activePosition, clientstate) {
@@ -54,7 +53,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
 					clog("Deciding on Single player: ActivePlayer: " + active_position + "MyPosition: " + position );
 					if ( active_position == position ){
 						if( old_game_state != new_game_state ){
-							game_timeout=180;
+							timeout.resetTimeout();
 						}
 						clear_screen();
 					}

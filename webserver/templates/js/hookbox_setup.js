@@ -82,10 +82,11 @@ var HookboxConnection = (function(){
 				if( channelName == 'movesfromsolved' ) {
 					movesfromsolved_subscription = _subscription;
 					movesfromsolved_subscription.onPublish = function(frame) {
-						clog('moves_from_solved has announced answer' + frame.payload);
-						moves_from_solved = frame.payload;
+						return;
+						//clog('moves_from_solved has announced answer' + frame.payload);
+						//moves_from_solved = frame.payload;
 						// start inactivity counter which will trigger the message to appear
-						next_flash_moves_display = setTimeout("flash_moves_display()", 5000 );
+						//next_flash_moves_display = setTimeout("flash_moves_display()", 5000 );
 					};
 				}
 				if( channelName == 'gameState' ) {
@@ -173,7 +174,7 @@ var HookboxConnection = (function(){
 									clear_screen();
 								}
 								else if (global.activePlayers.indexOf(parseInt(position)) >= 0){
-									goto_alert_screen("Player "+pos+" has joined the Game!", "", 1500);
+									goto_alert_screen("Multiplayer","Player "+pos+" has joined the Game!", 1500);
 								}
 							}
 							else{ //vote fail, alert joiner
