@@ -43,10 +43,6 @@
             <canvas height="1100" id="canvas" width="1100"></canvas>
         </div>
 
-		<div class="game_timeout">
-			<h1 id="game_timeout" ></h1>
-		</div>
-
         <div class="movesdisplay" id="movesdisplay">
             <h1 id="movestext"></h1>
         </div>
@@ -73,14 +69,6 @@
             <input type="button" class="button_back" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="Back">
         </div>
 
-        <div class="levelmenu" id="timeoutmenu">
-            <h1>Timeout</h1>
-
-			<h2>Press continue to return to game:<h2>
-            <h2 id="timeout_display">50</h2>
-            <img id="continue" onclick="clicked_continue();" ontouchstart="clicked_continue();" ondragstart="return false" src="/static/continue.png"><br>
-        </div>
-
         <div class="levelmenu" id="joinmenu">
         	<h1>Multiplayer</h1>
         	<h2>Join game already in progress?</h2>
@@ -96,7 +84,7 @@
         </div>
 
 		<div class="levelmenu" id="alertmenu">
-			<h1>Multiplayer</h1>
+			<h1></h1>
 			<h2></h2>
 		</div>
 
@@ -134,6 +122,24 @@
 
             <div class="clear"></div><br>
         </div>
+
+		<div id="turn_notice">
+			turn div
+		</div>
+
+		<div id="difficulty_notice">
+			Difficulty: <span id="difficulty">Hard</span>
+		</div>
+
+		<div id="game_timeout">
+			game time
+		</div>
+
+		<div id="turn_timeout">
+			Time remaining for your turn <span id="turn_time">100</span>
+		</div>
+
+		<img id="turn-token" src="/static/turn-token/cube_0.png" alt="">
 
 		<div id="player-list">
 			<ul>

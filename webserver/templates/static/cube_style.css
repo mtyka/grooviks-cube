@@ -33,7 +33,7 @@
 }
 
 body {
-	font-family: Gotham-Medium;
+	font-family: Gotham-Book;
 	background: transparent url("grooviks_background.png") top left;
 	color: rgb(255,255,255);
 	overflow: hidden;
@@ -56,6 +56,10 @@ h1.blackTitle{
 
 h2 {
 	text-transform: uppercase;
+}
+
+input{
+	font-family: Gotham-Book;
 }
 
 .levelmenu h2{
@@ -145,22 +149,6 @@ h2 {
 	background: rgba(255,255,255,.86);
 }
 
-.game_timeout {
-	clear: both;
-	position: fixed;
-	width: 250px;
-  	height: 100px;
-	right:  100px;
-	bottom: 130px;
-	z-index: 4;
-}
-.game_timeout h1{
-	color: #ffffff;
-	font-size: 2em;
-	text-align: center;
-	text-shadow: 0px 0px 5px #ffffff;
-}
-
 .movesdisplay{
 	display: none;
 	clear: both;
@@ -174,10 +162,6 @@ h2 {
 }
 
 /* --------- Buttons --------- */
-
-input:active{
-	border-style: none;
-}
 
 #button_about{
 	border-left-style: none;
@@ -215,8 +199,8 @@ input:active{
 	display: inline;
 	height: 100%;
 	margin: 0 -4px;
-	padding: 0 60px;
-	font-size: 2em;
+	padding: 5px 60px 2px;
+	font-size: 1.75em;
 	color: white;
 	text-transform: uppercase;
 	background-color: transparent;
@@ -292,7 +276,6 @@ input:active{
 	height: 250px;
 	top: 50%;
 	margin-top: -160px;
-
 	border-width: 75px 0;
 	border-color: rgb(99,100,102);
 	border-style: solid;
@@ -307,17 +290,27 @@ input:active{
 	background-color: rgb(248, 151, 29);
 }
 
+#bottomBar input{
+}
+
 /* --------- Player List --------- */
 
 #player-list{
 	position: fixed;
-	top: 50px;
-	right: 100px;
+	text-transform: uppercase;
+	font-size: 1.2em;
+	top: 10px;
+	right: 25px;
 	width: 150px;
 	height: auto;
 }
 #player-list ul{
 	list-style-type: none;
+	text-align: left;
+}
+
+#player-list ul li{
+	padding: 12px 0;
 }
 
 #p1, #p2, #p3{
@@ -325,17 +318,65 @@ input:active{
 }
 
 #p1.online{
-	color: rgb(255, 0, 0);
+	color: rgb(0,176,133);
 }
 
 #p2.online{
-	color: rgb(248, 151, 29);
+	color: rgb(248, 152, 29);
 }
 
 #p3.online{
-	color: rgb(0, 121, 193);
+	color: rgb(255,0,0);
 }
 
 .active{
 	text-shadow: 0 0 5px white, 0 0 5px white;
+}
+
+#turn-token{
+	position: fixed;
+	top: 10px;
+	right: 160px;
+	height: 180px;
+	width: 180px;
+}
+
+/* --------- Notice areas --------- */
+#turn_notice{
+	position:fixed;
+	clear: both;
+	top: 45px;
+	left: 50px;
+	text-transform: uppercase;
+	color: rgb(255,210,0);
+}
+
+#difficulty_notice{
+	font-size: 1.5em;
+	clear: both;
+	position: fixed;
+	bottom: 100px;
+	left: 50px;
+}
+
+#difficulty{
+	font-weight: bold;
+}
+
+#turn_timeout{
+	font-size: 1.5em;
+	clear: both;
+	position: fixed;
+	bottom: 100px;
+	right: 50px;
+	text-align: right;
+}
+
+#game_timeout {
+	font-size: 1.5em;
+	clear: both;
+	position: fixed;
+	right:  100px;
+	bottom: 130px;
+	text-align: right;
 }

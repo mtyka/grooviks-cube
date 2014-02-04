@@ -34,6 +34,7 @@ var global = (function($){
 			$("#p1").removeClass(activeClass + " " + onlineClass);
 			$("#p2").removeClass(activeClass + " " + onlineClass);
 			$("#p3").removeClass(activeClass + " " + onlineClass);
+			tokenChanger();
 		}
 		else{
 			for (var i=1; i <= 3; i++){
@@ -68,7 +69,33 @@ var global = (function($){
 					console.log(my.currentTurn);
 					break;
 			}
+
+			if (my.currentTurn == position)
+				$("#turn_notice").html("your turn");
+			else
+				$("#turn_notice").html("Player " + my.currentTurn + "'s turn");
+
+			tokenChanger();
 		}
+	}
+
+	function tokenChanger(){
+		var file = "/static/turn-token/";
+		var name = my.activePlayers.join("_");
+
+		if (my.activePlayers.length == 1)
+			name += "i";
+		else if (my.activePlayers.length > 1){
+			var ind = name.indexOf(my.currentTurn.toString());
+			name = name.substr(0,ind+1) + "i" + name.substr(ind+1,name.length-1);
+		}
+		else if (my.activePlayers.length == 0){
+			name = "0";
+		}
+
+		file += "cube_" + name + ".png";
+		console.log(file);
+		$("#turn-token").attr('src', file);
 	}
 
 	//add more to this later for the web version.
@@ -171,7 +198,7 @@ var global = (function($){
 		my.currentTurn = position;
 
 		goto_connecting_screen();
-		timeout.update_timeout( );
+		timeout.update_game_timeout( );
 		document.title = "P:" + position
 
 // 		$("#bar").css('background-color', my.colors[0]);
@@ -203,9 +230,9 @@ var global = (function($){
 		});
 
 		//--------menus on Ready-----------
-		$("#easy").bind( "click touchstart",   function() { select_difficulty(2);  clear_screen(); set_initial_position();} );
-		$("#medium").bind( "click touchstart", function() { select_difficulty(4);  clear_screen(); set_initial_position();} );
-		$("#hard").bind( "click touchstart",   function() { select_difficulty(20); clear_screen(); set_initial_position();} );
+		$("#easy").bind( "click touchstart",   function() { select_difficulty(2);} );
+		$("#medium").bind( "click touchstart", function() { select_difficulty(4);} );
+		$("#hard").bind( "click touchstart",   function() { select_difficulty(20);} );
 
 		$("#buttonleft").bind( "click touchstart", function(){
 			console.log("button left click");
@@ -230,8 +257,8 @@ var global = (function($){
 		});
 
 		// start the timeout counters
-		// update_timeout();
-		timeout.count_down_game_timeout();
+		timeout.update_game_timeout();
+		timeout.update_turn_timeout();
 	});
 
 	return my;
