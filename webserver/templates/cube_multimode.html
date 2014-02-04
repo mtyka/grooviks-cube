@@ -62,11 +62,18 @@
 
         <div class="levelmenu" id="levelmenu">
             <h1>Select difficulty:</h1>
-            <input id="easy" type="button" class="blueButton decisionButton" ondragstart="return false" value="Easy">
-            <input id="medium" type="button" class="blueButton decisionButton" ondragstart="return false" value="Medium">
-            <input id="hard" type="button" class="blueButton decisionButton" ondragstart="return false" value="Hard">
-            <br>
-            <input type="button" class="button_back" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="Back">
+            <div id="easy" class="blueButton divDecisionButton" ondragstart="return false">
+            	<h3>Easy</h3>
+        		2 Moves
+            </div>
+            <div id="medium" class="blueButton divDecisionButton" ondragstart="return false">
+            	<h3>Medium</h3>
+            	4 Moves
+            </div>
+            <div id="hard" class="blueButton divDecisionButton" ondragstart="return false">
+            	<h3>Hard</h3>
+            	Full Scramble
+            </div>
         </div>
 
         <div class="levelmenu" id="joinmenu">
@@ -132,7 +139,7 @@
 		</div>
 
 		<div id="game_timeout">
-			game time
+			Session time remaining:
 		</div>
 
 		<div id="turn_timeout">

@@ -69,14 +69,14 @@ var global = (function($){
 					console.log(my.currentTurn);
 					break;
 			}
-
-			if (my.currentTurn == position)
-				$("#turn_notice").html("your turn");
-			else
-				$("#turn_notice").html("Player " + my.currentTurn + "'s turn");
-
-			tokenChanger();
 		}
+		if (my.currentTurn == position)
+			$("#turn_notice").html("your turn");
+		else
+			$("#turn_notice").html("Player " + my.currentTurn + "'s turn");
+
+		tokenChanger();
+		timeout.start_turn_timeout();
 	}
 
 	function tokenChanger(){
@@ -94,7 +94,7 @@ var global = (function($){
 		}
 
 		file += "cube_" + name + ".png";
-		console.log(file);
+		//console.log(file);
 		$("#turn-token").attr('src', file);
 	}
 
@@ -168,26 +168,12 @@ var global = (function($){
 	});
 
 	$(window).bind( "click touchstart", function() {
-		timeout.reset_timeout();
-		//touch screen to begin!
 		if( menustate == 1 && !quitClicked){
 			clicked_wake();
 		}
 	});
 
-// 	my.colors = ['rgb(237,27,36)', 'rgb(247,150,27)', 'rgb(36,27,192)'];
-// 	my.colorIndex = 0;
  	my.insideout = false;
-// 	my.animate = function(newColor){
-// 		my.colorIndex++;
-// 		$("#bar").animate(
-// 			{backgroundColor: newColor},
-// 			3000,
-// 			"linear",
-// 			function(){
-// 				setTimeout('global.animate(global.colors[global.colorIndex % global.colors.length])', 5000);
-// 			});
-// 	}
 
 	$(document).ready(function() {
 
@@ -198,11 +184,8 @@ var global = (function($){
 		my.currentTurn = position;
 
 		goto_connecting_screen();
-		timeout.update_game_timeout( );
+		//timeout.update_game_timeout();
 		document.title = "P:" + position
-
-// 		$("#bar").css('background-color', my.colors[0]);
-// 		my.animate(my.colors[my.colorIndex]);
 
 		//--------CubeControl on Ready-----------
 
@@ -249,16 +232,6 @@ var global = (function($){
 			$(".debug").css('display','block');
 			setInterval( display_framerate, HOW_OFTEN_DISPLAY_FRAMERATE );
 		}
-
-		//--------Timeouts on Ready-----------
-		// Add a click event that resets the timeouts
-		$(window).bind( "click touchstart", function( eventObj ) {
-			timeout.reset_timeout();
-		});
-
-		// start the timeout counters
-		timeout.update_game_timeout();
-		timeout.update_turn_timeout();
 	});
 
 	return my;

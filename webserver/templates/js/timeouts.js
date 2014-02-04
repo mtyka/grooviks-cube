@@ -15,104 +15,121 @@ var timeout = (function($){
 	var timeout_count =  0;
 	var game_timeleft = -1;
 
+	var gTimer = null;
+	var tTimer = null;
+
 	my.getTimeleft = function(){
 		return [turn_timeleft, timeout_count, game_timeleft];
 	}
 
-	my.clear_game_timeout = function(){
-		console.log( "Clear game timeout..." );
-		game_timeleft = turn_timeleft = -1;
-		$("#game_timeout").css("display", "none" );
+//------ SYNC GAME TIMER -------
+	my.set_game_time(actual){
+		game_timeleft = actual;
 	}
 
-	my.clear_turn_timeout = function (){
-		console.log( "Clear turn timeout..." );
-		turn_timeleft = -1;
+	function get_game_time(){
+
 	}
 
-	my.start_timeout = function(){
-		if (client_state == "MULT"){
+//------ START TIMERS -------
+	my.start_game_timeout = function(){
+		if (client_state = "MULTIPLE")
 			game_timeleft = my.mp_session_duration;
+		else
+			game_timeleft = my.sp_session_duration;
 
-			if (global.currentTurn == position)
-				turn_timeleft = my.mp_turn_duration;
-
-			timeout_count = 0;
-			console.log("Starting timers...", game_timeleft);
-
-			my.update_game_timeout();
-			my.update_turn_timeout();
+		if (!gTimer)
+			gTimer = setInterval("self.update_game_timeout()", 1000);
+		else{
+			clearInterval(gTimer);
+			gTimer = setInterval("self.update_game_timeout()", 1000);
 		}
+
+		$("#game_timeout").css("display", "inline");
+	}
+
+	my.start_turn_timeout = function(){
+		turn_timeleft = my.mp_turn_duration;
+
+		if (!tTimer)
+			tTimer = setInterval("self.update_turn_timeout()", 1000);
+		else{
+			clearInterval(tTimer);
+			tTimer = setInterval("self.update_turn_timeout()", 1000);
+		}
+
+		$("#turn_timeout").css("display", "inline");
+	}
+
+
+//------ STOP TIMERS -------
+	my.stop_game_timer = function(){
+		game_timeleft = -1;
+		clearInterval(gTimer);
+
+		$("#game_timeout").css("display", "none");
+	}
+
+	my.stop_turn_timer = function(){
+		turn_timeleft = -1;
+		clearInterval(tTimer);
+
+		$("#turn_timeout").css("display", "none");
+	}
+
+//------ RESET TIMERS -------
+	my.reset_game_timeout = function(){
+		if (client_state = "MULTIPLE")
+			game_timeleft = my.mp_session_duration;
 		else
 			game_timeleft = my.sp_session_duration;
 	}
 
-	my.reset_timeout = function(){
-		return;
+	my.reset_turn_timeout = function(){
+		turn_timeleft = my.mp_turn_duration;
 	}
 
+//------ UPDATE TIMERS -------
 	self.update_game_timeout = function(){
-		//console.log("game timeout: ", game_timeleft);
-
-		if( game_timeleft < 0 )
-			return;
-
-		if( game_timeleft > 0 )
-			game_timeleft -= 1;
-
-		// timeout has occured!
-		if( game_timeleft == 0 ){
+		if (game_timeleft <= 0){
 			clicked_quit();
-			goto_alert_screen("Session Timout!", "Sorry! Your time is up.", 3500);
+
+			my.stop_game_timer();
+			return;
 		}
 
-		if( my.inactivity_timeout < 0 )
-			$("#game_timeout").css("display", "none" );
-		else
-			$("#game_timeout").css("display", "inline" );
+		game_timeleft -= 1;
 
-		$("#game_timeout").html( "Session time remaining: " + normalizeTime(game_timeleft));
-
-		setTimeout( "self.update_game_timeout()", 1000 );
+		$("#game_timeout").html("Session time remaining " + normalizeTime(game_timeleft));
 	}
 
 	self.update_turn_timeout = function(){
-		//console.log("turn timeout: ", turn_timeleft);
-		if( turn_timeleft < 0 || global.activePlayers.length > 1){
-			$("#turn_timeout").css("display", "none" );
+		if (global.currentTurn != position ||
+			global.activePlayers <= 1){
+			my.stop_turn_timer()
 			return;
 		}
-		else
-			$("#turn_timeout").css("display", "inline" );
+		else if (turn_timeleft <= 0){
+			timeout_count += 1;
+			if (timeout_count == my.mp_timeout_limit){
+				clicked_quit();
+				goto_alert_screen("Timeout!", "", 3500);
 
-		//ignore inactivity timeout when it's not your turn.
-		if (global.currentTurn != position){
-			$("#turn_timeout").css("display", "none" );
-			return;
+				my.stop_turn_timer()
+				return;
+			}
+			else{
+				HookboxConnection.hookbox_conn.publish('faceclick', [-1, -1] );
+				goto_alert_screen("Timeout!", "You have not made a move in time. Your turn has gone to another player.", 3500);
+
+				my.stop_turn_timer();
+				return;
+			}
 		}
 
-		if( turn_timeleft > 0 )
-			turn_timeleft -= 1;
+		turn_timeleft -= 1;
 
-		if( my.turn_timeleft == 0 ){
-			timeout_count++;
-			HookboxConnection.hookbox_conn.publish('faceclick', [-1, -1] );
-			goto_alert_screen("Timeout!", "You have not made a move in time. Your turn has gone to another player.", 3500);
-		}
-
-		if (timeout_count == my.mp_timeout_limit){
-			clicked_quit();
-			turn_timeleft = -1;
-			goto_alert_screen("Timeout!", "", 3500);
-		}
-
-		if( turn_timeleft < 0 )
-
-
-
-		$("#turn_timeout").html( "Time remaining for your turn " + normalizeTime(turn_timeleft) );
-
-		setTimeout("self.update_turn_timeout()",1000); // call me again in 1000 ms
+		$("#turn_timeout").html("Time remaining for your turn " + normalizeTime(turn_timeleft));
 	}
 
 	my.update_game_timeout = self.update_game_timeout;

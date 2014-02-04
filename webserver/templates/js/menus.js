@@ -27,7 +27,7 @@ function select_difficulty( difficulty ){
 
 	last_moves_from_solved = difficulty
 	moves_from_solved = difficulty
-	next_flash_moves_display = setTimeout("flash_moves_display()", 5000 );
+	//next_flash_moves_display = setTimeout("flash_moves_display()", 5000 );
 
 	console.log("diff etc: ", difficulty, game_state);
 	//HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : selected_game_mode } );
@@ -36,7 +36,7 @@ function select_difficulty( difficulty ){
   		reset_gamestate(position, difficulty);
 	}
 
-	timeout.clear_game_timeout();
+
 
 	// This is somewhat hacky - but because of the order reversal in multiplayer mode compared to single player mode,
 	// the select diff screen has to clear itself in multiplayer mode. But not in single player mode.
@@ -47,7 +47,7 @@ function select_difficulty( difficulty ){
 	else{
 		console.log("single?");
 	}
-	timeout.start_timeout();
+	timeout.start_game_timeout();
 	setTimeout(function(){set_initial_position();}, 400);
 }
 
@@ -109,7 +109,7 @@ function goto_idle_screen(){
 		interrupt_ok = true;
 
 		console.log("setting client state to home-restart");
-		timeout.clear_game_timeout();
+
 		start_spin( true );
 }
 
@@ -130,7 +130,7 @@ function goto_mode_screen(){
 		flyin_menu("#modemenu");
 
 		interrupt_ok = true;
-		timeout.clear_game_timeout();
+
 		start_spin( true );
 }
 
@@ -142,7 +142,7 @@ function goto_level_screen(){
 		if( menustate == 0 ) flyin_menu_bg();
    	menustate = 3
 		flyin_menu("#levelmenu");
-		timeout.clear_game_timeout();
+
 		start_spin( true );
 }
 
@@ -165,7 +165,7 @@ function goto_join_screen(){
 			menustate = 5
 			flyin_menu("#joinmenu");
 		}
-		timeout.clear_game_timeout();
+
 		start_spin( true );
 }
 
@@ -177,7 +177,7 @@ function goto_queued_screen(){
 		if( menustate == 0 ) flyin_menu_bg();
    	menustate = 6
 		flyin_menu("#queuedmenu");
-		timeout.clear_game_timeout();
+
 		start_spin( true );
 }
 
@@ -189,7 +189,7 @@ function goto_waiting_screen(){
 		if( menustate == 0 ) flyin_menu_bg();
    	menustate = 7
 		flyin_menu("#waitingmenu");
-		timeout.clear_game_timeout();
+
 		start_spin( true );
 }
 
@@ -200,7 +200,7 @@ function goto_connecting_screen(){
 		if( menustate == 0 ) flyin_menu_bg();
    	menustate = 8
 		flyin_menu("#connectingmenu");
-		timeout.clear_game_timeout();
+
 		start_spin( true );
 }
 
@@ -213,7 +213,7 @@ function goto_vote_screen(){
    	menustate = 9;
 
 	flyin_menu("#votemenu");
-	timeout.clear_game_timeout();
+
 	start_spin( true );
 }
 
@@ -239,7 +239,7 @@ function goto_alert_screen(text, subtext, timeup){
 	$("#alertmenu h2").html(subtext);
 
 	flyin_menu("#alertmenu");
-	timeout.clear_game_timeout();
+
 	start_spin( true );
 
 	setTimeout(function(){
@@ -290,7 +290,7 @@ function clear_screen(){
 
 	//hide_instructions();
 	if( game_state == "MULTIPLE" ){
-		timeout.start_timeout();
+		timeout.start_game_timeout();
 		show_rotation_buttons();
 		global.turnCheck();
 	}
@@ -315,6 +315,10 @@ function clicked_quit(){
 	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
 	quitClicked = true;
 	setTimeout(function(){quitClicked = false;}, 1400);
+
+	timeout.stop_game_timer();
+	timeout.stop_turn_timer();
+
 	global.turnCheck();
 }
 
@@ -354,7 +358,7 @@ function clicked_join(){
 }
 
 function clicked_continue(){
-	timeout.start_timeout();
+	timeout.start_game_timeout();
 	clear_screen();
 }
 
