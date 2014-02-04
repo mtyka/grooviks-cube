@@ -203,6 +203,7 @@ class Cube():
 						self.grooviksCube.HandleInput( CubeInput.FACE_CLICK, face)
 						#self.grooviksCube.QueueEffect( "victory0" )
 					self.resetClientTimeout(user)
+
 				elif channel == 'clientcommand':
 					'''This channel is used for sending commands to change the game state'''
 					position = int(payload.pop('position'))
