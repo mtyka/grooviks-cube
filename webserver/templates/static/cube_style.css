@@ -34,6 +34,7 @@
 
 body {
 	font-family: Gotham-Book;
+	text-transform: uppercase;
 	background: transparent url("grooviks_background.png") top left;
 	color: rgb(255,255,255);
 	overflow: hidden;
@@ -42,7 +43,6 @@ body {
 
 h1 {
 	font-family: Rubik;
-	text-transform: uppercase;
 	font-size: 3em;
 	background-color:red;
 	margin-top: 0px;
@@ -55,15 +55,17 @@ h1.blackTitle{
 }
 
 h2 {
-	text-transform: uppercase;
+
 }
 
 input{
 	font-family: Gotham-Book;
+	text-transform: uppercase;
 }
 
 .levelmenu h2{
 	color: black;
+	text-transform: none;
 }
 
 #container {
@@ -140,7 +142,6 @@ input{
 	top: 50%;
 	margin-top: -60px;
 	z-index: 8;
-
 	background: rgba(255,255,255,1);
 }
 
@@ -202,7 +203,7 @@ input{
 	padding: 5px 60px 2px;
 	font-size: 1.75em;
 	color: white;
-	text-transform: uppercase;
+
 	background-color: transparent;
 	border-style: solid;
 	border-width: 0 3px;
@@ -224,7 +225,24 @@ input{
 	font-size: 1em;
 	border-radius: 15px;
 	border-width: 0px;
+	font-size: 1.2em;
 	z-index: 20;
+}
+
+.divDecisionButton{
+	padding: 15px;
+	width: 250px;
+	border-radius: 15px;
+	border-width: 0px;
+	font-size: 1.2em;
+	z-index: 20;
+	display: inline-table;
+	margin: 0 8px;
+}
+
+.divDecisionButton h3{
+	font-size: 1.5em;
+	margin: 0;
 }
 
 .clear{ clear: both; }
@@ -290,14 +308,11 @@ input{
 	background-color: rgb(248, 151, 29);
 }
 
-#bottomBar input{
-}
-
 /* --------- Player List --------- */
 
 #player-list{
 	position: fixed;
-	text-transform: uppercase;
+
 	font-size: 1.2em;
 	top: 10px;
 	right: 25px;
@@ -347,7 +362,7 @@ input{
 	clear: both;
 	top: 45px;
 	left: 50px;
-	text-transform: uppercase;
+
 	color: rgb(255,210,0);
 }
 
@@ -364,6 +379,7 @@ input{
 }
 
 #turn_timeout{
+	display: none;
 	font-size: 1.5em;
 	clear: both;
 	position: fixed;
@@ -373,6 +389,7 @@ input{
 }
 
 #game_timeout {
+	display: none;
 	font-size: 1.5em;
 	clear: both;
 	position: fixed;

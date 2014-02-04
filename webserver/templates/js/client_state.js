@@ -20,23 +20,23 @@ function on_game_state_change(newState, activePosition, clientstate) {
 	new_client_state = clientstate[position-1];
 	new_game_state = newState;
 
-	clog("ActivePlayer: " + active_position + " MyPosition: " + position );
-	clog("Server: NewState: " + new_client_state + " OldState: " + client_state );
-	clog("Server: NewGameState: " + new_game_state + " OldGameState: " + game_state );
+	console.log("ActivePlayer: " + active_position + " MyPosition: " + position );
+	console.log("Server: NewState: " + new_client_state + " OldState: " + client_state );
+	console.log("Server: NewGameState: " + new_game_state + " OldGameState: " + game_state );
 
-	timeout.reset_timeout();
+	//timeout.reset_timeout();
 
 	var old_game_state = game_state;
 	game_state = new_game_state;
 
 	client_state = new_client_state;
 	if ( client_state == "IDLE" ){
-		timeout.clear_game_timeout();
+
 		goto_idle_screen();
 	}
 	else{
 		if ( client_state == "HOME" ){
-			timeout.clear_game_timeout();
+
 			if (global.isKiosk() && global.activePlayers.length >= 0)
 				clicked_3player();
 			else{	//for web version.
@@ -50,10 +50,10 @@ function on_game_state_change(newState, activePosition, clientstate) {
 				}
 				else
 				if( game_state == "SINGLE" ){
-					clog("Deciding on Single player: ActivePlayer: " + active_position + "MyPosition: " + position );
+					console.log("Deciding on Single player: ActivePlayer: " + active_position + "MyPosition: " + position );
 					if ( active_position == position ){
 						if( old_game_state != new_game_state ){
-							timeout.resetTimeout();
+							timeout.reset_game_timeout();
 						}
 						clear_screen();
 					}
@@ -62,7 +62,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
 				}
 				else{
 					if( game_state == "VICTORY" ){
-						timeout.clear_game_timeout();
+
 						clear_screen();
 					}
 				}
@@ -70,7 +70,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
 			else {
 				if ( client_state == "MULT" ){
 					if( game_state == "SINGLE_INVITE" ){
-						timeout.clear_game_timeout();
+
 						goto_waiting_screen();
 					}
 					else {
@@ -98,7 +98,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
 					if ( client_state == "VICT" )
 						clear_screen();
 					else
-						clog("Unknown client_state:" + client_state );
+						console.log("Unknown client_state:" + client_state );
 				}
 			} // close client_state != "SING"
 		} // close client_state != "HOME"
