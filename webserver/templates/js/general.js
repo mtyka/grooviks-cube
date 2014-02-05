@@ -79,6 +79,16 @@ var global = (function($){
 		timeout.start_turn_timeout();
 	}
 
+	my.difficultyNotice = function(on){
+		if (on){
+			$("#difficulty_notice").css("display", "inline");
+			HookboxConnection.hookbox_conn.publish('difficulty', 'get');
+		}
+		else{
+			$("#difficulty_notice").css("display", "none");
+		}
+	}
+
 	function tokenChanger(){
 		var file = "/static/turn-token/";
 		var name = my.activePlayers.join("_");

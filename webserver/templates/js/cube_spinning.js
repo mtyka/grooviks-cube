@@ -22,7 +22,7 @@ function animate_absolute_spin(radians) {
 
 	if( azimuth == radians ){
 		// we're already at solved position
-		clog("Already at solved position");
+		console.log("Already at starting position");
 		return;
 	}
 

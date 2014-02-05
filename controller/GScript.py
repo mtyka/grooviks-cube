@@ -6,7 +6,7 @@ class GScriptSubgroup:
 	NORMAL = 0
 	RANDOM = 1
 	REPEAT = 2
-	
+
 class GScript:
 	def Load(self, fileName):
 		self.moves = []
@@ -30,7 +30,7 @@ class GScript:
 						subgroupCountRemaining = parsedLine[1]
 						subgroupApplyCount = parsedLine[2]
 						subgroup = []
-						continue	
+						continue
 				self.moves.append( parsedLine )
 				continue
 			else:
@@ -47,7 +47,7 @@ class GScript:
 						j = random.randint( 0, len( subgroup ) - 1 )
 						self.moves.append( copy.deepcopy( subgroup[j] ) )
 				subgroupType = GScriptSubgroup.NORMAL
-				
+
 	def CreateRandom(self, depth, time, symmetric=False):
 		self.moves = [];
 		# These indicate the last rotated slice. THe default values are out of the range of possible values
@@ -59,11 +59,11 @@ class GScript:
 			while True:
 				rot = random.randint( 0, 8 )
 				clockwise = ( random.randint( 0, 1 ) == 1 )
-				# Ensure the rotation axis is differetn from the previous roation axis. This makes much 
+				# Ensure the rotation axis is differetn from the previous roation axis. This makes much
 				# better randomizations then allowing consecutive rotations to be on the same axis.
-				# The integer div-by-3 takes advantage of the fact that rotations 0,1,2  and 3,4,5 and 6,7,8 are on the same axis respectively. 
+				# The integer div-by-3 takes advantage of the fact that rotations 0,1,2  and 3,4,5 and 6,7,8 are on the same axis respectively.
 				if (rot/3) != (last_rot/3): break;
-			
+
 			last_rot = rot
 			# NOTE: The '2' is the enum for rotation
 			self.moves.append([2, rot, clockwise, time]);

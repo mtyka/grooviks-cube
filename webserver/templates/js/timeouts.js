@@ -23,12 +23,17 @@ var timeout = (function($){
 	}
 
 //------ SYNC GAME TIMER -------
-	my.set_game_time(actual){
+	my.set_game_time = function(actual){
 		game_timeleft = actual;
+		synced = true;
+	}
+
+	my.get_real_game_timeleft = function(){
+		return normalizeTime(game_timeleft);
 	}
 
 	function get_game_time(){
-
+		HookboxConnection.hookbox_conn.publish('timeout', 'get');
 	}
 
 //------ START TIMERS -------
@@ -45,10 +50,17 @@ var timeout = (function($){
 			gTimer = setInterval("self.update_game_timeout()", 1000);
 		}
 
+		get_game_time();
 		$("#game_timeout").css("display", "inline");
 	}
 
 	my.start_turn_timeout = function(){
+		if (global.currentTurn != position ||
+			global.activePlayers.length <= 1){
+			my.stop_turn_timer();
+			return;
+		}
+
 		turn_timeleft = my.mp_turn_duration;
 
 		if (!tTimer)
@@ -85,12 +97,15 @@ var timeout = (function($){
 			game_timeleft = my.sp_session_duration;
 	}
 
+	synced = false;
+
 	my.reset_turn_timeout = function(){
 		turn_timeleft = my.mp_turn_duration;
 	}
 
 //------ UPDATE TIMERS -------
 	self.update_game_timeout = function(){
+
 		if (game_timeleft <= 0){
 			clicked_quit();
 
@@ -105,8 +120,8 @@ var timeout = (function($){
 
 	self.update_turn_timeout = function(){
 		if (global.currentTurn != position ||
-			global.activePlayers <= 1){
-			my.stop_turn_timer()
+			global.activePlayers.length <= 1){
+			my.stop_turn_timer();
 			return;
 		}
 		else if (turn_timeleft <= 0){

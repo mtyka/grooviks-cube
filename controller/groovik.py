@@ -162,6 +162,9 @@ class GrooviksCube:
 			if len(active) == 1:
 				self.currentTurn = position
 
+			if self.__startTime == None:
+				self.__startTime = time.time()
+
 			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
 
 		# on quit the turn gets passed to the next active player.
@@ -173,6 +176,8 @@ class GrooviksCube:
 
 			if len(active) > 0:
 				self.currentTurn = active[0]
+			else:
+				self.__startTime = None;
 
 			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
 
@@ -429,6 +434,7 @@ class GrooviksCube:
 		if self.GetGameState() in [GameState.UNBOUND, GameState.VICTORY]:
 			# ignore if the cube isn't bound to an active game
 			return
+		self.currentDifficulty = depth
 		self.ResetColors()
 		self.__normalMode.Randomize(self, depth)
 
@@ -607,6 +613,12 @@ class GrooviksCube:
 		# Voter
 		self.__voter = None
 
+		#Timeouts
+		self.__startTime = None
+
+		#Diff
+		self.currentDifficulty = 0
+
 		# Initialize the three GroovikClients
 		self.__clientdict = {}
 		for i in range(1,4):
@@ -633,6 +645,20 @@ class GrooviksCube:
 		self.__startTime = currentTime
 		self.__lastSimTime = currentTime
 		self.__lastSimClock = time.clock()
+
+	def getTimeLeft(self):
+		time_since = math.floor(time.time() - self.__startTime)
+		time_left = int(groovikConfig.kioskSettings['mp-session-duration']) - time_since
+
+		print "time left: " + str(int(time_left))
+
+		if time_since >= 0:
+			return int(time_left)
+		else:
+			return 0
+
+	def getDifficulty(self):
+		self.currentDifficulty
 
 	# This method is designed exclusively for the GScript method of authoring pre-scripted transitions
 	# and shouldn't be called outside of that

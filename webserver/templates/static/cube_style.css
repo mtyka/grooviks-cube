@@ -367,15 +367,13 @@ input{
 }
 
 #difficulty_notice{
+	display: none;
 	font-size: 1.5em;
 	clear: both;
 	position: fixed;
 	bottom: 100px;
 	left: 50px;
-}
-
-#difficulty{
-	font-weight: bold;
+	text-align: left;
 }
 
 #turn_timeout{

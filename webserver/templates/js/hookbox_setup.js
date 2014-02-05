@@ -180,9 +180,33 @@ var HookboxConnection = (function(){
 							else{ //vote fail, alert joiner
 								if (pos == position){
 									console.log("vote fail");
+									goto_queued_screen();
 								}
 							}
 						}
+					};
+				}
+				if( channelName == 'timeout' ){
+					timeout_subscription = _subscription;
+					timeout_subscription.onPublish = function(frame) {
+						console.log("timeout frame: ", frame);
+						timeout.set_game_time(frame.payload["set"]);
+					};
+				}
+				if( channelName == 'difficulty' ){
+					diff_subscription = _subscription;
+					diff_subscription.onPublish = function(frame) {
+						console.log("diff frame: ", frame);
+						var diff = frame.payload["set"];
+
+						if (diff > 0 && diff <= 2)
+							diff = "Easy";
+						else if (diff > 2 && diff <= 4)
+							diff = "Medium";
+						else
+							diff = "Hard";
+
+						$("#difficulty").html(diff);
 					};
 				}
 			}
@@ -210,7 +234,6 @@ var HookboxConnection = (function(){
 			console.log("----- IS MULTIMODE -----");
 			my.hookbox_conn.subscribe("iframe");
 			my.hookbox_conn.subscribe("faceclick");
-			my.hookbox_conn.subscribe("movesfromsolved");
 			my.hookbox_conn.subscribe("gamemode");
 			my.hookbox_conn.subscribe("gameState");
 			my.hookbox_conn.subscribe("rotationStep");
@@ -221,6 +244,8 @@ var HookboxConnection = (function(){
 			my.hookbox_conn.subscribe("turns");
 			my.hookbox_conn.subscribe("settings");
 			my.hookbox_conn.subscribe("vote");
+			my.hookbox_conn.subscribe("timeout");
+			my.hookbox_conn.subscribe("difficulty");
 		}
 	}
 
