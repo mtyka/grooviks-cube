@@ -315,7 +315,7 @@ function waitTick(){
 
 	var val = parseInt(timeStr[0]*60) + parseInt(timeStr[1]);
 
-	if (val <= 0){
+	if (val <= 0 || global.activePlayers.length == 0){
 		clearInterval(waitTimer);
 		waitTimer == null;
 		goto_level_screen();
@@ -339,9 +339,10 @@ function clicked_quit(){
 	timeout.stop_game_timer();
 	timeout.stop_turn_timer();
 
-	if (waitTimer)
-		clearInterval(waitTimer);
-		waitTimer == null;
+	if (waitingTimer){
+		clearInterval(waitingTimer);
+		waitingTimer == null;
+	}
 
 	global.turnCheck();
 
@@ -357,7 +358,7 @@ function clicked_wake(){
 
 function clicked_alone(){
 	selected_game_mode = "START_1P";
-	goto_level_screen( )
+	goto_level_screen( );
 }
 
 function clicked_3player(){

@@ -6,10 +6,10 @@ var timeout = (function($){
 	var my = {};
 
 	my.mp_timeout_limit = 2;
-	my.mp_turn_duration	= 30;
-	my.sp_session_duration = 240;
-	my.mp_session_duration = 240;
-	my.menu_timeout = 10;
+	my.mp_turn_duration	= 32;
+	my.sp_session_duration = 321;
+	my.mp_session_duration = 321;
+	my.menu_timeout = 10;			//unimplemented
 
 	var turn_timeleft = -1;
 	var timeout_count =  0;
@@ -56,8 +56,8 @@ var timeout = (function($){
 
 	my.start_turn_timeout = function(){
 		if (global.currentTurn != position ||
-			global.activePlayers.length <= 1){
-			my.stop_turn_timer();
+			global.activePlayers.length <= 1 ||
+			tTimer != null){
 			return;
 		}
 
@@ -114,7 +114,7 @@ var timeout = (function($){
 		}
 
 		game_timeleft -= 1;
-
+		console.log("timeleft: ", game_timeleft);
 		$("#game_timeout").html("Session time remaining " + normalizeTime(game_timeleft));
 	}
 
