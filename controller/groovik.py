@@ -215,11 +215,11 @@ class GrooviksCube:
 
 	def StartSinglePlayerIfUnbound(self):
 		if self.GetGameState() != GameState.UNBOUND:
-			 return
+			return
 		nextPlayer = self.FindQueuedSinglePlayer()
 		if nextPlayer != None:
-			 self.ChangeGameState({ GameState.UNBOUND : GameState.SINGLE })
-			 self.SetActivePosition(nextPlayer.GetPosition())
+			self.ChangeGameState({ GameState.UNBOUND : GameState.SINGLE })
+			self.SetActivePosition(nextPlayer.GetPosition())
 
 	def FindQueuedSinglePlayer(self):
 		'''
@@ -235,9 +235,9 @@ class GrooviksCube:
 
 	def MultiplePlayerStarts( self ):
 		self.ChangeGameState({
-			 GameState.UNBOUND : GameState.MULTIPLE,
-			 GameState.SINGLE : GameState.SINGLE_INVITE,
-			 GameState.VICTORY : GameState.VICTORY,
+			GameState.UNBOUND : GameState.MULTIPLE,
+			GameState.SINGLE : GameState.SINGLE_INVITE,
+			GameState.VICTORY : GameState.VICTORY,
 		})
 
 	def SinglePlayerJoins( self, client ):
