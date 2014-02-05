@@ -57,7 +57,6 @@ function flyin_menu_bg(){
 	CubeControl.ignore_clicks=true;
 
 	hide_rotation_buttons();
-	//hide_instructions();
 }
 
 function flyout_menu_bg(){
@@ -80,9 +79,9 @@ function flyout_menu( id ){
 	  left: "125%"
 	},{ duration: 1000,
 		complete: function(){
-				$(id).css("left", "-25%");
-				$(id).css("display", "none");
-			}
+			$(id).css("left", "-25%");
+			$(id).css("display", "none");
+		}
 	  }
 	);
 }
@@ -166,6 +165,8 @@ function goto_join_screen(){
 			flyin_menu("#joinmenu");
 		}
 
+		global.difficultyNotice(true);
+
 		start_spin( true );
 }
 
@@ -179,6 +180,7 @@ function goto_queued_screen(){
 		flyin_menu("#queuedmenu");
 
 		start_spin( true );
+		$("#timeUntilTurn").html(timeout.get_real_game_timeleft());
 }
 
 function goto_waiting_screen(){
@@ -263,18 +265,14 @@ function remove_menu(){
 
 	if (menustate == 0){
 		show_rotation_buttons();
+		if (global.activePlayers.length > 1)
+			global.difficultyNotice(true);
+		else
+			global.difficultyNotice(false);
 	}
 	else{
 		hide_rotation_buttons();
 	}
-}
-
-function show_instructions(){
-	$(".instructions").css("display", "inline")
-}
-
-function hide_instructions(){
-	$(".instructions").css("display", "none")
 }
 
 function show_rotation_buttons(){
@@ -288,14 +286,13 @@ function hide_rotation_buttons(){
 function clear_screen(){
 	remove_menu();
 
-	//hide_instructions();
 	if( game_state == "MULTIPLE" ){
 		timeout.start_game_timeout();
 		show_rotation_buttons();
 		global.turnCheck();
 	}
 	if( game_state == "SINGLE" ){
-		timeout.start_timeout();
+		timeout.start_game_timeout();
 		show_rotation_buttons();
 		global.currentTurn = position;
 	}
@@ -320,6 +317,8 @@ function clicked_quit(){
 	timeout.stop_turn_timer();
 
 	global.turnCheck();
+
+	global.difficultyNotice(false);
 }
 
 function clicked_wake(){

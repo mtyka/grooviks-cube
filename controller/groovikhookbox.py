@@ -244,6 +244,14 @@ class Cube():
 					elif 'vote-initiate' in payload:
 						self.grooviksCube.startVote(int(payload['vote-initiate']))
 
+				elif channel == 'timeout':
+					if 'get' in payload:
+						push_message( json.dumps({'set': self.grooviksCube.getTimeLeft()}), "timeout")
+
+				elif channel == 'difficulty':
+					if 'get' in payload:
+						push_message( json.dumps({'set': self.grooviksCube.getDifficulty()}), "difficulty")
+
 			except KeyError:
 				#TODO: actually parse the error and log it
 				pass
