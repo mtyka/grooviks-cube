@@ -189,7 +189,10 @@ var global = (function($){
 
 		HookboxConnection.init( '/static/hookbox.js', function(){
 		   goto_idle_screen();
+		   HookboxConnection.hookbox_conn.publish('settings', {'command': 'get'});
 		});
+
+
 
 		my.currentTurn = position;
 

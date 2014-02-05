@@ -140,6 +140,7 @@ var HookboxConnection = (function(){
 				if( channelName == 'settings' ){
 					settings_subscription = _subscription;
 					settings_subscription.onPublish = function(frame) {
+						console.log("Settings recieved");
 						var setVal = function(id, f){
 							$("#"+id).val(parseInt(f[id]));
 						}
@@ -151,6 +152,13 @@ var HookboxConnection = (function(){
 							setVal("sp-session-duration", frame.payload);
 							setVal("mp-session-duration", frame.payload);
 							setVal("menu-timeout", frame.payload);
+						}
+						else {
+							timeout.mp_turn_duration = parseInt(frame.payload["mp-turn-duration"]);
+							timeout.mp_timeout_limit = parseInt(frame.payload["mp-timeout-limit"]);
+							timeout.sp_session_duration = parseInt(frame.payload["sp-session-duration"]);
+							timeout.mp_session_duration = parseInt(frame.payload["mp-session-duration"]);
+							timeout.menu_timeout = parseInt(frame.payload["menu-timeout"]);
 						}
 					};
 				}
