@@ -4,6 +4,7 @@
 var interrupt_ok=true;
 var menustate = 0;
 var quitClicked = false;
+var waitingTimer = null;
 
 // 1 = no menu
 // 2 = mode menu
@@ -181,6 +182,7 @@ function goto_queued_screen(){
 
 		start_spin( true );
 		$("#timeUntilTurn").html(timeout.get_real_game_timeleft());
+		waitTimer = setInterval("waitTick()", 1000);
 }
 
 function goto_waiting_screen(){
@@ -307,6 +309,27 @@ function clear_screen(){
 	set_initial_position();
 }
 
+function waitTick(){
+	var timeStr = $("#timeUntilTurn").html();
+	timeStr = timeStr.split(":");
+
+	var val = parseInt(timeStr[0]*60) + parseInt(timeStr[1]);
+
+	if (val <= 0){
+		clearInterval(waitTimer);
+		waitTimer == null;
+		goto_level_screen();
+	}
+	else {
+		val -= 1;
+		$("#timeUntilTurn").html(normalizeTime(val));
+	}
+}
+
+function normalizeTime(t){
+	return Math.floor(t/60).toString() + ":" + (t%60 < 10 ? ("0" + t%60).toString() : (t%60).toString());
+}
+
 function clicked_quit(){
 	console.log("ClientSent: QUIT ");
 	HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
@@ -315,6 +338,10 @@ function clicked_quit(){
 
 	timeout.stop_game_timer();
 	timeout.stop_turn_timer();
+
+	if (waitTimer)
+		clearInterval(waitTimer);
+		waitTimer == null;
 
 	global.turnCheck();
 
