@@ -35,10 +35,13 @@ function animate_absolute_spin(radians) {
 		complete: function(){
 			locked_buttons = false;
 
-			if (menustate == 0)
+			if (menustate == 0){
 				CubeControl.ignore_clicks = false;
+				CubeControl.reset_arrow_timer();
+			}
 
 			global.turnCheck();
+			CubeControl.reset_arrow_timer();
 
 			global.delta_x = parseFloat($("#slide_azi").val() > 0 ?
 				$("#slide_azi").val() % 630 :
@@ -84,8 +87,11 @@ function animate_spin(delta_radians) {
 	},{ duration: 1500,
 		complete: function(){
 			locked_buttons = false;
-			if (menustate == 0)
+			if (menustate == 0){
 				CubeControl.ignore_clicks = false;
+				CubeControl.reset_arrow_timer();
+			}
+
 			global.delta_x = parseFloat($("#slide_azi").val() > 0 ?
 				$("#slide_azi").val() % 630 :
 				$("#slide_azi").val() % -630);

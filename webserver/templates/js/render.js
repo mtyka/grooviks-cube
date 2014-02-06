@@ -19,9 +19,7 @@ Renderer = (function($){
 	var svg_polygons = [];
 	var current_cube_colors = new Array( 54 );
 
-	var transitionAlpha = 0;
-	var alphaAnimation = null;
-	var animationSteps = 10;
+	var alphaTransition = 0;
 
 	// Show SVG element if configured.
 	var svg;
@@ -375,7 +373,7 @@ Renderer = (function($){
 			return;
 		}
 
-		ctx.fillStyle = "rgba(" + Math.round(255.0*color[2]) + "," + Math.round(255.0*color[1]) + "," + Math.round(255.0*color[0]) + ",1)";
+		ctx.fillStyle = "rgba(" + Math.round(255.0*color[2]) + "," + Math.round(255.0*color[1]) + "," + Math.round(255.0*color[0]) + ","+my.alphaTransition+")";
 		ctx.globalAlpha = 1.0;
 
 		// Build basis
