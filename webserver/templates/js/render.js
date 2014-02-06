@@ -19,9 +19,9 @@ Renderer = (function($){
 	var svg_polygons = [];
 	var current_cube_colors = new Array( 54 );
 
-	var corners = [0,2,6,8, 9,11,15,17,
-				   18,20,24,26, 27,29,33,35,
-				   36,38,42,44, 45,47,51,53]
+	var transitionAlpha = 0;
+	var alphaAnimation = null;
+	var animationSteps = 10;
 
 	// Show SVG element if configured.
 	var svg;
@@ -133,13 +133,6 @@ Renderer = (function($){
 			ctx.fill();
 		}
 
-		// if(corners.indexOf(ndx) >=0 ){
-//  			ctx.beginPath();
-//  			ctx.arc(vp1.v[0], vp1.v[1], 4, 0, 2 * Math.PI, false);
-//  			ctx.fillStyle = 'red';
-//  			ctx.fill();
-//  		}
-
 		if( RENDER_WITH_SVG ) {
 			if( svg ) {
 				// Does this facet exist already?
@@ -245,9 +238,9 @@ Renderer = (function($){
 		var viewProjViewport = multiplyMatrix( viewport, viewProj );
 
 		return { 'ctx': ctx,
-						 'viewProj': viewProj,
-						 'viewProjViewport': viewProjViewport
-					 };
+				 'viewProj': viewProj,
+				 'viewProjViewport': viewProjViewport
+			 	};
 	}
 
 
@@ -263,12 +256,12 @@ Renderer = (function($){
 
 		var quadlist = buildQuadList( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'] );
 		for( ndx=0; ndx<54; ndx++) {
-				var quad = quadlist[ndx];
-				if( isPointInQuad( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'],
-													 quad[0], quad[1], quad[2], quad[3], point ) ) {
-						// found it.	break out of loop.
-						return ndx;
-				}
+			var quad = quadlist[ndx];
+			if( isPointInQuad( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'],
+												 quad[0], quad[1], quad[2], quad[3], point ) ) {
+					// found it.	break out of loop.
+				return ndx;
+			}
 		}
 		return -1;
 	}
@@ -291,7 +284,7 @@ Renderer = (function($){
 			p.v[axis] = 3.0;
 			if ( i & 1 )
 			{
-					p.v[axis] *= -1.0;
+				p.v[axis] *= -1.0;
 			}
 			d[axis] = 0.0;
 
@@ -301,11 +294,11 @@ Renderer = (function($){
 			var s1 = 1.0;
 			if ( invertAxis[ i ][ 0 ] )
 			{
-					s0 *= -1.0;
+				s0 *= -1.0;
 			}
 			if ( invertAxis[ i ][ 1 ] )
 			{
-					s1 *= -1.0
+				s1 *= -1.0
 			}
 			d[a0] = ( 2.0 - 2.0 * gapSize ) * s0;
 			d[a1] = ( 2.0 - 2.0 * gapSize ) * s1;
@@ -314,27 +307,27 @@ Renderer = (function($){
 			p.v[a1] = -3.0 * s1 + g[a1];
 			for ( var j = 0; j < 3; j++ )
 			{
-					p.v[a0] = -3.0 * s0 + g[a0]
-					for ( var k = 0; k < 3; k++ )
-					{
-							var p1 = vectorCopy( p );
+				p.v[a0] = -3.0 * s0 + g[a0]
+				for ( var k = 0; k < 3; k++ )
+				{
+					var p1 = vectorCopy( p );
 
-							p.v[ a0 ] += d[ a0 ]
-							var p2 = vectorCopy( p );
+					p.v[ a0 ] += d[ a0 ]
+					var p2 = vectorCopy( p );
 
-							p.v[ a1 ] += d[ a1 ];
-							var p3 = vectorCopy( p );
+					p.v[ a1 ] += d[ a1 ];
+					var p3 = vectorCopy( p );
 
-							p.v[ a0 ] -= d[ a0 ];
-							var p4 = vectorCopy( p );
+					p.v[ a0 ] -= d[ a0 ];
+					var p4 = vectorCopy( p );
 
-							var ndx = i*9 + j*3 + k
-							quadlist[ ndx ] = [p1,p2,p3,p4];
+					var ndx = i*9 + j*3 + k
+					quadlist[ ndx ] = [p1,p2,p3,p4];
 
-							p.v[ a1 ] -= d[ a1 ];
-							p.v[ a0 ] += d[ a0 ] + 2.0 * g[ a0 ];
-					}
-					p.v[ a1 ] += d[ a1 ] + 2.0 * g[ a1 ];
+					p.v[ a1 ] -= d[ a1 ];
+					p.v[ a0 ] += d[ a0 ] + 2.0 * g[ a0 ];
+				}
+				p.v[ a1 ] += d[ a1 ] + 2.0 * g[ a1 ];
 			}
 		}
 		return quadlist;
@@ -345,10 +338,10 @@ Renderer = (function($){
 	//	 available for click
 	//-----------------------------------------------------------------------------
 	my.shouldDrawArrow = function( faceNum ){
-			// If we're in single player mode, verify that this arrow is intended for this player
-			if ( CubeControl.ignore_clicks ){
-				return false;
-			}
+		// If we're in single player mode, verify that this arrow is intended for this player
+		if ( CubeControl.ignore_clicks ){
+			return false;
+		}
 
 //		//this enables the axis multiplayer
 //			 if ( client_state == "MULT" )
@@ -357,8 +350,8 @@ Renderer = (function($){
 //						 return false;
 //			 }
 
-			// Verify that this is a facet that deserves an arrow in any condition
-			return (arrowRotation[faceNum][0] != 0);
+		// Verify that this is a facet that deserves an arrow in any condition
+		return (arrowRotation[faceNum][0] != 0);
 	}
 
 	//-----------------------------------------------------------------------------
@@ -369,97 +362,97 @@ Renderer = (function($){
 	// p1-p4: the 4 quad points to render in
 	// orientation: a number 0-3 indicating the orientation
 	//-----------------------------------------------------------------------------
-	function drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, orientation, color ){
-			// Backface cull first
-			var b1 = vectorMultiplyProjective( viewProj, p1 );
-			var b2 = vectorMultiplyProjective( viewProj, p2 );
-			var b3 = vectorMultiplyProjective( viewProj, p3 );
-			var e1 = vectorSubtract( b2, b1 );
-			var e2 = vectorSubtract( b3, b1 );
-			var c = vectorCross( e1, e2 );
-			if ( c.v[2] <= 0.0 )
-			{
-					return;
-			}
+	function drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, orientation, color, alpha){
+		// Backface cull first
+		var b1 = vectorMultiplyProjective( viewProj, p1 );
+		var b2 = vectorMultiplyProjective( viewProj, p2 );
+		var b3 = vectorMultiplyProjective( viewProj, p3 );
+		var e1 = vectorSubtract( b2, b1 );
+		var e2 = vectorSubtract( b3, b1 );
+		var c = vectorCross( e1, e2 );
+		if ( c.v[2] <= 0.0 )
+		{
+				return;
+		}
 
-			ctx.fillStyle = "rgba(" + Math.round(255.0*color[2]) + "," + Math.round(255.0*color[1]) + "," + Math.round(255.0*color[0]) + ",1)";
-			ctx.globalAlpha = 1.0;
+		ctx.fillStyle = "rgba(" + Math.round(255.0*color[2]) + "," + Math.round(255.0*color[1]) + "," + Math.round(255.0*color[0]) + ",1)";
+		ctx.globalAlpha = transitionAlpha;
 
-			// Build basis
-			var origin;
-			var up;
-			var right;
-			if ( orientation == 0 )
-			{
-					origin = p1;
-					up = vectorSubtract( p4, p1 );
-					right = vectorSubtract( p2, p1 );
-			}
-			else if ( orientation == 1 )
-			{
-					origin = p2;
-					up = vectorSubtract( p1, p2 );
-					right = vectorSubtract( p3, p2 );
-			}
-			else if ( orientation == 2 )
-			{
-					origin = p3;
-					up = vectorSubtract( p2, p3 );
-					right = vectorSubtract( p4, p3 );
-			}
-			else if ( orientation == 3 )
-			{
-					origin = p4;
-					up = vectorSubtract( p3, p4 );
-					right = vectorSubtract( p1, p4 );
-			}
+		// Build basis
+		var origin;
+		var up;
+		var right;
+		if ( orientation == 0 )
+		{
+			origin = p1;
+			up = vectorSubtract( p4, p1 );
+			right = vectorSubtract( p2, p1 );
+		}
+		else if ( orientation == 1 )
+		{
+			origin = p2;
+			up = vectorSubtract( p1, p2 );
+			right = vectorSubtract( p3, p2 );
+		}
+		else if ( orientation == 2 )
+		{
+			origin = p3;
+			up = vectorSubtract( p2, p3 );
+			right = vectorSubtract( p4, p3 );
+		}
+		else if ( orientation == 3 )
+		{
+			origin = p4;
+			up = vectorSubtract( p3, p4 );
+			right = vectorSubtract( p1, p4 );
+		}
 
-			// Build arrow points
-			var borderAmount = 0.1;
-			var baseAmount = 0.3;
-			var arrowVertAmount = 0.4;
+		// Build arrow points
+		var borderAmount = 0.1;
+		var baseAmount = 0.3;
+		var arrowVertAmount = 0.4;
 
-			var a1 = vectorMultiplyAdd2( origin, up, borderAmount, right, baseAmount );
-			var a2 = vectorMultiplyAdd2( origin, up, borderAmount, right, 1.0 - baseAmount );
-			var a3 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, 1.0 - baseAmount );
-			var a4 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, 1.0 - borderAmount );
-			var a5 = vectorMultiplyAdd2( origin, up, 1.0 - borderAmount, right, 0.5 );
-			var a6 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, borderAmount );
-			var a7 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, baseAmount );
+		var a1 = vectorMultiplyAdd2( origin, up, borderAmount, right, baseAmount );
+		var a2 = vectorMultiplyAdd2( origin, up, borderAmount, right, 1.0 - baseAmount );
+		var a3 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, 1.0 - baseAmount );
+		var a4 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, 1.0 - borderAmount );
+		var a5 = vectorMultiplyAdd2( origin, up, 1.0 - borderAmount, right, 0.5 );
+		var a6 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, borderAmount );
+		var a7 = vectorMultiplyAdd2( origin, up, arrowVertAmount, right, baseAmount );
 
-			// Transform all points into viewport space
-			var vp1 = vectorMultiplyProjective( viewProjViewport, a1 );
-			var vp2 = vectorMultiplyProjective( viewProjViewport, a2 );
-			var vp3 = vectorMultiplyProjective( viewProjViewport, a3 );
-			var vp4 = vectorMultiplyProjective( viewProjViewport, a4 );
-			var vp5 = vectorMultiplyProjective( viewProjViewport, a5 );
-			var vp6 = vectorMultiplyProjective( viewProjViewport, a6 );
-			var vp7 = vectorMultiplyProjective( viewProjViewport, a7 );
+		// Transform all points into viewport space
+		var vp1 = vectorMultiplyProjective( viewProjViewport, a1 );
+		var vp2 = vectorMultiplyProjective( viewProjViewport, a2 );
+		var vp3 = vectorMultiplyProjective( viewProjViewport, a3 );
+		var vp4 = vectorMultiplyProjective( viewProjViewport, a4 );
+		var vp5 = vectorMultiplyProjective( viewProjViewport, a5 );
+		var vp6 = vectorMultiplyProjective( viewProjViewport, a6 );
+		var vp7 = vectorMultiplyProjective( viewProjViewport, a7 );
 
-			// Draw a filled quad
-			ctx.beginPath();
-			ctx.moveTo(vp1.v[0], vp1.v[1]);
-			ctx.lineTo(vp2.v[0], vp2.v[1]);
-			ctx.lineTo(vp3.v[0], vp3.v[1]);
-			ctx.lineTo(vp4.v[0], vp4.v[1]);
-			ctx.lineTo(vp5.v[0], vp5.v[1]);
-			ctx.lineTo(vp6.v[0], vp6.v[1]);
-			ctx.lineTo(vp7.v[0], vp7.v[1]);
-			ctx.closePath();
-			ctx.fill();
+		// Draw a filled quad
+		ctx.beginPath();
+		ctx.moveTo(vp1.v[0], vp1.v[1]);
+		ctx.lineTo(vp2.v[0], vp2.v[1]);
+		ctx.lineTo(vp3.v[0], vp3.v[1]);
+		ctx.lineTo(vp4.v[0], vp4.v[1]);
+		ctx.lineTo(vp5.v[0], vp5.v[1]);
+		ctx.lineTo(vp6.v[0], vp6.v[1]);
+		ctx.lineTo(vp7.v[0], vp7.v[1]);
+		ctx.closePath();
+		ctx.fill();
 	}
 
 	// x = 1,-1 y = 2,-2 z = 3,-3 !rotate = 0
 	// Second ordinal is the row #
 	arrowRotation = [
-			 [2,2,3],[0,0,3],[-2,2,3],[2,1,3],[0,0,3],[-2,1,3],[2,0,3],[0,0,3],[-2,0,3],
-			 [2,2,3],[0,0,3],[-2,2,3],[2,1,3],[0,0,3],[-2,1,3],[2,0,3],[0,0,3],[-2,0,3],
+		[2,2,3],[0,0,3],[-2,2,3],[2,1,3],[0,0,3],[-2,1,3],[2,0,3],[0,0,3],[-2,0,3],
+		[2,2,3],[0,0,3],[-2,2,3],[2,1,3],[0,0,3],[-2,1,3],[2,0,3],[0,0,3],[-2,0,3],
 
-			 [3,0,1],[3,1,1],[3,2,1],[0,0,1],[0,0,1],[0,0,1],[-3,0,1],[-3,1,1],[-3,2,1],
-			 [-3,2,1],[-3,1,1],[-3,0,1],[0,0,1],[0,0,1],[0,0,1],[3,2,1],[3,1,1],[3,0,1],
+		[3,0,1],[3,1,1],[3,2,1],[0,0,1],[0,0,1],[0,0,1],[-3,0,1],[-3,1,1],[-3,2,1],
+		[-3,2,1],[-3,1,1],[-3,0,1],[0,0,1],[0,0,1],[0,0,1],[3,2,1],[3,1,1],[3,0,1],
 
-			 [1,2,2],[0,0,2],[-1,2,2],[1,1,2],[0,0,2],[-1,1,2],[1,0,2],[0,0,2],[-1,0,2],
-			 [1,2,2],[0,0,2],[-1,2,2],[1,1,2],[0,0,2],[-1,1,2],[1,0,2],[0,0,2],[-1,0,2],
+		[1,2,2],[0,0,2],[-1,2,2],[1,1,2],[0,0,2],[-1,1,2],[1,0,2],[0,0,2],[-1,0,2],
+		[1,2,2],[0,0,2],[-1,2,2],[1,1,2],[0,0,2],[-1,1,2],[1,0,2],[0,0,2],[-1,0,2],
 	];
 
 	// x[],y[],z[] then
@@ -470,12 +463,12 @@ Renderer = (function($){
 
 
 	function clear_svg() {
-			if( RENDER_WITH_SVG ) {
-					if( svg ) {
-							svg.clear();
-					}
+		if( RENDER_WITH_SVG ) {
+			if( svg ) {
+				svg.clear();
 			}
-			svg_polygons = [];
+		}
+		svg_polygons = [];
 	}
 
 	function drawCube( ctx, viewProj, viewProjViewport, colors, grey_mode ){
@@ -498,18 +491,19 @@ Renderer = (function($){
 			if (my.shouldDrawArrow(ndx)) {
 				var sign = arrowRotation[ndx][0] < 0;
 				arrowDirection = rotToOrient[Math.abs(arrowRotation[ndx][0]) - 1][Math.floor(ndx / 9)]
-					if (sign) {
-						arrowDirection = (2 + arrowDirection) % 4
-					}
+				if (sign) {
+					arrowDirection = (2 + arrowDirection) % 4
+				}
 				//clog(arrowRotation[ndx], Math.floor(ndx/9), sign, arrowDirection)
 				if (arrowDirection >= 0)
 				{
 					if( CubeControl.INCLUDE_ARROWS )
 					{
 						if( !grey_mode ){
-							drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor );
-						} else {
-							drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor );
+							drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor, 0);
+						}
+						else {
+							drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor, 0);
 						}
 					}
 				}
@@ -517,13 +511,11 @@ Renderer = (function($){
 
 			if ( ( CubeControl.lastFaceClicked >= 0 ) && (CubeControl.lastFaceClicked == ndx ) )
 			{
-				if (arrowDirection >= 0)
-				{
+				if (arrowDirection >= 0){
 					drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, red );
 				}
 				CubeControl.renderClickedFaceCount--;
-				if ( CubeControl.renderClickedFaceCount <= 0 )
-				{
+				if ( CubeControl.renderClickedFaceCount <= 0 ){
 					CubeControl.lastFaceClicked = -1;
 				}
 			}
@@ -531,21 +523,20 @@ Renderer = (function($){
 	}
 
 	my.render_view = function( width, height, altitude, azimuth, distance ){
-			var canvas = document.getElementById("canvas");
-			var ctx = canvas.getContext("2d");
+		var canvas = document.getElementById("canvas");
+		var ctx = canvas.getContext("2d");
 
+		// Clear canvas
+		canvas.width = canvas.width;
 
-			// Clear canvas
-			canvas.width = canvas.width;
+		var view_context = build_view_context();
 
-			var view_context = build_view_context();
-
-			if( grey == 1 && menustate == 0 ){
-				drawCube( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'], current_cube_colors, true );
-			} else {
-				drawCube( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'], current_cube_colors, false );
-			}
-
+		if( grey == 1 && menustate == 0 ){
+			drawCube( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'], current_cube_colors, true );
+		}
+		else {
+			drawCube( view_context['ctx'], view_context['viewProj'], view_context['viewProjViewport'], current_cube_colors, false );
+		}
 	}
 
 	my.set_current_cube_colors = function( new_colors ){
