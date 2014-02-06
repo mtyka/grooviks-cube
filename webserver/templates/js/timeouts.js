@@ -25,7 +25,6 @@ var timeout = (function($){
 //------ SYNC GAME TIMER -------
 	my.set_game_time = function(actual){
 		game_timeleft = actual;
-		synced = true;
 	}
 
 	my.get_real_game_timeleft = function(){
@@ -96,8 +95,6 @@ var timeout = (function($){
 		else
 			game_timeleft = my.sp_session_duration;
 	}
-
-	synced = false;
 
 	my.reset_turn_timeout = function(){
 		turn_timeleft = my.mp_turn_duration;
