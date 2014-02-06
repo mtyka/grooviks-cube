@@ -64,26 +64,26 @@ var HookboxConnection = (function(){
 					faceclick_subscription = _subscription;
 					faceclick_subscription.onPublish = function(frame) {
 						playFaceClickSound(frame);
-						clog('Heard about click on face ' + frame.payload);
+						console.log('Heard about click on face ' + frame.payload);
 					};
 				}
 
 				if( channelName == 'colorcalibrx') {
 					calib_subscription = _subscription;
 					calib_subscription.onPublish = function(frame) {
-						clog('Heard calibration message');
-						clog(frame.payload);
+						console.log('Heard calibration message');
+						console.log(frame.payload);
 						var rgb_floats = decompress_rgbfloat(frame.payload);
 
 						changeSlider ( rgb_floats );
-						clog('done with calibration message');
+						console.log('done with calibration message');
 					};
 				}
 				if( channelName == 'movesfromsolved' ) {
 					movesfromsolved_subscription = _subscription;
 					movesfromsolved_subscription.onPublish = function(frame) {
 						return;
-						//clog('moves_from_solved has announced answer' + frame.payload);
+						//console.log('moves_from_solved has announced answer' + frame.payload);
 						//moves_from_solved = frame.payload;
 						// start inactivity counter which will trigger the message to appear
 						//next_flash_moves_display = setTimeout("flash_moves_display()", 5000 );
@@ -140,7 +140,7 @@ var HookboxConnection = (function(){
 				if( channelName == 'settings' ){
 					settings_subscription = _subscription;
 					settings_subscription.onPublish = function(frame) {
-						console.log("Settings recieved");
+						//console.log("Settings recieved");
 						var setVal = function(id, f){
 							$("#"+id).val(parseInt(f[id]));
 						}
@@ -165,7 +165,7 @@ var HookboxConnection = (function(){
 				if( channelName == 'vote' ){
 					vote_subscription = _subscription;
 					vote_subscription.onPublish = function(frame) {
-						console.log(frame);
+						//console.log(frame);
 						if (typeof(frame.payload["vote-for"]) != 'undefined' &&
 								frame.payload["vote-for"] != position &&
 			 					global.activePlayers.indexOf(parseInt(position)) >= 0){
@@ -197,14 +197,14 @@ var HookboxConnection = (function(){
 				if( channelName == 'timeout' ){
 					timeout_subscription = _subscription;
 					timeout_subscription.onPublish = function(frame) {
-						console.log("timeout frame: ", frame);
+						//console.log("timeout frame: ", frame);
 						timeout.set_game_time(frame.payload["set"]);
 					};
 				}
 				if( channelName == 'difficulty' ){
 					diff_subscription = _subscription;
 					diff_subscription.onPublish = function(frame) {
-						console.log("diff frame: ", frame);
+						//console.log("diff frame: ", frame);
 						var diff = frame.payload["set"];
 
 						if (diff > 0 && diff <= 2)

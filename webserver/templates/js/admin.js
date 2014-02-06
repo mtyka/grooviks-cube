@@ -42,18 +42,18 @@ function cube_got_shift_clicked_on(x,y){
         calibrationFace = facenum;
         HookboxConnection.hookbox_conn.publish('colorcalib', [facenum] );
         $('div#facenum').html('Facet ' + facenum + ' is now being calibrated.');
-        clog("Facet " + facenum + " is now being calibrated");
+        console.log("Facet " + facenum + " is now being calibrated");
     }
 }
 
 function calibrate(face, red, green, blue) {
-	clog("Calibrating face: " + face +" r: " + red + " g: " + green + " b: " + blue);
+	console.log("Calibrating face: " + face +" r: " + red + " g: " + green + " b: " + blue);
 	HookboxConnection.hookbox_conn.publish('colorcalib', [face, blue, green, red]);
 }
 
 function calibrateEvent(){
 	if (calibrationFace == -1) {
-		clog("Escaping out of calibration because no face selected");
+		console.log("Escaping out of calibration because no face selected");
 		return;
 	}
 
@@ -66,15 +66,15 @@ function calibrateEvent(){
 }
 
 function changeSlider(rgb_floats){
-        clog("changing slider based on message" );
+        console.log("changing slider based on message" );
         $( "#red" ).slider( "value", rgb_floats[0]*max_slider);
         $( "#green" ).slider( "value", rgb_floats[1]*max_slider );
         $( "#blue" ).slider( "value", rgb_floats[2]*max_slider );
 }
 
 function set_cubemode(mode) {
-    clog("Setting cube mode: " + mode);
-    clog( HookboxConnection.hookbox_conn )
+    console.log("Setting cube mode: " + mode);
+    console.log( HookboxConnection.hookbox_conn )
     HookboxConnection.hookbox_conn.publish('cubemode', {'mode' : mode});
     CubeControl.current_mode = mode;
 

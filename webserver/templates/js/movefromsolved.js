@@ -58,6 +58,6 @@ function flash_moves_display(){
 }
 
 function reset_flash_moves_timeout(){
-	clog( "Clear Flash Moves Timeout" );
+	console.log( "Clear Flash Moves Timeout" );
 	$("#movestext").html("");
 }

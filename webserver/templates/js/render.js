@@ -92,7 +92,7 @@ Renderer = (function($){
 			if( RENDER_WITH_SVG ) {
 				// Make sure it is hidden. This is actually not needed b/c clear_svg() takes care of it.
 				if( svg_polygons[ndx] ) {
-					clog("Hiding face " + ndx);
+					console.log("Hiding face " + ndx);
 					$( svg_polygons[ndx] ).animate( {svgFillOpacity:0}, 0);
 					svg_polygons[ndx] = 0;
 				}
@@ -137,9 +137,9 @@ Renderer = (function($){
 				if( svg_polygons[ndx] ) {
 					// Yes.	Just update the color.
 					$( svg_polygons[ndx] ).animate( {svgFill: color}, SVG_ANIMATION_SPEED );
-					//clog("Animating svg face "+ndx);
+					//console.log("Animating svg face "+ndx);
 				} else {
-					//clog("Drawing svg face "+ndx + " with color " + color);
+					//console.log("Drawing svg face "+ndx + " with color " + color);
 					// The polygon doesnt exist yet.	Create it.
 					//svg_polygons[ndx] = svg.polygon([
 					pg = svg.polygon([
@@ -492,7 +492,7 @@ Renderer = (function($){
 				if (sign) {
 					arrowDirection = (2 + arrowDirection) % 4
 				}
-				//clog(arrowRotation[ndx], Math.floor(ndx/9), sign, arrowDirection)
+				//console.log(arrowRotation[ndx], Math.floor(ndx/9), sign, arrowDirection)
 				if (arrowDirection >= 0)
 				{
 					if( CubeControl.INCLUDE_ARROWS )
