@@ -114,7 +114,7 @@ var timeout = (function($){
 		}
 
 		game_timeleft -= 1;
-		console.log("timeleft: ", game_timeleft);
+		//console.log("timeleft: ", game_timeleft);
 		$("#game_timeout").html("Session time remaining " + normalizeTime(game_timeleft));
 	}
 

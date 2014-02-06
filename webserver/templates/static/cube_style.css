@@ -344,10 +344,6 @@ input{
 	color: rgb(255,0,0);
 }
 
-.active{
-	text-shadow: 0 0 5px white, 0 0 5px white;
-}
-
 #turn-token{
 	position: fixed;
 	top: 10px;
@@ -362,8 +358,12 @@ input{
 	clear: both;
 	top: 45px;
 	left: 50px;
-
+	font-size: 1.4em;
 	color: rgb(255,210,0);
+}
+
+#turn_notice.active{
+	font-size: 1.8em;
 }
 
 #difficulty_notice{
@@ -383,7 +383,8 @@ input{
 	position: fixed;
 	bottom: 100px;
 	right: 50px;
-	text-align: right;
+	text-align: left;
+	width: 16.5em;
 }
 
 #game_timeout {
@@ -393,5 +394,6 @@ input{
 	position: fixed;
 	right:  100px;
 	bottom: 130px;
-	text-align: right;
+	text-align: left;
+	width: 22.5em;
 }
