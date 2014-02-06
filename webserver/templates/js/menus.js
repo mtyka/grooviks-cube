@@ -232,6 +232,28 @@ function voteNo(){
 	clear_screen();
 }
 
+function goto_alert_screen(text, subtext, timeup){
+	CubeControl.ignore_clicks = true;
+   	if( menustate == 10 ) return;
+		remove_menu();
+
+	flyin_menu_bg(); //there is never a menu up before this one
+   	menustate = 10;
+
+	$("#alertmenu h1").html(text);
+	$("#alertmenu h2").html(subtext);
+
+	flyin_menu("#alertmenu");
+
+	start_spin( true );
+
+	setTimeout(function(){
+		clear_screen();				//depends on the context, might want to quit()
+		$("#alertmenu h1").empty();
+		$("#alertmenu h2").empty();
+	}, timeup);
+}
+
 function goto_victory_screen(){
 	CubeControl.ignore_clicks = true;
    	if( menustate == 11 ) return;
@@ -239,7 +261,7 @@ function goto_victory_screen(){
 
    	menustate = 11;
 
-	flyin_menu("#votemenu");
+	flyin_menu("#victorymenu");
 
 	var timeStr = timeout.get_real_game_timeleft();
 	timeStr = timeStr.split(":");
@@ -257,30 +279,16 @@ function goto_victory_screen(){
 	$("#victoryTime").html(normalizeTime(upper - val));
 	$("#victoryDiff").html(global.parseDifficulty());
 
-	start_spin( true );
-}
-
-function goto_alert_screen(text, subtext, timeup){
-	CubeControl.ignore_clicks = true;
-   	if( menustate == 10 ) return;
-		remove_menu();
-
-	flyin_menu_bg(); //there is never a menu up before this one
-   	menustate = 10;
-
-	$("#alertmenu h1").html(text);
-	$("#alertmenu h2").html(subtext);
-
-	flyin_menu("#alertmenu");
+	timeout.stop_game_timer();
+	timeout.stop_turn_timer();
 
 	start_spin( true );
 
 	setTimeout(function(){
-		clear_screen();
-		$("#alertmenu h1").empty();
-		$("#alertmenu h2").empty();
-	}, timeup);
+		clicked_quit();
+	}, 10000);
 }
+
 
 function remove_menu(){
 	if( menustate == 1 )   flyout_menu("#idlemenu");
@@ -293,7 +301,7 @@ function remove_menu(){
 	else if( menustate == 8 )   flyout_menu("#connectingmenu");
 	else if( menustate == 9 )   flyout_menu("#votemenu");
 	else if( menustate == 10 )  flyout_menu("#alertmenu");
-	else if( menustate == 10 )  flyout_menu("#victorymenu");
+	else if( menustate == 11 )  flyout_menu("#victorymenu");
 
 	if (menustate == 0){
 		show_rotation_buttons();

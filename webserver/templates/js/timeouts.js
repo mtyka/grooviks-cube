@@ -50,13 +50,12 @@ var timeout = (function($){
 		}
 
 		my.get_game_time();
+		setTimeout(my.get_game_time, Math.floor(game_timeleft/2));
 		$("#game_timeout").css("display", "inline");
 	}
 
 	my.start_turn_timeout = function(){
-		if (global.currentTurn != position ||
-			global.activePlayers.length <= 1 ||
-			tTimer != null){
+		if (tTimer != null){
 			return;
 		}
 

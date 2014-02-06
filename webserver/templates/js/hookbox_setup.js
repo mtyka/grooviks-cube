@@ -92,6 +92,7 @@ var HookboxConnection = (function(){
 				if( channelName == 'gameState' ) {
 					gamestate_subscription = _subscription;
 					gamestate_subscription.onPublish = function(frame) {
+						console.log(frame);
 						on_game_state_change(frame.payload["gamestate"], frame.payload["active_position"], frame.payload["clientstate"]);
 					};
 				}
