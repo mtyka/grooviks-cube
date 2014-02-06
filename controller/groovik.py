@@ -462,6 +462,7 @@ class GrooviksCube:
 		print "vote stat: " + status
 		if status == "success":
 			push_message(json.dumps({'vote-result': 1, 'position': self.__voter.candidate}), "vote")
+			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(self.GetActiveClientsForState(ClientState.MULT))}), "turns")
 			self.__voter = None
 		elif status == "failure":
 			push_message(json.dumps({'vote-result': 0, 'position': self.__voter.candidate}), "vote")

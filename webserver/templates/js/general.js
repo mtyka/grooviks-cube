@@ -42,38 +42,13 @@ var global = (function($){
 					$("#p"+i.toString()).addClass(onlineClass);
 				else{
 					$("#p"+i.toString()).removeClass(onlineClass);
-					$("#p"+i.toString()).removeClass(activeClass)
 				}
-			}
-
-			switch (parseInt(my.currentTurn)){
-				case 1:
-					$("#p1").addClass(activeClass);
-					$("#p2").removeClass(activeClass);
-					$("#p3").removeClass(activeClass);
-					break;
-				case 2:
-					$("#p1").removeClass(activeClass);
-					$("#p2").addClass(activeClass);
-					$("#p3").removeClass(activeClass);
-					break;
-				case 3:
-					$("#p1").removeClass(activeClass);
-					$("#p2").removeClass(activeClass);
-					$("#p3").addClass(activeClass);
-					break;
-				default:
-					$("#p1").removeClass(activeClass + " " + onlineClass);
-					$("#p2").removeClass(activeClass + " " + onlineClass);
-					$("#p3").removeClass(activeClass + " " + onlineClass);
-					console.log(my.currentTurn);
-					break;
 			}
 		}
 		if (my.currentTurn == position)
-			$("#turn_notice").html("your turn");
+			$("#turn_notice").html("your turn").addClass('active');
 		else
-			$("#turn_notice").html("Player " + my.currentTurn + "'s turn");
+			$("#turn_notice").html("Player " + my.currentTurn + "'s turn").removeClass('active');
 
 		tokenChanger();
 		timeout.start_turn_timeout();
@@ -191,8 +166,6 @@ var global = (function($){
 		   goto_idle_screen();
 		   HookboxConnection.hookbox_conn.publish('settings', {'command': 'get'});
 		});
-
-
 
 		my.currentTurn = position;
 
