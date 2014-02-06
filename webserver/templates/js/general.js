@@ -16,6 +16,8 @@ var global = (function($){
 	my.currentTurn = 0;
 	my.activePlayers = [];
 
+	my.difficulty = 0;
+
 	var wasSpinning = false;
 
 	my.turnCheck = function(){
@@ -23,7 +25,10 @@ var global = (function($){
 			CubeControl.ignore_clicks = true;
 		}
 		else if (menustate == 0){
-			CubeControl.ignore_clicks = false;
+			setTimeout( function(){
+				CubeControl.ignore_clicks = false;
+				CubeControl.reset_arrow_timer();
+			}, 1000);
 		}
 
 		//just to avoid a ton of hardcoding.
@@ -52,6 +57,15 @@ var global = (function($){
 
 		tokenChanger();
 		timeout.start_turn_timeout();
+	}
+
+	my.parseDifficulty = function(){
+		if (my.difficulty > 0 && my.difficulty <= 2)
+			return "Easy";
+		else if (my.difficulty > 2 && my.difficulty <= 4)
+			return "Medium";
+		else
+			return "Hard";
 	}
 
 	my.difficultyNotice = function(on){

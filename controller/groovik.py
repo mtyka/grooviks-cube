@@ -659,7 +659,7 @@ class GrooviksCube:
 			return 0
 
 	def getDifficulty(self):
-		self.currentDifficulty
+		return self.currentDifficulty
 
 	# This method is designed exclusively for the GScript method of authoring pre-scripted transitions
 	# and shouldn't be called outside of that

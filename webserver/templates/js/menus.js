@@ -16,6 +16,7 @@ var waitingTimer = null;
 // 8 = connecting menu;
 // 9 = vote menu
 // 10= alert screen, a menu style alert that enters and dismisses quickly.
+// 11= victory menu
 
 function reset_gamestate(position, difficulty) {
     console.log("Resetting gamestate: " + difficulty);
@@ -25,6 +26,8 @@ function reset_gamestate(position, difficulty) {
 var selected_game_mode = "START_3P"
 
 function select_difficulty( difficulty ){
+
+	global.difficulty = difficulty;
 
 	last_moves_from_solved = difficulty
 	moves_from_solved = difficulty
@@ -36,8 +39,6 @@ function select_difficulty( difficulty ){
   	if (difficulty > 0){
   		reset_gamestate(position, difficulty);
 	}
-
-
 
 	// This is somewhat hacky - but because of the order reversal in multiplayer mode compared to single player mode,
 	// the select diff screen has to clear itself in multiplayer mode. But not in single player mode.
@@ -181,6 +182,7 @@ function goto_queued_screen(){
 		flyin_menu("#queuedmenu");
 
 		start_spin( true );
+		timeout.get_game_time();
 		$("#timeUntilTurn").html(timeout.get_real_game_timeleft());
 		waitTimer = setInterval("waitTick()", 1000);
 }
@@ -213,7 +215,6 @@ function goto_vote_screen(){
    	if( menustate == 9 ) return;
 		remove_menu();
 
-	flyin_menu_bg(); //there is never a menu up before this one
    	menustate = 9;
 
 	flyin_menu("#votemenu");
@@ -229,6 +230,34 @@ function voteYes(){
 function voteNo(){
 	HookboxConnection.hookbox_conn.publish('vote', {'position':position, 'vote':0});
 	clear_screen();
+}
+
+function goto_victory_screen(){
+	CubeControl.ignore_clicks = true;
+   	if( menustate == 11 ) return;
+		remove_menu();
+
+   	menustate = 11;
+
+	flyin_menu("#votemenu");
+
+	var timeStr = timeout.get_real_game_timeleft();
+	timeStr = timeStr.split(":");
+
+	var val = parseInt(timeStr[0]*60) + parseInt(timeStr[1]);
+	var upper = 500;
+
+	if (client_state == "MULT"){
+		upper = timeout.mp_session_duration;
+	}
+	else{
+		upper = timeout.sp_session_duration;
+	}
+
+	$("#victoryTime").html(normalizeTime(upper - val));
+	$("#victoryDiff").html(global.parseDifficulty());
+
+	start_spin( true );
 }
 
 function goto_alert_screen(text, subtext, timeup){
@@ -264,6 +293,7 @@ function remove_menu(){
 	else if( menustate == 8 )   flyout_menu("#connectingmenu");
 	else if( menustate == 9 )   flyout_menu("#votemenu");
 	else if( menustate == 10 )  flyout_menu("#alertmenu");
+	else if( menustate == 10 )  flyout_menu("#victorymenu");
 
 	if (menustate == 0){
 		show_rotation_buttons();

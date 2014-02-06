@@ -64,7 +64,7 @@ class ModeNormal( ModeBase ):
 				resetScript.ForceQueue( grooviksCube )
 				## also make all clients quit!
 				for position in [1,2,3]:
-				  push_message( json.dumps({ 'position':position, 'command':ClientCommand.QUIT, }), 'clientcommand' )
+					push_message( json.dumps({ 'position':position, 'command':ClientCommand.QUIT, }), 'clientcommand' )
 		elif ( self.__normalModeState == ModeNormalState.RANDOMIZING_AFTER_VICTORY_DANCE ):
 			if ( not grooviksCube.HasQueuedStates() ):
 				self.__normalModeState = ModeNormalState.NORMAL
