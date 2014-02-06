@@ -204,15 +204,11 @@ var HookboxConnection = (function(){
 				if( channelName == 'difficulty' ){
 					diff_subscription = _subscription;
 					diff_subscription.onPublish = function(frame) {
-						//console.log("diff frame: ", frame);
+						console.log("diff frame: ", frame);
 						var diff = frame.payload["set"];
 
-						if (diff > 0 && diff <= 2)
-							diff = "Easy";
-						else if (diff > 2 && diff <= 4)
-							diff = "Medium";
-						else
-							diff = "Hard";
+						global.difficulty = diff;
+						diff = global.parseDifficulty();
 
 						$("#difficulty").html(diff);
 					};

@@ -89,14 +89,17 @@ function on_game_state_change(newState, activePosition, clientstate) {
 								}
 							}
 						}
-						else
-							if( game_state == "VICTORY" )
+						else{
+							if( game_state == "VICTORY" ){
 								clear_screen();
+							}
+						}
 					}
 				} //close client_state == "MULT"
 				else {
-					if ( client_state == "VICT" )
+					if ( client_state == "VICT" ){
 						clear_screen();
+					}
 					else
 						console.log("Unknown client_state:" + client_state );
 				}

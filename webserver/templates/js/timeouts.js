@@ -31,7 +31,7 @@ var timeout = (function($){
 		return normalizeTime(game_timeleft);
 	}
 
-	function get_game_time(){
+	my.get_game_time = function(){
 		HookboxConnection.hookbox_conn.publish('timeout', 'get');
 	}
 
@@ -49,7 +49,7 @@ var timeout = (function($){
 			gTimer = setInterval("self.update_game_timeout()", 1000);
 		}
 
-		get_game_time();
+		my.get_game_time();
 		$("#game_timeout").css("display", "inline");
 	}
 
