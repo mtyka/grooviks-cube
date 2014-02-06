@@ -16,7 +16,7 @@ CubeControl = (function($){
 	var previous_datagram = null;
 	var faceclick_subscription;
 	var enable_arrows_timeout = null;
-	var HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS = 700;	// ms
+	var HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS = 200;	// ms
 
 	// Converts a long hex string into an array of 54 RGB-float-triples
 	function decompress_datagram(datagram) {
@@ -48,7 +48,7 @@ CubeControl = (function($){
 	//
 	// Logic to turn arrows off when moving
 	//
-	function reset_arrow_timer() {
+	my.reset_arrow_timer = function() {
 		my.INCLUDE_ARROWS = false;
 		clearTimeout( enable_arrows_timeout );
 		enable_arrows_timeout = setTimeout( show_arrows, HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS );
@@ -95,7 +95,25 @@ CubeControl = (function($){
 		if(!my.admin_mode){
 			my.INCLUDE_ARROWS = true;
 		}
-		my.update_view();
+		console.log("show arrows called");
+
+		Renderer.alphaTranstion = 0.0;
+		$("#alphaTransition").attr('avalue', 0);
+
+		$("#alphaTransition").animate(
+		{
+			avalue: 1.0
+		},{	duration: 250,
+			complete: function(){
+				Renderer.alphaTransition = 1.0;
+				my.update_view();
+			},
+			step: function(){
+				//console.log($("#alphaTransition").attr("avalue"));
+				Renderer.alphaTransition = parseFloat($("#alphaTransition").attr("avalue"));
+				my.update_view();
+			}
+		});
 	}
 
 	my.set_ignore_clicks = function( value ){
@@ -105,7 +123,7 @@ CubeControl = (function($){
 	my.update_cube_state_from_datagram = function( datagram ) {
 		Renderer.set_current_cube_colors(decompress_datagram( datagram ));
 		if( previous_datagram != datagram ) {
-				reset_arrow_timer();
+				my.reset_arrow_timer();
 				previous_datagram = datagram;
 		}
 		my.update_view();	// calls into the renderer code
