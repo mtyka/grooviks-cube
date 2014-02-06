@@ -29,6 +29,7 @@ var global = (function($){
 				CubeControl.ignore_clicks = false;
 				CubeControl.reset_arrow_timer();
 			}, 1000);
+			timeout.start_turn_timeout();
 		}
 
 		//just to avoid a ton of hardcoding.
@@ -56,7 +57,6 @@ var global = (function($){
 			$("#turn_notice").html("Player " + my.currentTurn + "'s turn").removeClass('active');
 
 		tokenChanger();
-		timeout.start_turn_timeout();
 	}
 
 	my.parseDifficulty = function(){
