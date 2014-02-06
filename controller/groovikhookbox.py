@@ -52,7 +52,6 @@ from GScript import GScript
 
 TARGET_FRAMERATE = 3
 TARGET_FRAMETIME = 1.0 / TARGET_FRAMERATE
-INACTIVITY_TIMEOUT = 125
 
 # 30 looks good on real PCs.  iphones and ipads max out at about 5-10.
 # TODO: publish multiple channels at different framerates
@@ -275,7 +274,13 @@ class Cube():
 		'''
 		now = time.time()
 		for position, last_activity in self.clientLastActivity.items():
-			if now - last_activity > INACTIVITY_TIMEOUT:
+			inactivity_timeout = 0
+			if self.grooviksCube.GetGameState() == ClientState.MULT:
+				inactivity_timeout = int(groovikConfig.kioskSettings['mp-session-duration'])
+			else:
+				inactivity_timeout = int(groovikConfig.kioskSettings['sp-session-duration'])
+
+			if now - last_activity > inactivity_timeout:
 				self.logger.logLine("Client at position %s inactive for %d seconds; timing out" % (position, now - last_activity))
 				push_message( json.dumps({ 'position':position, 'command':ClientCommand.QUIT, }), 'clientcommand' )
 				del self.clientLastActivity[position]
