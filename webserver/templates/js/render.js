@@ -362,7 +362,7 @@ Renderer = (function($){
 	// p1-p4: the 4 quad points to render in
 	// orientation: a number 0-3 indicating the orientation
 	//-----------------------------------------------------------------------------
-	function drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, orientation, color, alpha){
+	function drawArrow( ctx, viewProj, viewProjViewport, p1, p2, p3, p4, orientation, color){
 		// Backface cull first
 		var b1 = vectorMultiplyProjective( viewProj, p1 );
 		var b2 = vectorMultiplyProjective( viewProj, p2 );
@@ -372,11 +372,11 @@ Renderer = (function($){
 		var c = vectorCross( e1, e2 );
 		if ( c.v[2] <= 0.0 )
 		{
-				return;
+			return;
 		}
 
 		ctx.fillStyle = "rgba(" + Math.round(255.0*color[2]) + "," + Math.round(255.0*color[1]) + "," + Math.round(255.0*color[0]) + ",1)";
-		ctx.globalAlpha = transitionAlpha;
+		ctx.globalAlpha = 1.0;
 
 		// Build basis
 		var origin;
@@ -500,10 +500,10 @@ Renderer = (function($){
 					if( CubeControl.INCLUDE_ARROWS )
 					{
 						if( !grey_mode ){
-							drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor, 0);
+							drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor);
 						}
 						else {
-							drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor, 0);
+							drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor);
 						}
 					}
 				}
