@@ -26,8 +26,8 @@ soundManager.onload = function(){
     soundManager.createSound({
         id: 'column1_3',
         url: '/static/synth_8bit_high_001.mp3',
-        autoLoad: true 
-    }); 
+        autoLoad: true
+    });
 
      soundManager.createSound({
         id: 'column2_1',
@@ -45,8 +45,8 @@ soundManager.onload = function(){
         id: 'column2_3',
         url: '/static/synth_tal_high_002.mp3',
         autoLoad: true
-    });    
-    
+    });
+
     soundManager.createSound({
         id: 'column3_1',
         url: '/static/vocoder_low_001.mp3',
@@ -81,7 +81,7 @@ soundManager.onload = function(){
         url: '/static/gear_003.mp3',
         autoLoad: true
     });
-    
+
     soundManager.createSound({
         id: 'victory1',
         url: '/static/mario1.mp3',
@@ -99,7 +99,7 @@ function playFaceClickSound(frame){
 }
 
 function playRotationSound(rotationStep){
-  clog(rotationStep);
+  console.log(rotationStep);
   if(rotationStep ){
     var gearSound = soundManager.getSoundById('gear' + rotationStep );
     gearSound.setVolume(masterVolume);
@@ -115,13 +115,13 @@ function playSound( soundid, stopall ){
 }
 
 function setMasterVolumeLevel(volumeLevel){
-	masterVolume  = volumeLevel;	
+	masterVolume  = volumeLevel;
 }
 
 // This is a placeholder for a function that can handle pongs
 pong_handler = null;
 
-ping_handler = function(){ 
+ping_handler = function(){
   HookboxConnection.hookbox_conn.publish("volumeControl", ["pong", position, masterVolume] );
 }
 

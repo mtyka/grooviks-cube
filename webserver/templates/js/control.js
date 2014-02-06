@@ -95,7 +95,7 @@ CubeControl = (function($){
 		if(!my.admin_mode){
 			my.INCLUDE_ARROWS = true;
 		}
-		console.log("show arrows called");
+		//console.log("show arrows called");
 
 		Renderer.alphaTranstion = 0.0;
 		$("#alphaTransition").attr('avalue', 0);
