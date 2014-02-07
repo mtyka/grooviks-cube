@@ -100,6 +100,7 @@ CubeControl = (function($){
 		Renderer.alphaTranstion = 0.0;
 		$("#alphaTransition").attr('avalue', 0);
 
+		$("#alphaTransition").stop()
 		$("#alphaTransition").animate(
 		{
 			avalue: 1.0
