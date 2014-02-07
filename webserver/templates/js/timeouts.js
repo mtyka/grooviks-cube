@@ -77,6 +77,7 @@ var timeout = (function($){
 		game_timeleft = -1;
 		clearInterval(gTimer);
 
+		gTimer = null;
 		$("#game_timeout").css("display", "none");
 	}
 
@@ -84,6 +85,7 @@ var timeout = (function($){
 		turn_timeleft = -1;
 		clearInterval(tTimer);
 
+		tTimer = null;
 		$("#turn_timeout").css("display", "none");
 	}
 

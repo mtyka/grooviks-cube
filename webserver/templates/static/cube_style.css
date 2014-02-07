@@ -384,7 +384,7 @@ input{
 	bottom: 100px;
 	right: 50px;
 	text-align: left;
-	width: 16.5em;
+	width: 22em;
 }
 
 #game_timeout {
@@ -395,5 +395,5 @@ input{
 	right:  100px;
 	bottom: 130px;
 	text-align: left;
-	width: 22.5em;
+	width: 19em;
 }
