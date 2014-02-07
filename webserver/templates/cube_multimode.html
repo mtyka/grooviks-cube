@@ -79,15 +79,15 @@
         <div class="levelmenu" id="joinmenu">
         	<h1>Multiplayer</h1>
         	<h2>Join game already in progress?</h2>
-			<input type="button" class="blueButton decisionButton" onclick="clicked_send_join_request();" ontouchstart="clicked_send_join_request();" ondragstart="return false" value="Yes">
-    		<input type="button" class="blueButton decisionButton" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="No">
+			<input type="button" class="blueButton decisionButton" onclick="menu.clicked_send_join_request();" ontouchstart="menu.clicked_send_join_request();" ondragstart="return false" value="Yes">
+    		<input type="button" class="blueButton decisionButton" onclick="menu.clicked_quit();" ontouchstart="menu.clicked_quit();" ondragstart="return false" value="No">
         </div>
 
 		<div class="levelmenu" id="votemenu">
 			<h1>Multiplayer</h1>
         	<h2>Add player <span id="new-player"></span> to game?</h2>
-			<input type="button" class="blueButton decisionButton" onclick="voteYes();" ontouchstart="voteYes();" ondragstart="return false" value="Yes">
-    		<input type="button" class="blueButton decisionButton" onclick="voteNo();" ontouchstart="voteNo();" ondragstart="return false" value="No">
+			<input type="button" class="blueButton decisionButton" onclick="menu.voteYes();" ontouchstart="menu.voteYes();" ondragstart="return false" value="Yes">
+    		<input type="button" class="blueButton decisionButton" onclick="menu.voteNo();" ontouchstart="menu.voteNo();" ondragstart="return false" value="No">
         </div>
 
 		<div class="levelmenu" id="alertmenu">
@@ -101,19 +101,19 @@
             	Your turn will start in
             	<span id="timeUntilTurn"></span>
             </h2>
-            <input type="button" class="button_back" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="Back">
+            <input type="button" class="button_back" onclick="menu.clicked_quit();" ontouchstart="menu.clicked_quit();" ondragstart="return false" value="Back">
         </div>
 
         <div class="levelmenu" id="waitingmenu">
             <h1>Multiplayer</h1>
             <h2>Waiting for other players let you join.</h2>
-            <input type="button" class="button_back" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="Back">
+            <input type="button" class="button_back" onclick="menu.clicked_quit();" ontouchstart="menu.clicked_quit();" ondragstart="return false" value="Back">
         </div>
 
         <div class="levelmenu" id="victorymenu">
             <h1>Congratulations</h1>
             <h2>You solved the cube in <span id="victoryTime"></span>. Difficulty: <span id="victoryDiff"></span></h2>
-            <input type="button" class="button_back" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="Continue">
+            <input type="button" class="button_back" onclick="menu.clicked_quit();" ontouchstart="menu.clicked_quit();" ondragstart="return false" value="Continue">
         </div>
 
         <div class="levelmenu" id="connectingmenu">
@@ -148,7 +148,7 @@
 		</div>
 
 		<div id="turn_timeout">
-			Time remaining for your turn <span id="turn_time">100</span>
+			Time remaining for your turn <span id="turn_time"></span>
 		</div>
 
 		<img id="turn-token" src="/static/turn-token/cube_0.png" alt="">
@@ -165,8 +165,8 @@
 			<input type="button" id="button_about" 		 class="bottomBarButton" onclick="global.unimplemented();" ontouchstart="unimplemented();" ondragstart="return false" value="About">
 			<input type="button" id="button_leaderboard" class="bottomBarButton" onclick="global.unimplemented();" ontouchstart="unimplemented();" ondragstart="return false" value="Leaderboard">
 
-			<input type="button" id="button_perspective" class="bottomBarButton" onclick="set_initial_position();" ontouchstart="set_initial_position();" ondragstart="return false" value="View from my perspective">
-    		<input type="button" id="button_quit" 		 class="bottomBarButton" onclick="clicked_quit();" ontouchstart="clicked_quit();" ondragstart="return false" value="Quit">
+			<input type="button" id="button_perspective" class="bottomBarButton" onclick="if (menu.menustate == 0)set_initial_position();" ontouchstart="if (menu.menustate == 0)set_initial_position();" ondragstart="return false" value="View from my perspective">
+    		<input type="button" id="button_quit" 		 class="bottomBarButton" onclick="menu.clicked_quit();" ontouchstart="menu.clicked_quit();" ondragstart="return false" value="Quit">
 		</div>
 
         <div class="debug" id="manual_rotate">
