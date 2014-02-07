@@ -386,6 +386,10 @@ input{
 	text-align: left;
 }
 
+#difficulty{
+	font-family: Gotham-Medium;
+}
+
 #turn_timeout{
 	display: none;
 	font-size: 1.5em;
