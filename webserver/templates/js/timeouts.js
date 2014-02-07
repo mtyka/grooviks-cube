@@ -15,8 +15,9 @@ var timeout = (function($){
 	var timeout_count =  0;
 	var game_timeleft = -1;
 
-	var gTimer = null;
-	var tTimer = null;
+	var gameTimer = null;
+	var turnTimer = null;
+	var menuTimer = null;
 
 	my.getTimeleft = function(){
 		return [turn_timeleft, timeout_count, game_timeleft];
@@ -42,11 +43,11 @@ var timeout = (function($){
 		else
 			game_timeleft = my.sp_session_duration;
 
-		if (!gTimer)
-			gTimer = setInterval("self.update_game_timeout()", 1000);
+		if (!gameTimer)
+			gameTimer = setInterval("self.update_game_timeout()", 1000);
 		else{
-			clearInterval(gTimer);
-			gTimer = setInterval("self.update_game_timeout()", 1000);
+			clearInterval(gameTimer);
+			gameTimer = setInterval("self.update_game_timeout()", 1000);
 		}
 
 		my.get_game_time();
@@ -55,38 +56,54 @@ var timeout = (function($){
 	}
 
 	my.start_turn_timeout = function(){
-		if (tTimer != null || global.activePlayers.length <= 1){
+		if (turnTimer != null || global.activePlayers.length <= 1){
 			return;
 		}
 
 		turn_timeleft = my.mp_turn_duration;
 
-		if (!tTimer)
-			tTimer = setInterval("self.update_turn_timeout()", 1000);
+		if (!turnTimer)
+			turnTimer = setInterval("self.update_turn_timeout()", 1000);
 		else{
-			clearInterval(tTimer);
-			tTimer = setInterval("self.update_turn_timeout()", 1000);
+			clearInterval(turnTimer);
+			turnTimer = setInterval("self.update_turn_timeout()", 1000);
 		}
 
 		$("#turn_timeout").css("display", "inline");
 	}
 
+	my.start_menu_timer = function(){
+		if (menuTimer != null){
+			return;
+		}
+		else{
+			menuTimer = setTimeout(function(){
+				menu.clicked_quit();
+				menuTimer = null;
+			}, my.menu_timeout * 1000);
+		}
+	}
 
 //------ STOP TIMERS -------
 	my.stop_game_timer = function(){
 		game_timeleft = -1;
-		clearInterval(gTimer);
+		clearInterval(gameTimer);
 
-		gTimer = null;
+		gameTimer = null;
 		$("#game_timeout").css("display", "none");
 	}
 
 	my.stop_turn_timer = function(){
 		turn_timeleft = -1;
-		clearInterval(tTimer);
+		clearInterval(turnTimer);
 
-		tTimer = null;
+		turnTimer = null;
 		$("#turn_timeout").css("display", "none");
+	}
+
+	my.stop_menu_timer = function(){
+		clearTimeout(menuTimer);
+		menuTimer = null;
 	}
 
 //------ RESET TIMERS -------
