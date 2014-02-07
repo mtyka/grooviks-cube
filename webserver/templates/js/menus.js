@@ -438,7 +438,7 @@ menu = (function(){
 
 	my.clicked_continue = function (){
 		timeout.start_game_timeout();
-		clear_screen();
+		my.clear_screen();
 	}
 
 	return my;
