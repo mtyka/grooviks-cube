@@ -137,16 +137,25 @@ input{
 	clear: both;
 	position: fixed;
 	width: 100%;
+  	height: 250px;
+	left: -25%;
+	top: 50%;
+	margin-top: -85px;
+	z-index: 8;
+	background: rgba(255,255,255,1);
+}
+
+#idlemenu.levelmenu{
+	color: black;
+	display: none;
+	clear: both;
+	position: fixed;
+	width: 100%;
   	height: 200px;
 	left: -25%;
 	top: 50%;
 	margin-top: -60px;
 	z-index: 8;
-	background: rgba(255,255,255,1);
-}
-
-#idlemenu{
-	color: black;
 	background: rgba(255,255,255,.86);
 }
 
@@ -227,6 +236,7 @@ input{
 	border-width: 0px;
 	font-size: 1.2em;
 	z-index: 20;
+	margin: 0 40px;
 }
 
 .divDecisionButton{
