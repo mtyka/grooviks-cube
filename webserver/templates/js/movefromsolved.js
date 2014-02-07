@@ -24,7 +24,6 @@ function remove_flash_display(){
 
 }
 
-
 ///////////// HOW MANY MOVES FROM SOLVED - DISPLAY ////////////////////
 var last_moves_from_solved = 0
 var moves_from_solved = 0

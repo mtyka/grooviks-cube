@@ -38,7 +38,56 @@ menu = (function(){
 
 	var selected_game_mode = "START_3P"
 
-	my.select_difficulty  = function (difficulty){
+
+	function flyin_menu_bg(){
+		// background is in place - thus ignore clicks on canvas
+		CubeControl.ignore_clicks=true;
+
+		hide_rotation_buttons();
+	}
+
+	function flyout_menu_bg(){
+
+	}
+
+	function flyin_menu( id ){
+		$(id).css("left", "-25%");
+		$(id).css("display", "inline");
+		$(id).animate( {
+		  left: "0%",
+		},{ duration: 1000,
+			complete: function(){
+				CubeControl.ignore_clicks = true;
+			}
+		});
+		timeout.start_menu_timer();
+	}
+
+	function flyout_menu( id ){
+		$(id).animate( {
+			left: "125%"
+		},{ duration: 1000,
+			complete: function(){
+				$(id).css("left", "-25%");
+				$(id).css("display", "none");
+			}
+		});
+		timeout.stop_menu_timer();
+	}
+
+	function menuIsOpen(m){
+		return $(menuIds[m]).css('display') == "inline";
+	}
+
+	function disableButton(which, disabled){
+		if (disabled)
+			$(which).attr("disabled", "disabled");
+			$(which).
+		else
+			$(which).removeAttr("disabled");
+	}
+
+		my.select_difficulty  = function (difficulty){
 
 		global.difficulty = difficulty;
 
@@ -64,54 +113,6 @@ menu = (function(){
 		}
 		timeout.start_game_timeout();
 		setTimeout(function(){set_initial_position();}, 400);
-	}
-
-
-	function flyin_menu_bg(){
-		// background is in place - thus ignore clicks on canvas
-		CubeControl.ignore_clicks=true;
-
-		hide_rotation_buttons();
-	}
-
-	function flyout_menu_bg(){
-
-	}
-
-	function flyin_menu( id ){
-		$(id).css("left", "-25%");
-		$(id).css("display", "inline");
-		$(id).animate( {
-		  left: "0%",
-		},{ duration: 1000 }
-		);
-
-		CubeControl.ignore_clicks = true;
-	}
-
-	function flyout_menu( id ){
-		$(id).animate( {
-		  left: "125%"
-		},{ duration: 1000,
-			complete: function(){
-				$(id).css("left", "-25%");
-				$(id).css("display", "none");
-			}
-		  }
-		);
-	}
-
-	function menuIsOpen(m){
-		return $(menuIds[m]).css('display') == "inline";
-	}
-
-
-	function disableButton(which, disabled){
-		if (disabled)
-			$(which).attr("disabled", "disabled");
-			$(which).
-		else
-			$(which).removeAttr("disabled");
 	}
 
 	my.goto_idle_screen = function(){
