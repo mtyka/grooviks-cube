@@ -24,7 +24,7 @@ var global = (function($){
 		if (position != my.currentTurn){
 			CubeControl.ignore_clicks = true;
 		}
-		else if (menustate == 0){
+		else if (menu.menustate == 0){
 			setTimeout( function(){
 				CubeControl.ignore_clicks = false;
 				CubeControl.reset_arrow_timer();
@@ -119,7 +119,7 @@ var global = (function($){
 	//free rotation
 	$(document).bind("mousedown touchstart", function(e){
 		//rotation only available when there are no menus
-		if (menustate > 0)
+		if (menu.menustate > 0)
 			return;
 
 		if (is_spinning){
@@ -167,8 +167,8 @@ var global = (function($){
 	});
 
 	$(window).bind( "click touchstart", function() {
-		if( menustate == 1 && !quitClicked){
-			clicked_wake();
+		if( menu.menustate == 1 && !menu.quitClicked){
+			menu.clicked_wake();
 		}
 	});
 
@@ -177,13 +177,13 @@ var global = (function($){
 	$(document).ready(function() {
 
 		HookboxConnection.init( '/static/hookbox.js', function(){
-		   goto_idle_screen();
+		   menu.goto_idle_screen();
 		   HookboxConnection.hookbox_conn.publish('settings', {'command': 'get'});
 		});
 
 		my.currentTurn = position;
 
-		goto_connecting_screen();
+		menu.goto_connecting_screen();
 		//timeout.update_game_timeout();
 		document.title = "P:" + position
 
@@ -195,7 +195,7 @@ var global = (function($){
 		// add click events that control the cube.
 		$("body").bind( "click touchstart", function( eventObj ) {
 			if( !CubeControl.ignore_clicks ){
-				if (menustate > 0){
+				if (menu.menustate > 0){
 					CubeControl.ignore_clicks = true;
 					return true;
 				}
@@ -213,9 +213,9 @@ var global = (function($){
 		});
 
 		//--------menus on Ready-----------
-		$("#easy").bind( "click touchstart",   function() { select_difficulty(2);} );
-		$("#medium").bind( "click touchstart", function() { select_difficulty(4);} );
-		$("#hard").bind( "click touchstart",   function() { select_difficulty(20);} );
+		$("#easy").bind( "click touchstart",   function() { menu.select_difficulty(2); menu.clear_screen();} );
+		$("#medium").bind( "click touchstart", function() { menu.select_difficulty(4); menu.clear_screen();} );
+		$("#hard").bind( "click touchstart",   function() { menu.select_difficulty(20); menu.clear_screen();} );
 
 		$("#buttonleft").bind( "click touchstart", function(){
 			console.log("button left click");

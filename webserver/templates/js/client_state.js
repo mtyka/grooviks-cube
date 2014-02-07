@@ -32,21 +32,21 @@ function on_game_state_change(newState, activePosition, clientstate) {
 	client_state = new_client_state;
 	if ( client_state == "IDLE" ){
 
-		goto_idle_screen();
+		menu.goto_idle_screen();
 	}
 	else{
 		if ( client_state == "HOME" ){
 
 			if (global.isKiosk() && global.activePlayers.length >= 0)
-				clicked_3player();
+				menu.clicked_3player();
 			else{	//for web version.
-				clicked_alone();
+				menu.clicked_alone();
 			}
 		}
 		else {
 			if ( client_state == "SING" ){
 				if( game_state == "SINGLE_INVITE" ){
-					goto_join_screen();
+					menu.goto_join_screen();
 				}
 				else
 				if( game_state == "SINGLE" ){
@@ -55,15 +55,15 @@ function on_game_state_change(newState, activePosition, clientstate) {
 						if( old_game_state != new_game_state ){
 							timeout.reset_game_timeout();
 						}
-						clear_screen();
+						menu.clear_screen();
 					}
 					else
-						goto_queued_screen();
+						menu.goto_queued_screen();
 				}
 				else{
 					if( game_state == "VICTORY" ){
 
-						clear_screen();
+						menu.clear_screen();
 					}
 				}
 			} //close client_state == "SING"
@@ -71,35 +71,35 @@ function on_game_state_change(newState, activePosition, clientstate) {
 				if ( client_state == "MULT" ){
 					if( game_state == "SINGLE_INVITE" ){
 
-						goto_waiting_screen();
+						menu.goto_waiting_screen();
 					}
 					else {
 						if( game_state == "MULTIPLE" ){
 							// active player gets to select difficulty mode.
 							if ( new_client_state == "MULT" && old_client_state == "HOME" ){
-								goto_level_screen();   // create level screen
+								menu.goto_level_screen();   // create level screen
 							}
 							else {
 								// active player comes from a waiting screen
 								if ( new_client_state == "MULT" && old_client_state == "MULT" && old_game_state == "SINGLE_INVITE"  ){
-									goto_level_screen();   // create level screen
+									menu.goto_level_screen();   // create level screen
 								}
 								else if (old_client_state == "IDLE"){
-									goto_join_screen();
+									menu.goto_join_screen();
 								}
 							}
 						}
 						else{
 							if( game_state == "VICTORY" ){
-								goto_victory_screen();
+								menu.goto_victory_screen();
 							}
 						}
 					}
 				} //close client_state == "MULT"
 				else {
 					if ( client_state == "VICTORY" ){
-						//clear_screen();
-						goto_victory_screen();
+						//menu.clear_screen();
+						menu.goto_victory_screen();
 					}
 					else
 						console.log("Unknown client_state:" + client_state );

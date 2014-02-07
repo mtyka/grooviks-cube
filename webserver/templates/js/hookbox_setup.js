@@ -37,13 +37,13 @@ var HookboxConnection = (function(){
 	function decompress_rgbfloat(rgb) {
 		var output = [];
 		output = rgb.split(" ");
-		var rgb_floats = [ parseFloat(output[2]), parseFloat(output[1]), parseFloat(output[0])] ;
+		var rgb_floats = [ parseFloat(output[2]), parseFloat(output[1]), parseFloat(output[0])];
 		return rgb_floats;
 	}
 
 	function establish_hookbox_connections() {
 		if( !is_hookbox_loaded ) {
-				alert("Failed to connect to hookbox server.");
+			alert("Failed to connect to hookbox server.");
 		}
 
 		// create a connection object and setup the basic event callbacks.
@@ -172,7 +172,7 @@ var HookboxConnection = (function(){
 			 					global.activePlayers.indexOf(parseInt(position)) >= 0){
 							console.log("vote to add player " + frame.payload["vote-for"] + " to game");
 							$("#player-add").html(frame.payload["vote-for"]);
-							goto_vote_screen();
+							menu.goto_vote_screen();
 						}
 						else if (typeof(frame.payload["vote-result"]) != 'undefined'){
 							var res = frame.payload["vote-result"];
@@ -180,16 +180,16 @@ var HookboxConnection = (function(){
 							console.log("vote result: " + res + " for position " + pos);
 							if (res == 1){ //vote success, alert in game clients,
 								if (pos == position){
-									clear_screen();
+									menu.clear_screen();
 								}
 								else if (global.activePlayers.indexOf(parseInt(position)) >= 0){
-									goto_alert_screen("Multiplayer","Player "+pos+" has joined the Game!", 1500);
+									menu.goto_alert_screen("Multiplayer","Player "+pos+" has joined the Game!", 1500, false);
 								}
 							}
 							else{ //vote fail, alert joiner
 								if (pos == position){
 									console.log("vote fail");
-									goto_queued_screen();
+									menu.goto_queued_screen();
 								}
 							}
 						}

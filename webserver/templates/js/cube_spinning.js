@@ -35,7 +35,7 @@ function animate_absolute_spin(radians) {
 		complete: function(){
 			locked_buttons = false;
 
-			if (menustate == 0){
+			if (menu.menustate == 0){
 				CubeControl.ignore_clicks = false;
 				CubeControl.reset_arrow_timer();
 			}
@@ -50,7 +50,7 @@ function animate_absolute_spin(radians) {
 		fail: function() {
 			locked_buttons = false;
 
-			if (menustate == 0)
+			if (menu.menustate == 0)
 				CubeControl.ignore_clicks = false;
 
 			global.delta_x = parseFloat($("#slide_azi").val() > 0 ?
@@ -87,7 +87,7 @@ function animate_spin(delta_radians) {
 	},{ duration: 1500,
 		complete: function(){
 			locked_buttons = false;
-			if (menustate == 0){
+			if (menu.menustate == 0){
 				CubeControl.ignore_clicks = false;
 				CubeControl.reset_arrow_timer();
 			}
@@ -98,7 +98,7 @@ function animate_spin(delta_radians) {
 		},
 		fail: function (){
 			locked_buttons = false;
-			if (menustate == 0)
+			if (menu.menustate == 0)
 				CubeControl.ignore_clicks = false;
 			global.delta_x = parseFloat($("#slide_azi").val() > 0 ?
 				$("#slide_azi").val() % 630 :
@@ -120,7 +120,7 @@ function start_spin( start_spin ){
   		return;
 
 	// dont spin if there's no menu.
-	if( menustate == 0 )
+	if( menu.menustate == 0 )
 		return;
 
 	if( start_spin ){

@@ -55,7 +55,7 @@ var timeout = (function($){
 	}
 
 	my.start_turn_timeout = function(){
-		if (tTimer != null){
+		if (tTimer != null || global.activePlayers.length <= 1){
 			return;
 		}
 
@@ -105,7 +105,7 @@ var timeout = (function($){
 	self.update_game_timeout = function(){
 
 		if (game_timeleft <= 0){
-			clicked_quit();
+			menu.goto_alert_screen("Timeout!", "Sorry your time is up.", 3500, true);
 
 			my.stop_game_timer();
 			return;
@@ -125,15 +125,15 @@ var timeout = (function($){
 		else if (turn_timeleft <= 0){
 			timeout_count += 1;
 			if (timeout_count == my.mp_timeout_limit){
-				clicked_quit();
-				goto_alert_screen("Timeout!", "", 3500);
+				menu.clicked_quit();
+				menu.goto_alert_screen("Timeout!", "", 3500, true);
 
 				my.stop_turn_timer()
 				return;
 			}
 			else{
 				HookboxConnection.hookbox_conn.publish('faceclick', [-1, -1] );
-				goto_alert_screen("Timeout!", "You have not made a move in time. Your turn has gone to another player.", 3500);
+				menu.goto_alert_screen("Timeout!", "You have not made a move in time. Your turn has gone to another player.", 3500, false);
 
 				my.stop_turn_timer();
 				return;
