@@ -28,8 +28,8 @@ var timeout = (function($){
 		game_timeleft = actual;
 	}
 
-	my.get_real_game_timeleft = function(){
-		return normalizeTime(game_timeleft);
+	my.get_game_timeleft = function(){
+		return game_timeleft;
 	}
 
 	my.get_game_time = function(){

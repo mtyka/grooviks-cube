@@ -61,7 +61,7 @@ menu = (function(){
 			}
 		});
 
-		if (my.menustate != 0 && my.menustate != 1 && my.menustate != 8)
+		if ([0,1,6,8].indexOf(my.menustate) == -1)
 			timeout.start_menu_timer();
 	}
 
@@ -198,8 +198,10 @@ menu = (function(){
 
 			start_spin( true );
 			timeout.get_game_time();
-			$("#timeUntilTurn").html(timeout.get_real_game_timeleft());
-			waitTimer = setInterval("self.waitTick()", 1000);
+			setTimeout( function(){ //give it some time to respond
+				$("#timeUntilTurn").html(normalizeTime(timeout.get_game_timeleft()));
+				waitingTimer = setInterval("self.waitTick()", 1000);
+			}, 1500);
 	}
 
 	my.goto_waiting_screen = function(){
@@ -286,10 +288,7 @@ menu = (function(){
 
 		flyin_menu("#victorymenu");
 
-		var timeStr = timeout.get_real_game_timeleft();
-		timeStr = timeStr.split(":");
-
-		var val = parseInt(timeStr[0]*60) + parseInt(timeStr[1]);
+		var val = normalizeTime(timeout.get_game_timeleft());
 		var upper = 500;
 
 		if (client_state == "MULT"){
@@ -366,9 +365,15 @@ menu = (function(){
 
 		var val = parseInt(timeStr[0]*60) + parseInt(timeStr[1]);
 
+		if (menuIsOpen(7)){
+			clearInterval(waitingTimer);
+			waitingTimer == null;
+			return;
+		}
+
 		if (val <= 0 || global.activePlayers.length == 0){
-			clearInterval(waitTimer);
-			waitTimer == null;
+			clearInterval(waitingTimer);
+			waitingTimer == null;
 			my.goto_level_screen();
 		}
 		else {
@@ -392,7 +397,7 @@ menu = (function(){
 		timeout.stop_game_timer();
 		timeout.stop_turn_timer();
 
-		if (waitingTimer){
+		if (waitingTimer != null){
 			clearInterval(waitingTimer);
 			waitingTimer == null;
 		}
