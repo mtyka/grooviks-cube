@@ -9,7 +9,7 @@ var timeout = (function($){
 	my.mp_turn_duration	= 32;
 	my.sp_session_duration = 321;
 	my.mp_session_duration = 321;
-	my.menu_timeout = 10;			//unimplemented
+	my.menu_timeout = 10;
 
 	var turn_timeleft = -1;
 	var timeout_count =  0;
@@ -37,7 +37,7 @@ var timeout = (function($){
 	}
 
 //------ START TIMERS -------
-	my.start_game_timeout = function(){
+	my.start_game_timer = function(){
 		if (client_state = "MULTIPLE")
 			game_timeleft = my.mp_session_duration;
 		else
@@ -55,7 +55,7 @@ var timeout = (function($){
 		$("#game_timeout").css("display", "inline");
 	}
 
-	my.start_turn_timeout = function(){
+	my.start_turn_timer = function(){
 		if (turnTimer != null || global.activePlayers.length <= 1){
 			return;
 		}
@@ -78,7 +78,11 @@ var timeout = (function($){
 		}
 		else{
 			menuTimer = setTimeout(function(){
+				if (menu.menustate == 0)
+					return;
+				console.log("MENU TIMEOUT!");
 				menu.clicked_quit();
+				clearTimeout(menuTimer);
 				menuTimer = null;
 			}, my.menu_timeout * 1000);
 		}

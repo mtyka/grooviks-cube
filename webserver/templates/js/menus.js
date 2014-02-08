@@ -60,7 +60,9 @@ menu = (function(){
 				CubeControl.ignore_clicks = true;
 			}
 		});
-		timeout.start_menu_timer();
+
+		if (my.menustate != 0 && my.menustate != 1 && my.menustate != 8)
+			timeout.start_menu_timer();
 	}
 
 	function flyout_menu( id ){
@@ -111,7 +113,7 @@ menu = (function(){
 		else{
 			console.log("single?");
 		}
-		timeout.start_game_timeout();
+		timeout.start_game_timer();
 		setTimeout(function(){set_initial_position();}, 400);
 	}
 
@@ -260,8 +262,6 @@ menu = (function(){
 
 		flyin_menu("#alertmenu");
 
-		start_spin( true );
-
 		if (quit)
 			setTimeout(function(){
 				my.clicked_quit();
@@ -270,7 +270,7 @@ menu = (function(){
 			}, timeup);
 		else
 			setTimeout(function(){
-				clear_screen();
+				my.clear_screen();
 				$("#alertmenu h1").empty();
 				$("#alertmenu h2").empty();
 			}, timeup);
@@ -340,12 +340,12 @@ menu = (function(){
 		remove_menu();
 
 		if( game_state == "MULTIPLE" ){
-			timeout.start_game_timeout();
+			timeout.start_game_timer();
 			show_rotation_buttons();
 			global.turnCheck();
 		}
 		if( game_state == "SINGLE" ){
-			timeout.start_game_timeout();
+			timeout.start_game_timer();
 			show_rotation_buttons();
 			global.currentTurn = position;
 		}
@@ -438,7 +438,7 @@ menu = (function(){
 	}
 
 	my.clicked_continue = function (){
-		timeout.start_game_timeout();
+		timeout.start_game_timer();
 		my.clear_screen();
 	}
 

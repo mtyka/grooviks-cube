@@ -281,6 +281,7 @@ class Cube():
 				inactivity_timeout = int(groovikConfig.kioskSettings['sp-session-duration'])
 
 			if now - last_activity > inactivity_timeout:
+				print "Server side inactivity timeout!"
 				self.logger.logLine("Client at position %s inactive for %d seconds; timing out" % (position, now - last_activity))
 				push_message( json.dumps({ 'position':position, 'command':ClientCommand.QUIT, }), 'clientcommand' )
 				del self.clientLastActivity[position]

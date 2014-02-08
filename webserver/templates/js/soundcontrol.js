@@ -99,7 +99,7 @@ function playFaceClickSound(frame){
 }
 
 function playRotationSound(rotationStep){
-  console.log(rotationStep);
+  //console.log(rotationStep);
   if(rotationStep ){
     var gearSound = soundManager.getSoundById('gear' + rotationStep );
     gearSound.setVolume(masterVolume);
