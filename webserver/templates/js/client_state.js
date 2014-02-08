@@ -62,7 +62,6 @@ function on_game_state_change(newState, activePosition, clientstate) {
 				}
 				else{
 					if( game_state == "VICTORY" ){
-
 						menu.clear_screen();
 					}
 				}
@@ -70,7 +69,6 @@ function on_game_state_change(newState, activePosition, clientstate) {
 			else {
 				if ( client_state == "MULT" ){
 					if( game_state == "SINGLE_INVITE" ){
-
 						menu.goto_waiting_screen();
 					}
 					else {
