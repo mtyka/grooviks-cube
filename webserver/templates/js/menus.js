@@ -288,7 +288,7 @@ menu = (function(){
 
 		flyin_menu("#victorymenu");
 
-		var val = normalizeTime(timeout.get_game_timeleft());
+		var val = timeout.get_game_timeleft();
 		var upper = 500;
 
 		if (client_state == "MULT"){
@@ -361,6 +361,9 @@ menu = (function(){
 
 	self.waitTick = function(){
 		var timeStr = $("#timeUntilTurn").html();
+		if (timeStr == "")
+			return;
+
 		timeStr = timeStr.split(":");
 
 		var val = parseInt(timeStr[0]*60) + parseInt(timeStr[1]);

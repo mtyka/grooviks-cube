@@ -411,3 +411,8 @@ input{
 	text-align: left;
 	width: 19em;
 }
+
+/* --------- Debug and placeholders --------- */
+#alphaTransition{
+	display: none;
+}
