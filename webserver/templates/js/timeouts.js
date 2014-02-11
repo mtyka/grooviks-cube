@@ -133,7 +133,10 @@ var timeout = (function($){
 		}
 
 		game_timeleft -= 1;
-		//console.log("timeleft: ", game_timeleft);
+
+		if (game_timeleft % 60 == 0 && game_timeleft > 0)
+			HookboxConnection.hookbox_conn.publish('timeout', 'get');
+
 		$("#game_timeout").html("Session time remaining " + normalizeTime(game_timeleft));
 	}
 

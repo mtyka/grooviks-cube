@@ -139,5 +139,5 @@ calibration_colors =
 	]
 
 [KioskSettings]
-settings = {"sp-session-duration": "200", "mp-timeout-limit": "2", "mp-session-duration": "200", "mp-turn-duration": "25", "menu-timeout": "15"}
+settings = {"sp-session-duration": "200", "mp-timeout-limit": "2", "mp-session-duration": "40", "mp-turn-duration": "25", "menu-timeout": "15"}
 
