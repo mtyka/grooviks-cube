@@ -368,7 +368,7 @@ menu = (function(){
 
 		var val = parseInt(timeStr[0]*60) + parseInt(timeStr[1]);
 
-		if (menuIsOpen(7)){
+		if (!menuIsOpen(6)){
 			clearInterval(waitingTimer);
 			waitingTimer == null;
 			return;
@@ -381,6 +381,9 @@ menu = (function(){
 		}
 		else {
 			val -= 1;
+			if (val % 60 == 0 && val > 0)
+				HookboxConnection.hookbox_conn.publish('timeout', 'get');
+
 			$("#timeUntilTurn").html(normalizeTime(val));
 		}
 	}

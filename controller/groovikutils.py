@@ -18,14 +18,14 @@ dev_mode = 1
 
 class Enum(set):
     '''Checked enumerations, from http://stackoverflow.com/questions/36932/whats-the-best-way-to-implement-an-enum-in-python'''
-    
+
     def __init__(self, initStr):
     	'''Build an enum from a string containing all of the states'''
     	set.__init__(self, initStr.split())
-    
+
     def __getattr__(self, name):
     	'''
-    	Treat any attribute lookup for a name in the init list as an 
+    	Treat any attribute lookup for a name in the init list as an
     	enumeration constant, and anything else as an error
     	'''
         if name in self:
@@ -46,7 +46,7 @@ class CubeState:
 	DELAY = 6
 	ROTATING = 7
 	SWITCH_MODE = 8
-	FIREMODE = 9	
+	FIREMODE = 9
 	TETRISMODE = 10
 	MOVELIBRARY=11
 #-------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ class CubeState:
 # See http://code.google.com/p/grooviks-cube/wiki/PacsciStateMachine#Global_State
 # for more information.
 #-------------------------------------------------------------------------------
-ClientState = Enum('IDLE HOME SING MULT VICT')
+ClientState = Enum('IDLE HOME SING MULT VICT QUEUED')
 
 ClientCommand = Enum('WAKE QUIT START_1P START_3P JOIN_3P SELECT_DIFFICULTY')
 
@@ -75,7 +75,7 @@ class CubeMode:
 	LIGHT_BOARD_CONFIGURATION = 2
 	SCREENSAVER = 3
 	CUBE_MODE_COUNT = 4 # make sure this is last
-	
+
 #-------------------------------------------------------------------------------
 # Cube input types
 #-------------------------------------------------------------------------------
@@ -84,8 +84,8 @@ class CubeInput:
 	SWITCH_MODE = 1  # Requires input parameter of the form < cube mode to switch to (see CubeMode) >
 	FACE_CLICK = 2 # Requires input parameter of the form < logicalPixelID (see lightboard.py) >
 	COLOR_CAL = 3 # Requires input parameter of the form [ Pixel to change calib for, ( R G B ) ], where R G B are from 0 to 1
-	
-	
+
+
 #-------------------------------------------------------------------------------
 # Color blending helper methods
 #-------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ def RGBtoHSL( rgb ):
 		hsl[0] = ( 4.0 + ( rgb[0] - rgb[1] ) / deltaRGB )
 	hsl[0] /= 6.0
 	return hsl;
-		
+
 def HSLComponent( temp1, temp2, temp3 ):
 	temp3 = math.fmod( temp3 + 1.0, 1.0 )
 	if ( temp3 < ( 1.0 / 6.0 ) ):
@@ -123,12 +123,12 @@ def HSLComponent( temp1, temp2, temp3 ):
 		return temp1 + ( temp2 - temp1 ) * ( ( 2.0 / 3.0 ) - temp3 ) * 6.0
 	else:
 		return temp1
-		
+
 def HSLtoRGB( hsl ):
 	rgb = [ 0.0, 0.0, 0.0 ]
 	if ( hsl[1] == 0.0 ):
 		rgb[0] = rgb[1] = rgb[2] = hsl[2];
-		return rgb		
+		return rgb
 	if ( hsl[2] < 0.5 ):
 		temp2 = hsl[2] * ( 1.0 + hsl[1] )
 	else:
@@ -138,32 +138,32 @@ def HSLtoRGB( hsl ):
 	rgb[1] = HSLComponent( temp1, temp2, hsl[0] )
 	rgb[2] = HSLComponent( temp1, temp2, hsl[0] - 1.0 / 3.0 )
 	return rgb
-			
+
 def BlendColorsHSL( inSrcColor, inDstColor, t ):
 	srcColor = RGBtoHSL( inSrcColor )
-	dstColor = RGBtoHSL( inDstColor )			
+	dstColor = RGBtoHSL( inDstColor )
 	blendColor = [ 0.0, 0.0, 0.0 ]
-			
+
 	# for hue (blendColor[0]), pick shortest path
 	if ( math.fabs( dstColor[0] - srcColor[0] ) > 0.5 ):
 		if ( dstColor[0] < srcColor[0] ):
 			dstColor[0] += 1.0
 		else:
 			srcColor[0] += 1.0
-					
+
 	blendColor[0] = srcColor[0] + ( dstColor[0] - srcColor[0] ) * t
 	blendColor[1] = srcColor[1] + ( dstColor[1] - srcColor[1] ) * t
-	blendColor[2] = srcColor[2] + ( dstColor[2] - srcColor[2] ) * t			
+	blendColor[2] = srcColor[2] + ( dstColor[2] - srcColor[2] ) * t
 	return HSLtoRGB( blendColor )
-			
+
 def BlendColorsRGB( srcColor, dstColor, t ):
 	t *= t * t
 	blendColor = [ 0.0, 0.0, 0.0 ]
 	blendColor[0] = srcColor[0] + ( dstColor[0] - srcColor[0] ) * t
 	blendColor[1] = srcColor[1] + ( dstColor[1] - srcColor[1] ) * t
-	blendColor[2] = srcColor[2] + ( dstColor[2] - srcColor[2] ) * t	
-	return blendColor;	
-	
+	blendColor[2] = srcColor[2] + ( dstColor[2] - srcColor[2] ) * t
+	return blendColor;
+
 
 #-------------------------------------------------------------------------------
 # Simulation timestep, be careful to not reduce this below what the lightboards can handle!

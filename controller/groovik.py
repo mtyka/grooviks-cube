@@ -131,12 +131,10 @@ class GrooviksCube:
 		else:
 			self.__currentMode.HandleInput( self, self.display, cubeInputType, params )
 
-
 	def DetermineMovesFromSolved( self, curtime ):
 		print "Figuring out how many moves from solved"
 		output = self.__currentState.Update( curtime )
 		return self.__movelibrary.AnalysePosition( output[0] )
-
 
 	#-----------------------------------------------------------------------------
 	# This method will take some client command to change the game state and
@@ -161,8 +159,6 @@ class GrooviksCube:
 
 			if len(active) == 1:
 				self.currentTurn = position
-
-			if self.__startTime == None:
 				self.__startTime = time.time()
 
 			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
@@ -170,6 +166,12 @@ class GrooviksCube:
 		# on quit the turn gets passed to the next active player.
 		elif str(command) == ClientCommand.QUIT:
 			active = []
+			queued = 0
+			for k in self.__clientdict.keys():
+				if self.__clientdict[k].GetState() == ClientState.QUEUED:
+					queued = k
+					self.__clientdict[k].SetState(ClientState.MULT)
+
 			for k in self.__clientdict.keys():
 				if self.__clientdict[k].GetState() == ClientState.MULT and k != position:
 					active.append(k)
@@ -180,6 +182,14 @@ class GrooviksCube:
 				self.__startTime = None;
 
 			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
+
+			#This might be a little bit of a hack, we're simultaneously adding and removing a player
+			if queued > 0 and len(active) >= 2:
+				push_message(json.dumps({'vote-result': 1, 'position': queued }), "vote")
+			elif queued > 0 and len(active) >= 1:
+				self.__startTime = time.time()
+				push_message(json.dumps({'vote-result': 1, 'position': queued }), "vote")
+				self.SetGameState(GameState.MULTIPLE)
 
 		print "active length: " + str(len(active))
 		return ret
@@ -466,6 +476,7 @@ class GrooviksCube:
 			self.__voter = None
 		elif status == "failure":
 			push_message(json.dumps({'vote-result': 0, 'position': self.__voter.candidate}), "vote")
+			self.__clientdict[self.__voter.candidate].SetState(ClientState.QUEUED);
 			self.__voter = None
 		elif status == "waiting":
 			pass
