@@ -130,6 +130,7 @@ class GrooviksClient:
             ClientState.HOME :              QuitFromHome,
             ClientState.SING :            QuitFromSingle,
             ClientState.MULT :          QuitFromMultiple,
+            ClientState.QUEUED:         QuitFromMultiple
         },
         ClientCommand.START_1P : {
             ClientState.HOME :              Start1P,
