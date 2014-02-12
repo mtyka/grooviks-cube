@@ -159,7 +159,7 @@ class GrooviksCube:
 
 			if len(active) == 1:
 				self.currentTurn = position
-				self.__startTime = time.time()
+				self.__gameStartTime = time.time()
 
 			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
 
@@ -179,7 +179,7 @@ class GrooviksCube:
 			if len(active) > 0:
 				self.currentTurn = active[0]
 			else:
-				self.__startTime = None;
+				self.__gameStartTime = None;
 
 			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
 
@@ -187,7 +187,7 @@ class GrooviksCube:
 			if queued > 0 and len(active) >= 2:
 				push_message(json.dumps({'vote-result': 1, 'position': queued }), "vote")
 			elif queued > 0 and len(active) >= 1:
-				self.__startTime = time.time()
+				self.__gameStartTime = time.time()
 				push_message(json.dumps({'vote-result': 1, 'position': queued }), "vote")
 				self.SetGameState(GameState.MULTIPLE)
 
@@ -626,7 +626,7 @@ class GrooviksCube:
 		self.__voter = None
 
 		#Timeouts
-		self.__startTime = None
+		self.__gameStartTime = None
 
 		#Diff
 		self.currentDifficulty = 0
@@ -659,7 +659,7 @@ class GrooviksCube:
 		self.__lastSimClock = time.clock()
 
 	def getTimeLeft(self):
-		time_since = math.floor(time.time() - self.__startTime)
+		time_since = math.floor(time.time() - self.__gameStartTime)
 		time_left = int(groovikConfig.kioskSettings['mp-session-duration']) - time_since
 
 		print "time left: " + str(int(time_left))
