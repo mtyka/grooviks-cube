@@ -28,8 +28,8 @@ var global = (function($){
 			setTimeout( function(){
 				CubeControl.ignore_clicks = false;
 				CubeControl.reset_arrow_timer();
+				timeout.start_turn_timer();
 			}, 1000);
-			timeout.start_turn_timer();
 		}
 
 		//just to avoid a ton of hardcoding.
