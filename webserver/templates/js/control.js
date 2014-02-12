@@ -25,9 +25,9 @@ CubeControl = (function($){
 		var output = [];
 
 		while( datagram.length > 0 ) {
-		var rgb = datagram.substring(0,6);
-		datagram = datagram.substring(6);
-		output[output.length] = parse_hex_rgb(rgb);
+			var rgb = datagram.substring(0,6);
+			datagram = datagram.substring(6);
+			output[output.length] = parse_hex_rgb(rgb);
 		}
 		//console.log("decompressed to...");
 		//console.log(output);
@@ -54,7 +54,6 @@ CubeControl = (function($){
 		enable_arrows_timeout = setTimeout( show_arrows, HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS );
 	}
 
-
 	my.cube_got_clicked_on = function(x,y) {
 		if ( my.ignore_clicks)
 			return;
@@ -77,6 +76,7 @@ CubeControl = (function($){
 				my.lastFaceClicked = facenum;
 				renderClickedFaceCount = 5;
 			}
+			timeout.stop_turn_timer();
 		}
 	}
 
@@ -100,7 +100,8 @@ CubeControl = (function($){
 		Renderer.alphaTranstion = 0.0;
 		$("#alphaTransition").attr('avalue', 0);
 
-		$("#alphaTransition").stop()
+		//animate arrows into existence
+		$("#alphaTransition").stop();
 		$("#alphaTransition").animate(
 		{
 			avalue: 1.0

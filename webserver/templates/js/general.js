@@ -20,11 +20,11 @@ var global = (function($){
 
 	var wasSpinning = false;
 
-	my.turnCheck = function(){
+	my.turnCheck = function(runTwice){
 		if (position != my.currentTurn){
 			CubeControl.ignore_clicks = true;
 		}
-		else if (menu.menustate == 0){
+		else if (menu.menustate == 0 && global.activePlayers.length > 1){
 			setTimeout( function(){
 				CubeControl.ignore_clicks = false;
 				CubeControl.reset_arrow_timer();
