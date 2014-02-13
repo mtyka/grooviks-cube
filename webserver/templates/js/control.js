@@ -16,6 +16,7 @@ CubeControl = (function($){
 	var previous_datagram = null;
 	var faceclick_subscription;
 	var enable_arrows_timeout = null;
+	var faceJustClicked = false;
 	var HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS = 200;	// ms
 
 	// Converts a long hex string into an array of 54 RGB-float-triples
@@ -64,13 +65,16 @@ CubeControl = (function($){
 			console.log("Local click not on cube face.");
 			return;
 		}
-		if (Renderer.shouldDrawArrow(facenum) || my.admin_mode ) {
+		if ( (Renderer.shouldDrawArrow(facenum) || my.admin_mode) && !faceJustClicked) {
 			console.log("Publishing local click on face "+facenum);
 			var rotation_direction = arrowRotation[facenum][0] > 0;
 			// See QueueRotation in groovik.py
 			// TODO(bretford): mapping is weird, fix
 			var rotation_index = arrowRotation[facenum][1] + (Math.abs(arrowRotation[facenum][0]))%3*3;
 			HookboxConnection.hookbox_conn.publish('faceclick', [facenum, rotation_index, rotation_direction] );
+
+			faceJustClicked = true;
+			setTimeout(function(){faceJustClicked = false;}, 750);
 
 			if ( my.INCLUDE_ARROWS ){
 				my.lastFaceClicked = facenum;
