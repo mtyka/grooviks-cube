@@ -275,6 +275,7 @@ menu = (function(){
 				my.clear_screen();
 				$("#alertmenu h1").empty();
 				$("#alertmenu h2").empty();
+				global.turnCheck();
 			}, timeup);
 	}
 
@@ -402,6 +403,7 @@ menu = (function(){
 
 		timeout.stop_game_timer();
 		timeout.stop_turn_timer();
+		timeout.stop_menu_timer();
 
 		if (waitingTimer != null){
 			clearInterval(waitingTimer);
@@ -411,6 +413,7 @@ menu = (function(){
 		global.turnCheck();
 
 		global.difficultyNotice(false);
+		my.goto_idle_screen();
 	}
 
 	my.clicked_wake = function (){

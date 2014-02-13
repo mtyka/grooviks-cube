@@ -81,9 +81,9 @@ var timeout = (function($){
 				if (menu.menustate == 0)
 					return;
 				console.log("MENU TIMEOUT!");
-				menu.clicked_quit();
 				clearTimeout(menuTimer);
 				menuTimer = null;
+				menu.clicked_quit();
 			}, my.menu_timeout * 1000);
 		}
 	}
@@ -106,8 +106,10 @@ var timeout = (function($){
 	}
 
 	my.stop_menu_timer = function(){
-		clearTimeout(menuTimer);
-		menuTimer = null;
+		if (menuTimer != null){
+			clearTimeout(menuTimer);
+			menuTimer = null;
+		}
 	}
 
 //------ RESET TIMERS -------
@@ -141,8 +143,10 @@ var timeout = (function($){
 	}
 
 	self.update_turn_timeout = function(){
-		if (global.currentTurn != position ||
-			global.activePlayers.length <= 1){
+		if (global.currentTurn != position || global.activePlayers.length <= 1){
+			if (global.activePlayers.length > 1){
+				CubeControl.ignore_clicks = true;
+			}
 			my.stop_turn_timer();
 			return;
 		}
@@ -152,7 +156,8 @@ var timeout = (function($){
 				menu.clicked_quit();
 				menu.goto_alert_screen("Timeout!", "", 3500, true);
 
-				my.stop_turn_timer()
+				my.stop_turn_timer();
+				timeout_count = 0;
 				return;
 			}
 			else{
