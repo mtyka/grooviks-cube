@@ -20,16 +20,26 @@ var global = (function($){
 
 	var wasSpinning = false;
 
-	my.turnCheck = function(runTwice){
+	my.turnCheck = function(){
 		if (position != my.currentTurn){
 			CubeControl.ignore_clicks = true;
+			$("#turn_notice").html("Player " + my.currentTurn + "'s turn").removeClass('active');
 		}
-		else if (menu.menustate == 0 && global.activePlayers.length > 1){
-			setTimeout( function(){
-				CubeControl.ignore_clicks = false;
-				CubeControl.reset_arrow_timer();
-				timeout.start_turn_timer();
-			}, 1000);
+		else{
+			$("#turn_notice").html("your turn").addClass('active');
+			if (menu.menustate == 0 && global.activePlayers.length > 1){
+				setTimeout( function(){
+					CubeControl.ignore_clicks = false;
+					CubeControl.reset_arrow_timer();
+					timeout.start_turn_timer();
+				}, 1000);
+			}
+			else if (menu.menustate == 0 && global.activePlayers.length == 1) {
+				setTimeout( function(){
+					CubeControl.ignore_clicks = false;
+					CubeControl.reset_arrow_timer();
+				}, 1000);
+			}
 		}
 
 		//just to avoid a ton of hardcoding.
@@ -51,10 +61,6 @@ var global = (function($){
 				}
 			}
 		}
-		if (my.currentTurn == position)
-			$("#turn_notice").html("your turn").addClass('active');
-		else
-			$("#turn_notice").html("Player " + my.currentTurn + "'s turn").removeClass('active');
 
 		tokenChanger();
 	}
