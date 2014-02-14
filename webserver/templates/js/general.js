@@ -24,9 +24,9 @@ var global = (function($){
 		if (position != my.currentTurn){
 			CubeControl.ignore_clicks = true;
 			$("#turn_notice").html("Player " + my.currentTurn + "'s turn").removeClass('active');
+			toggleButtons(false);
 		}
 		else{
-			$("#turn_notice").html("your turn").addClass('active');
 			if (menu.menustate == 0 && global.activePlayers.length > 1){
 				setTimeout( function(){
 					CubeControl.ignore_clicks = false;
@@ -40,6 +40,8 @@ var global = (function($){
 					CubeControl.reset_arrow_timer();
 				}, 1000);
 			}
+			$("#turn_notice").html("your turn").addClass('active');
+			toggleButtons(true);
 		}
 
 		//just to avoid a ton of hardcoding.
@@ -82,6 +84,12 @@ var global = (function($){
 		else{
 			$("#difficulty_notice").css("display", "none");
 		}
+	}
+
+	function toggleButtons(buttonsOn){
+		var val = buttonsOn ? 1.0 : 0.3;
+		$("#buttonleft").animate({opacity: val}, {duration: 200});
+		$("#buttonright").animate({opacity: val}, {duration: 200});
 	}
 
 	function tokenChanger(){
