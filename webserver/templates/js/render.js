@@ -19,7 +19,7 @@ Renderer = (function($){
 	var svg_polygons = [];
 	var current_cube_colors = new Array( 54 );
 
-	var alphaTransition = 0;
+	my.alphaTransition = 1.0;
 
 	// Show SVG element if configured.
 	var svg;
