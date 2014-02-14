@@ -84,7 +84,6 @@ CubeControl = (function($){
 		}
 	}
 
-
 	my.update_view = function() {
 		// looks at the view sliders and renders-the cube with that and the current color-state
 		var altitude = $("#slide_alt").val() / 100.0;
