@@ -83,7 +83,15 @@ var timeout = (function($){
 				console.log("MENU TIMEOUT!");
 				clearTimeout(menuTimer);
 				menuTimer = null;
-				menu.clicked_quit();
+
+				if (menu.menustate == 9){
+					HookboxConnection.hookbox_conn.publish('vote', {'position':position, 'vote':0});
+					menu.clear_screen();
+				}
+				else{
+					menu.clicked_quit();
+				}
+
 			}, my.menu_timeout * 1000);
 		}
 	}
