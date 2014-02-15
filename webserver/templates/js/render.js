@@ -495,7 +495,7 @@ Renderer = (function($){
 				//console.log(arrowRotation[ndx], Math.floor(ndx/9), sign, arrowDirection)
 				if (arrowDirection >= 0)
 				{
-					if( CubeControl.INCLUDE_ARROWS )
+					if( CubeControl.drawArrows )
 					{
 						if( !grey_mode ){
 							drawArrow( ctx, viewProj, viewProjViewport, quad[0], quad[1], quad[2], quad[3], arrowDirection, darkcolor);
