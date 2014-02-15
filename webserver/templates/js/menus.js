@@ -61,7 +61,7 @@ menu = (function(){
 			}
 		});
 
-		if ([0,1,6,8].indexOf(my.menustate) == -1)
+		if ([0,1,6,7,8].indexOf(my.menustate) == -1)
 			timeout.start_menu_timer();
 	}
 
@@ -84,7 +84,6 @@ menu = (function(){
 	function disableButton(which, disabled){
 		if (disabled)
 			$(which).attr("disabled", "disabled");
-			$(which).
 		else
 			$(which).removeAttr("disabled");
 	}
