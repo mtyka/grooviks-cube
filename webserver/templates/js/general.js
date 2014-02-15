@@ -37,7 +37,8 @@ var global = (function($){
 			else if (menu.menustate == 0 && global.activePlayers.length == 1) {
 				setTimeout( function(){
 					CubeControl.ignore_clicks = false;
-					CubeControl.reset_arrow_timer();
+					if (!CubeControl.drawArrows)
+						CubeControl.reset_arrow_timer();
 				}, 1000);
 			}
 			$("#turn_notice").html("your turn").addClass('active');

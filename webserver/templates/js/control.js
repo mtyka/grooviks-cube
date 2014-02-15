@@ -9,7 +9,7 @@ CubeControl = (function($){
 	my.ignore_clicks = false;
 	my.lastFaceClicked = -1;
 	my.renderClickedFaceCount = 0;
-	my.INCLUDE_ARROWS = false;
+	my.drawArrows = false;
 	my.admin_mode = false;
 
 	var current_mode;
@@ -50,7 +50,7 @@ CubeControl = (function($){
 	// Logic to turn arrows off when moving
 	//
 	my.reset_arrow_timer = function() {
-		my.INCLUDE_ARROWS = false;
+		my.drawArrows = false;
 		clearTimeout( enable_arrows_timeout );
 		enable_arrows_timeout = setTimeout( show_arrows, HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS );
 	}
@@ -76,7 +76,7 @@ CubeControl = (function($){
 			faceJustClicked = true;
 			setTimeout(function(){faceJustClicked = false;}, 750);
 
-			if ( my.INCLUDE_ARROWS ){
+			if ( my.drawArrows ){
 				my.lastFaceClicked = facenum;
 				renderClickedFaceCount = 5;
 			}
@@ -96,7 +96,7 @@ CubeControl = (function($){
 
 	function show_arrows() {
 		if(!my.admin_mode){
-			my.INCLUDE_ARROWS = true;
+			my.drawArrows = true;
 		}
 		//console.log("show arrows called");
 

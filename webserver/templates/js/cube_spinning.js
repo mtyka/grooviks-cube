@@ -35,13 +35,10 @@ function animate_absolute_spin(radians) {
 		complete: function(){
 			locked_buttons = false;
 
-			if (menu.menustate == 0){
+			if (menu.menustate == 0 && global.currenTurn == position){
 				CubeControl.ignore_clicks = false;
 				CubeControl.reset_arrow_timer();
 			}
-
-			global.turnCheck();
-			CubeControl.reset_arrow_timer();
 
 			global.delta_x = parseFloat($("#slide_azi").val() > 0 ?
 				$("#slide_azi").val() % 630 :
