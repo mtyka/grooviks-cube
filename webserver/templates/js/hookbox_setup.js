@@ -210,7 +210,7 @@ var HookboxConnection = (function(){
 							$("#difficulty").html(diff);
 						}
 						else if (frame.payload['sub'] == 'leaderboard'){
-							var leaderboard = JSON.parse(frame.payload['set'].replace(/u/g, "").replace(/'/g, "\""));
+							var leaderboard = frame.payload['set'];
 							leaderboard.sort(function(a,b){
 								if (a.time > b.time)
 									return 1;
