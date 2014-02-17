@@ -33,7 +33,7 @@ var timeout = (function($){
 	}
 
 	my.get_game_time = function(){
-		HookboxConnection.hookbox_conn.publish('timeout', 'get');
+		HookboxConnection.hookbox_conn.publish('info', {'get': 'timeout'});
 	}
 
 //------ START TIMERS -------
@@ -145,7 +145,7 @@ var timeout = (function($){
 		game_timeleft -= 1;
 
 		if (game_timeleft % 60 == 0 && game_timeleft > 0)
-			HookboxConnection.hookbox_conn.publish('timeout', 'get');
+			HookboxConnection.hookbox_conn.publish('info', {'get': 'timeout'});
 
 		$("#game_timeout").html("Session time remaining " + normalizeTime(game_timeleft));
 	}

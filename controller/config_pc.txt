@@ -1,5 +1,5 @@
 [Display]
-color_correction = 
+color_correction =
 	[
 	[1.0, 1.0, 1.0],
 	[1.0, 1.0, 1.0],
@@ -56,7 +56,7 @@ color_correction =
 	[1.0, 1.0, 1.0],
 	[1.0, 1.0, 1.0]
 	]
-physical_cube_pixel_mapping = 
+physical_cube_pixel_mapping =
 	[
 	0,
 	1,
@@ -118,7 +118,7 @@ physical_cube_pixel_mapping =
 idle_pulse_dim_factor = 1.0
 
 [CubeState]
-standard_face_colors = 
+standard_face_colors =
 	[
 	[0.15294117647058825, 0.15294117647058825, 0.788235294117647],
 	[0.7490196078431373, 0.4823529411764706, 0.9215686274509803],
@@ -130,7 +130,7 @@ standard_face_colors =
 	]
 
 [ModeCalibration]
-calibration_colors = 
+calibration_colors =
 	[
 	[1.0, 0.0, 0.0],
 	[0.0, 1.0, 0.0],
@@ -139,5 +139,5 @@ calibration_colors =
 	]
 
 [KioskSettings]
-settings = {"sp-session-duration": "200", "mp-timeout-limit": "2", "mp-session-duration": "210", "mp-turn-duration": "25", "menu-timeout": "15"}
+settings = {"sp-session-duration": "200", "mp-timeout-limit": "2", "mp-session-duration": "40", "mp-turn-duration": "25", "menu-timeout": "15"}
 

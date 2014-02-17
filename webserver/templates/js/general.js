@@ -80,7 +80,7 @@ var global = (function($){
 	my.difficultyNotice = function(on){
 		if (on){
 			$("#difficulty_notice").css("display", "inline");
-			HookboxConnection.hookbox_conn.publish('difficulty', 'get');
+			HookboxConnection.hookbox_conn.publish('info', {'get': 'difficulty'});
 		}
 		else{
 			$("#difficulty_notice").css("display", "none");

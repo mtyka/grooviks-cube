@@ -383,7 +383,7 @@ menu = (function(){
 		else {
 			val -= 1;
 			if (val % 60 == 0 && val > 0)
-				HookboxConnection.hookbox_conn.publish('timeout', 'get');
+				HookboxConnection.hookbox_conn.publish('info', {'get': 'timeout'});
 
 			$("#timeUntilTurn").html(normalizeTime(val));
 		}
