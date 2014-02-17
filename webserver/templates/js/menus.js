@@ -338,12 +338,14 @@ menu = (function(){
 	my.clear_screen = function(){
 		remove_menu();
 
+		set_initial_position();
+
 		if( game_state == "MULTIPLE" ){
 			timeout.start_game_timer();
 			show_rotation_buttons();
 			global.turnCheck();
 		}
-		if( game_state == "SINGLE" ){
+		else if( game_state == "SINGLE" ){
 			timeout.start_game_timer();
 			show_rotation_buttons();
 			global.currentTurn = position;
@@ -356,7 +358,6 @@ menu = (function(){
 
 		my.menustate = 0;
 		console.log("menu state set to 0");
-		set_initial_position();
 	}
 
 	self.waitTick = function(){

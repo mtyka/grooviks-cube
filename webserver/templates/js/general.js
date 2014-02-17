@@ -24,7 +24,7 @@ var global = (function($){
 		if (position != my.currentTurn){
 			CubeControl.ignore_clicks = true;
 			$("#turn_notice").html("Player " + my.currentTurn + "'s turn").removeClass('active');
-			toggleButtons(false);
+			toggleRotationButtons(false);
 		}
 		else{
 			if (menu.menustate == 0 && global.activePlayers.length > 1){
@@ -42,7 +42,7 @@ var global = (function($){
 				}, 1000);
 			}
 			$("#turn_notice").html("your turn").addClass('active');
-			toggleButtons(true);
+			toggleRotationButtons(true);
 		}
 
 		//just to avoid a ton of hardcoding.
@@ -87,7 +87,7 @@ var global = (function($){
 		}
 	}
 
-	function toggleButtons(buttonsOn){
+	function toggleRotationButtons(buttonsOn){
 		var val = buttonsOn ? 1.0 : 0.3;
 		$("#buttonleft").animate({opacity: val}, {duration: 200});
 		$("#buttonright").animate({opacity: val}, {duration: 200});
