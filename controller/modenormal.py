@@ -54,11 +54,12 @@ class ModeNormal( ModeBase ):
 					print "Pushed: ", [ json.dumps(gs_dict), 'playsound']
 					push_message( json.dumps(gs_dict), 'playsound' )
 
-					groovikConfig.addLeaderboardEntry(
-						int(groovikConfig.kioskSettings['mp-session-duration'])-grooviksCube.getTimeLeft(),
-						grooviksCube.moves)
-					groovikConfig.SaveConfig()
-					groovikConfig.getLeaderboard()
+					if grooviksCube.getDifficulty() > 15:
+						groovikConfig.addLeaderboardEntry(
+							int(groovikConfig.kioskSettings['mp-session-duration'])-grooviksCube.getTimeLeft(),
+							grooviksCube.moves)
+						groovikConfig.SaveConfig()
+						groovikConfig.getLeaderboard()
 
 					clients = grooviksCube.GetAllClients()
 					client_state = []
