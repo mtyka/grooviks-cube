@@ -17,7 +17,7 @@ CubeControl = (function($){
 	var faceclick_subscription;
 	var enable_arrows_timeout = null;
 	var faceJustClicked = false;
-	var HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS = 200;	// ms
+	var timeIdleUntilShowArrows = 200;	// ms
 
 	// Converts a long hex string into an array of 54 RGB-float-triples
 	function decompress_datagram(datagram) {
@@ -52,7 +52,7 @@ CubeControl = (function($){
 	my.reset_arrow_timer = function() {
 		my.drawArrows = false;
 		clearTimeout( enable_arrows_timeout );
-		enable_arrows_timeout = setTimeout( show_arrows, HOW_LONG_STABLE_BEFORE_SHOWING_ARROWS );
+		enable_arrows_timeout = setTimeout( show_arrows, timeIdleUntilShowArrows);
 	}
 
 	my.cube_got_clicked_on = function(x,y) {
