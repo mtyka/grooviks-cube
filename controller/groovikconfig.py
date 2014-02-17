@@ -14,6 +14,7 @@ class GroovikConfig:
 		self.lightBoardMap = []
 		self.colorCorrection = []
 		self.kioskSettings = {}
+		self.leaderboard = []
 		for i in range(54):
 			self.lightBoardMap.append( i )
 			self.colorCorrection.append( [ 1.0, 1.0, 1.0 ] )
@@ -45,6 +46,7 @@ class GroovikConfig:
 		self.lightBoardMap = self.__ParseIntArray( config, 'Display', 'physical_cube_pixel_mapping' )
 		self.colorCorrection  = self.__ParseColorArray( config, 'Display', 'color_correction' )
 		self.kioskSettings = self.__ParseDictionary(config, 'KioskSettings', 'settings')
+		self.leaderboard = self.__ParseDictionary(config, 'Leaderboard', 'board')['board']
 		self.idlePulseDimFactor = config.getfloat( 'RotationState', 'idle_pulse_dim_factor' )
 		# except:
  		#	print "error parsing configuration file!"
@@ -73,10 +75,23 @@ class GroovikConfig:
 		config.add_section( 'KioskSettings' )
 		config.set('KioskSettings', 'settings', json.dumps(self.kioskSettings))
 
+		config.add_section( 'Leaderboard' )
+		config.set('Leaderboard', 'board', json.dumps({'board':self.leaderboard}))
+
 		print "Saving to " + self.__configFileName
 		configfile = open( self.__configFileName, "w")
 		config.write( configfile )
 		configfile.close()
+
+	def getLeaderboard(self):
+		print json.dumps({'sub': 'leaderboard', 'set':self.leaderboard})
+		push_message(json.dumps({'sub': 'leaderboard', 'set':self.leaderboard}), 'info')
+
+	def addLeaderboardEntry(self, time, moves):
+		self.leaderboard.append({'time': time, 'moves':moves})
+
+	def clearLeaderboard(self):
+		self.leaderboard = [];
 
 	def getSettings(self):
 		print "current settings: " + json.dumps(self.kioskSettings)
@@ -120,12 +135,11 @@ class GroovikConfig:
 
 	def __ParseDictionary(self, configParser, section, option):
 		obj = configParser.get( section, option ).replace("'", "\"").replace("\n","")
-		#print obj
+		print "dict: " + str(obj)
 		tmpRet = json.loads(obj)
 		ret = {}
 		for key in tmpRet.keys():
 			ret[str(key)] = str(tmpRet[key])
-		#print ret
 		return ret
 
 	def __outputArray( self, configParser, section, option, array ):

@@ -166,10 +166,9 @@ var HookboxConnection = (function(){
 				else if( channelName == 'vote' ){
 					vote_subscription = _subscription;
 					vote_subscription.onPublish = function(frame) {
-						//console.log(frame);
 						if (typeof(frame.payload["vote-for"]) != 'undefined' &&
 								frame.payload["vote-for"] != position &&
-			 					global.activePlayers.indexOf(parseInt(position)) >= 0){
+								global.activePlayers.indexOf(parseInt(position)) >= 0){
 							console.log("vote to add player " + frame.payload["vote-for"] + " to game");
 							$("#player-add").html(frame.payload["vote-for"]);
 							menu.goto_vote_screen();
@@ -196,9 +195,9 @@ var HookboxConnection = (function(){
 					};
 				}
 				else if( channelName == 'info' ){
-					timeout_subscription = _subscription;
-					timeout_subscription.onPublish = function(frame) {
-						//console.log("timeout frame: ", frame);
+					info_subscription = _subscription;
+					info_subscription.onPublish = function(frame) {
+						console.log("Frame: ", frame);
 						if (frame.payload['sub'] == 'timeout'){
 							timeout.set_game_time(frame.payload["set"]);
 						}
@@ -211,7 +210,32 @@ var HookboxConnection = (function(){
 							$("#difficulty").html(diff);
 						}
 						else if (frame.payload['sub'] == 'leaderboard'){
-							console.log('leaderboard signal');
+							var leaderboard = JSON.parse(frame.payload['set'].replace(/u/g, "").replace(/'/g, "\""));
+							leaderboard.sort(function(a,b){
+								if (a.time > b.time)
+									return 1;
+								else if (a.time < b.time)
+									return -1;
+								else
+									return 0;
+							});
+							//console.log('board', leaderboard)
+							$('#board').empty();
+							if (leaderboard.length > 0){
+								var openRow =  '<tr>';
+								var closeRow = '</tr>';
+								var openCell = '<td>';
+								var closeCell ='</td>';
+								for (var i=0; i<leaderboard.length; i++){
+									var placeCell = openCell+(i+1).toString()+closeCell;
+									var timeCell = openCell+global.normalizeTime(leaderboard[i].time)+closeCell;
+									var moveCell = openCell+leaderboard[i].moves.toString()+closeCell;
+									$('#board').append(openRow + placeCell + timeCell + moveCell + closeRow);
+								}
+							}
+							else{
+								$('#board').html('<td>No times recorded yet today.</td>');
+							}
 						}
 					};
 				}
