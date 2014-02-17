@@ -46,7 +46,7 @@ class GroovikConfig:
 		self.lightBoardMap = self.__ParseIntArray( config, 'Display', 'physical_cube_pixel_mapping' )
 		self.colorCorrection  = self.__ParseColorArray( config, 'Display', 'color_correction' )
 		self.kioskSettings = self.__ParseDictionary(config, 'KioskSettings', 'settings')
-		self.leaderboard = self.__ParseDictionary(config, 'Leaderboard', 'board')['board']
+		self.leaderboard = self.__ParseArrayFromDictionary(config, 'Leaderboard', 'board', 'board')
 		self.idlePulseDimFactor = config.getfloat( 'RotationState', 'idle_pulse_dim_factor' )
 		# except:
  		#	print "error parsing configuration file!"
@@ -88,6 +88,7 @@ class GroovikConfig:
 		push_message(json.dumps({'sub': 'leaderboard', 'set':self.leaderboard}), 'info')
 
 	def addLeaderboardEntry(self, time, moves):
+		print type(self.leaderboard)
 		self.leaderboard.append({'time': time, 'moves':moves})
 
 	def clearLeaderboard(self):
@@ -132,6 +133,13 @@ class GroovikConfig:
 			color = self.__ParseFloatArrayString( colorString );
 			colors.append( color )
 		return colors
+
+	def __ParseArrayFromDictionary(self, configParser, section, option, key):
+		obj = configParser.get( section, option ).replace("'", "\"").replace("\n","")
+		obj = json.loads(obj)
+		arr = obj[key]
+		print "array: " + str(arr)
+		return arr
 
 	def __ParseDictionary(self, configParser, section, option):
 		obj = configParser.get( section, option ).replace("'", "\"").replace("\n","")

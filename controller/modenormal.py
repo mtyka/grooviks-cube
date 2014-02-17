@@ -57,7 +57,7 @@ class ModeNormal( ModeBase ):
 					groovikConfig.addLeaderboardEntry(
 						int(groovikConfig.kioskSettings['mp-session-duration'])-grooviksCube.getTimeLeft(),
 						grooviksCube.moves)
-					groovikConfig.saveConfig()
+					groovikConfig.SaveConfig()
 					groovikConfig.getLeaderboard()
 
 					clients = grooviksCube.GetAllClients()
