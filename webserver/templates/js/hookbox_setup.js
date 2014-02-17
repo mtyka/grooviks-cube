@@ -60,7 +60,7 @@ var HookboxConnection = (function(){
 						CubeControl.update_cube_state_from_datagram( frame.payload );
 					};
 				}
-				if( channelName == 'faceclick' ) {
+				else if( channelName == 'faceclick' ) {
 					faceclick_subscription = _subscription;
 					faceclick_subscription.onPublish = function(frame) {
 						playFaceClickSound(frame);
@@ -68,7 +68,7 @@ var HookboxConnection = (function(){
 					};
 				}
 
-				if( channelName == 'colorcalibrx') {
+				else if( channelName == 'colorcalibrx') {
 					calib_subscription = _subscription;
 					calib_subscription.onPublish = function(frame) {
 						console.log('Heard calibration message');
@@ -79,7 +79,7 @@ var HookboxConnection = (function(){
 						console.log('done with calibration message');
 					};
 				}
-				if( channelName == 'movesfromsolved' ) {
+				else if( channelName == 'movesfromsolved' ) {
 					movesfromsolved_subscription = _subscription;
 					movesfromsolved_subscription.onPublish = function(frame) {
 						return;
@@ -89,33 +89,33 @@ var HookboxConnection = (function(){
 						//next_flash_moves_display = setTimeout("flash_moves_display()", 5000 );
 					};
 				}
-				if( channelName == 'gameState' ) {
+				else if( channelName == 'gameState' ) {
 					gamestate_subscription = _subscription;
 					gamestate_subscription.onPublish = function(frame) {
 						console.log(frame);
 						on_game_state_change(frame.payload["gamestate"], frame.payload["active_position"], frame.payload["clientstate"]);
 					};
 				}
-				if( channelName == 'rotationStep' ) {
+				else if( channelName == 'rotationStep' ) {
 					rotation_subscription = _subscription;
 					rotation_subscription.onPublish = function(frame) {
 						playRotationSound(frame.payload);
 					};
 				}
-				if( channelName == 'volumeControl' ) {
+				else if( channelName == 'volumeControl' ) {
 					vol_subscription = _subscription;
 					vol_subscription.onPublish = function(frame) {
 						handle_vol(frame.payload);
 					};
 				}
-				if( channelName == 'playsound' ){
+				else if( channelName == 'playsound' ){
 					vol_subscription = _subscription;
 					vol_subscription.onPublish = function(frame) {
 						console.log(frame);
 						playSound(frame.payload["soundid"], false);
 					};
 				}
-				if( channelName == 'turns' ){
+				else if( channelName == 'turns' ){
 					turn_subscription = _subscription;
 					turn_subscription.onPublish = function(frame) {
 						global.currentTurn = frame.payload["turn"];
@@ -138,7 +138,7 @@ var HookboxConnection = (function(){
 						console.log("current turn: " + global.currentTurn);
 					}
 				}
-				if( channelName == 'settings' ){
+				else if( channelName == 'settings' ){
 					settings_subscription = _subscription;
 					settings_subscription.onPublish = function(frame) {
 						//console.log("Settings recieved");
@@ -163,7 +163,7 @@ var HookboxConnection = (function(){
 						}
 					};
 				}
-				if( channelName == 'vote' ){
+				else if( channelName == 'vote' ){
 					vote_subscription = _subscription;
 					vote_subscription.onPublish = function(frame) {
 						//console.log(frame);
@@ -195,24 +195,25 @@ var HookboxConnection = (function(){
 						}
 					};
 				}
-				if( channelName == 'timeout' ){
+				else if( channelName == 'info' ){
 					timeout_subscription = _subscription;
 					timeout_subscription.onPublish = function(frame) {
 						//console.log("timeout frame: ", frame);
-						timeout.set_game_time(frame.payload["set"]);
+						if (frame.payload['sub'] == 'timeout'){
+							timeout.set_game_time(frame.payload["set"]);
+						}
+						else if (frame.payload['sub'] == 'difficulty'){
+							var diff = frame.payload["set"];
+
+							global.difficulty = diff;
+							diff = global.parseDifficulty();
+
+							$("#difficulty").html(diff);
+						}
 					};
 				}
-				if( channelName == 'difficulty' ){
-					diff_subscription = _subscription;
-					diff_subscription.onPublish = function(frame) {
-						console.log("diff frame: ", frame);
-						var diff = frame.payload["set"];
-
-						global.difficulty = diff;
-						diff = global.parseDifficulty();
-
-						$("#difficulty").html(diff);
-					};
+				else {
+					console.log('~~~~~~~~ UNKNOWN CHANNEL! ~~~~~~~~');
 				}
 			}
 			catch(e){
@@ -249,8 +250,7 @@ var HookboxConnection = (function(){
 			my.hookbox_conn.subscribe("turns");
 			my.hookbox_conn.subscribe("settings");
 			my.hookbox_conn.subscribe("vote");
-			my.hookbox_conn.subscribe("timeout");
-			my.hookbox_conn.subscribe("difficulty");
+			my.hookbox_conn.subscribe("info");
 		}
 	}
 

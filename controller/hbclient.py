@@ -40,9 +40,7 @@ class HookClient:
 		self.frame_id += 1
 		self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'vote' }))
 		self.frame_id += 1
-		self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'timeout' }))
-		self.frame_id += 1
-		self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'difficulty' }))
+		self.ws.send(core.serialize_frame(self.frame_id, 'SUBSCRIBE', { 'channel_name' : 'info' }))
 
 	def on_message(self, m):
 		self.callback(core.deserialize_frame(m))
