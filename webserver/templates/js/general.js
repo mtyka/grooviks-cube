@@ -98,6 +98,10 @@ var global = (function($){
 		leaderboardOpen = !leaderboardOpen;
 	}
 
+	my.normalizeTime = function (t){
+		return Math.floor(t/60).toString() + ":" + (t%60 < 10 ? ("0" + t%60).toString() : (t%60).toString());
+	}
+
 	function toggleRotationButtons(buttonsOn){
 		var val = buttonsOn ? 1.0 : 0.3;
 		$("#buttonleft").animate({opacity: val}, {duration: 200});
@@ -139,6 +143,7 @@ var global = (function($){
 		HookboxConnection.init( '/static/hookbox.js', function(){
 		   menu.goto_idle_screen();
 		   HookboxConnection.hookbox_conn.publish('settings', {'command': 'get'});
+		   HookboxConnection.hookbox_conn.publish('info', {'get': 'leaderboard'});
 		});
 
 		my.currentTurn = position;

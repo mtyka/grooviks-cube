@@ -245,10 +245,13 @@ class Cube():
 
 				elif channel == 'info':
 					if str(payload['get']) == 'timeout':
-							push_message( json.dumps({'sub': 'timeout', 'set': self.grooviksCube.getTimeLeft()}), 'info')
+						push_message( json.dumps({'sub': 'timeout', 'set': self.grooviksCube.getTimeLeft()}), 'info')
 
 					elif str(payload['get']) == 'difficulty':
-							push_message( json.dumps({'sub': 'difficulty', 'set': self.grooviksCube.getDifficulty()}), 'info')
+						push_message( json.dumps({'sub': 'difficulty', 'set': self.grooviksCube.getDifficulty()}), 'info')
+
+					elif str(payload['get']) == 'leaderboard':
+						groovikConfig.getLeaderboard();
 
 			except KeyError:
 				#TODO: actually parse the error and log it

@@ -147,7 +147,7 @@ var timeout = (function($){
 		if (game_timeleft % 60 == 0 && game_timeleft > 0)
 			HookboxConnection.hookbox_conn.publish('info', {'get': 'timeout'});
 
-		$("#game_timeout").html("Session time remaining " + normalizeTime(game_timeleft));
+		$("#game_timeout").html("Session time remaining " + global.normalizeTime(game_timeleft));
 	}
 
 	self.update_turn_timeout = function(){
@@ -179,15 +179,11 @@ var timeout = (function($){
 
 		turn_timeleft -= 1;
 
-		$("#turn_timeout").html("Time remaining for your turn " + normalizeTime(turn_timeleft));
+		$("#turn_timeout").html("Time remaining for your turn " + global.normalizeTime(turn_timeleft));
 	}
 
 	my.update_game_timeout = self.update_game_timeout;
 	my.update_turn_timeout = self.update_turn_timeout;
-
-	function normalizeTime(t){
-		return Math.floor(t/60).toString() + ":" + (t%60 < 10 ? ("0" + t%60).toString() : (t%60).toString());
-	}
 
 	return my;
 }(jQuery))

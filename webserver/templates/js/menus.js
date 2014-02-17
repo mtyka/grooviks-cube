@@ -198,7 +198,7 @@ menu = (function(){
 			start_spin( true );
 			timeout.get_game_time();
 			setTimeout( function(){ //give it some time to respond
-				$("#timeUntilTurn").html(normalizeTime(timeout.get_game_timeleft()));
+				$("#timeUntilTurn").html(global.normalizeTime(timeout.get_game_timeleft()));
 				waitingTimer = setInterval("self.waitTick()", 1000);
 			}, 1500);
 	}
@@ -298,7 +298,7 @@ menu = (function(){
 			upper = timeout.sp_session_duration;
 		}
 
-		$("#victoryTime").html(normalizeTime(upper - val));
+		$("#victoryTime").html(global.normalizeTime(upper - val));
 		$("#victoryDiff").html(global.parseDifficulty());
 
 		timeout.stop_game_timer();
@@ -385,14 +385,10 @@ menu = (function(){
 			if (val % 60 == 0 && val > 0)
 				HookboxConnection.hookbox_conn.publish('info', {'get': 'timeout'});
 
-			$("#timeUntilTurn").html(normalizeTime(val));
+			$("#timeUntilTurn").html(global.normalizeTime(val));
 		}
 	}
 	my.waitTick = self.waitTick;
-
-	function normalizeTime(t){
-		return Math.floor(t/60).toString() + ":" + (t%60 < 10 ? ("0" + t%60).toString() : (t%60).toString());
-	}
 
 	my.clicked_quit = function (){
 		console.log("ClientSent: QUIT ");

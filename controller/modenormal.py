@@ -54,6 +54,12 @@ class ModeNormal( ModeBase ):
 					print "Pushed: ", [ json.dumps(gs_dict), 'playsound']
 					push_message( json.dumps(gs_dict), 'playsound' )
 
+					groovikConfig.addLeaderboardEntry(
+						int(groovikConfig.kioskSettings['mp-session-duration'])-grooviksCube.getTimeLeft(),
+						grooviksCube.moves)
+					groovikConfig.saveConfig()
+					groovikConfig.getLeaderboard()
+
 					clients = grooviksCube.GetAllClients()
 					client_state = []
 					for client in clients:

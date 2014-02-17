@@ -160,6 +160,7 @@ class GrooviksCube:
 			if len(active) == 1:
 				self.currentTurn = position
 				self.__gameStartTime = time.time()
+				self.moves = 0
 
 			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
 
@@ -374,6 +375,7 @@ class GrooviksCube:
 		for r in rotations:
 			print "rotation: " + str(r)
 
+		self.moves += 1
 		# Disallow illegal rotations
 		actualRotations = []
 		validRotations = [ True, True, True, True, True, True, True, True, True ]
@@ -625,8 +627,9 @@ class GrooviksCube:
 		# Voter
 		self.__voter = None
 
-		#Timeouts
+		#Timeouts and Moves taken
 		self.__gameStartTime = None
+		self.moves = 0
 
 		#Diff
 		self.currentDifficulty = 0
