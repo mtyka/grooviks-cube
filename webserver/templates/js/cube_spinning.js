@@ -35,7 +35,7 @@ function animate_absolute_spin(radians) {
 		complete: function(){
 			locked_buttons = false;
 
-			if (menu.menustate == 0 && global.currenTurn == position){
+			if (menu.menustate == 0 && global.currentTurn == position){
 				CubeControl.ignore_clicks = false;
 				CubeControl.reset_arrow_timer();
 			}
