@@ -84,6 +84,10 @@ input{
 	z-index:  0;
 }
 
+#svgholder{
+	height: 1000px;
+}
+
 #manual_rotate {
 	position: relative;
 	top: -400px;

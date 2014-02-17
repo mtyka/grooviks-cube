@@ -204,7 +204,7 @@ var global = (function($){
 
 		});
 
-		$('#container').bind( "click touchstart", function() {
+		$("#svgholder, #idlemenu").bind( "click touchstart", function() {
 			if( menu.menustate == 1 && !menu.quitClicked){
 				menu.clicked_wake();
 			}
