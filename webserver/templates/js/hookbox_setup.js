@@ -210,10 +210,13 @@ var HookboxConnection = (function(){
 
 							$("#difficulty").html(diff);
 						}
+						else if (frame.payload['sub'] == 'leaderboard'){
+							console.log('leaderboard signal');
+						}
 					};
 				}
 				else {
-					console.log('~~~~~~~~ UNKNOWN CHANNEL! ~~~~~~~~');
+					console.log('~~~ UNKNOWN CHANNEL: ' + channelName);
 				}
 			}
 			catch(e){
@@ -243,7 +246,6 @@ var HookboxConnection = (function(){
 			my.hookbox_conn.subscribe("gamemode");
 			my.hookbox_conn.subscribe("gameState");
 			my.hookbox_conn.subscribe("rotationStep");
-			//my.hookbox_conn.subscribe("volumeControl");
 			my.hookbox_conn.subscribe("cubemode");
 			my.hookbox_conn.subscribe("playsound");
 			my.hookbox_conn.subscribe("clientcommand");

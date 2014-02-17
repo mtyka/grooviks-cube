@@ -19,6 +19,8 @@ var global = (function($){
 	my.difficulty = 0;
 
 	var wasSpinning = false;
+	var leaderboardOpen = false;
+	var aboutOpen = false;
 
 	my.turnCheck = function(){
 		if (position != my.currentTurn){
@@ -87,6 +89,15 @@ var global = (function($){
 		}
 	}
 
+	my.toggleLeaderboard = function(){
+		if (leaderboardOpen)
+			$('#leaderboard').css('display', 'none');
+		else
+			$('#leaderboard').css('display', 'block');
+
+		leaderboardOpen = !leaderboardOpen;
+	}
+
 	function toggleRotationButtons(buttonsOn){
 		var val = buttonsOn ? 1.0 : 0.3;
 		$("#buttonleft").animate({opacity: val}, {duration: 200});
@@ -121,72 +132,6 @@ var global = (function($){
 		alert("Unimplemented");
 	}
 
-	//prevent scrolling on mobile pages
-	$(document).bind("touchmove", function(e){
-		e.preventDefault();
-	});
-
-	//prevent highlighting
-	$(document).bind("selectstart", function(e){
-		return false;
-	});
-
-	//free rotation
-	$(document).bind("mousedown touchstart", function(e){
-		//rotation only available when there are no menus
-		if (menu.menustate > 0)
-			return;
-
-		if (is_spinning){
-			wasSpinning = true;
-			stop_spin();
-		}
-
-		$("#slide_azi").stop(true, true);
-
-		if (e.type == "mousedown"){
-			my.last_move = e.pageX;
-
-			$("#container").bind("mousemove", function(e){
-				my.delta_x += e.pageX - my.last_move;
-				my.last_move = e.pageX;
-				$("#slide_azi").val(my.delta_x < 0 ? my.delta_x % -630 : my.delta_x % 630);
-				CubeControl.update_view();
-			});
-		}
-		else if (e.type == "touchstart"){
-			//pageX is hidden in touches...?
-		 	my.last_move = e.originalEvent.targetTouches[0].pageX;
-
-			$("#container").bind("touchmove", function(e){
-				my.delta_x += e.originalEvent.targetTouches[0].pageX - my.last_move;
-				my.last_move = e.originalEvent.targetTouches[0].pageX;
-				$("#slide_azi").val(my.delta_x < 0 ? my.delta_x % -630 : my.delta_x % 630);
-				CubeControl.update_view();
-			});
-		}
-	});
-
-	$(document).bind("mouseup touchend", function(){
-		$("#container").unbind();
-		if (my.delta_x < 0)
-			my.delta_x =  my.delta_x % -630
-		else
-			my.delta_x % 630; //uncertain why it's 630. /// it's close to 100*Math.PI*2
-
-		if (wasSpinning){
-			start_spin(true);
-			wasSpinning = false;
-		}
-
-	});
-
-	$(window).bind( "click touchstart", function() {
-		if( menu.menustate == 1 && !menu.quitClicked){
-			menu.clicked_wake();
-		}
-	});
-
  	my.insideout = false;
 
 	$(document).ready(function() {
@@ -198,9 +143,81 @@ var global = (function($){
 
 		my.currentTurn = position;
 
+		// ------ Basic Bindings -------
+			//prevent scrolling on mobile pages
+		$(document).bind("touchmove", function(e){
+			e.preventDefault();
+		});
+
+		//prevent highlighting
+		$(document).bind("selectstart", function(e){
+			return false;
+		});
+
+		//free rotation
+		$(document).bind("mousedown touchstart", function(e){
+			//rotation only available when there are no menus
+			if (menu.menustate > 0)
+				return;
+
+			if (is_spinning){
+				wasSpinning = true;
+				stop_spin();
+			}
+
+			$("#slide_azi").stop(true, true);
+
+			if (e.type == "mousedown"){
+				my.last_move = e.pageX;
+
+				$("#container").bind("mousemove", function(e){
+					my.delta_x += e.pageX - my.last_move;
+					my.last_move = e.pageX;
+					$("#slide_azi").val(my.delta_x < 0 ? my.delta_x % -630 : my.delta_x % 630);
+					CubeControl.update_view();
+				});
+			}
+			else if (e.type == "touchstart"){
+				//pageX is hidden in touches...?
+				my.last_move = e.originalEvent.targetTouches[0].pageX;
+
+				$("#container").bind("touchmove", function(e){
+					my.delta_x += e.originalEvent.targetTouches[0].pageX - my.last_move;
+					my.last_move = e.originalEvent.targetTouches[0].pageX;
+					$("#slide_azi").val(my.delta_x < 0 ? my.delta_x % -630 : my.delta_x % 630);
+					CubeControl.update_view();
+				});
+			}
+		});
+
+		$(document).bind("mouseup touchend", function(){
+			$("#container").unbind();
+			if (my.delta_x < 0)
+				my.delta_x =  my.delta_x % -630
+			else
+				my.delta_x % 630; //uncertain why it's 630. /// it's close to 100*Math.PI*2
+
+			if (wasSpinning){
+				start_spin(true);
+				wasSpinning = false;
+			}
+
+		});
+
+		$('#container').bind( "click touchstart", function() {
+			if( menu.menustate == 1 && !menu.quitClicked){
+				menu.clicked_wake();
+			}
+		});
+
 		menu.goto_connecting_screen();
 		//timeout.update_game_timeout();
 		document.title = "P:" + position
+
+		// Bottom Bar Bindings
+		$('#button_leaderboard').bind('mousedown', function(){
+			my.toggleLeaderboard();
+		});
 
 		//--------CubeControl on Ready-----------
 

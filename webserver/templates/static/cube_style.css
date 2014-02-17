@@ -73,51 +73,28 @@ input{
 	margin: 0px auto;
 }
 
+#canvas{
+	width: 1100px;
+	height: 1100px;
+	position: fixed;
+	top: 45%;
+	left: 50%;
+	margin-top: -550px;
+	margin-left: -550px;
+	z-index:  0;
+}
+
+#manual_rotate {
+	position: relative;
+	top: -400px;
+}
+
 .leftmenu{
 	margin-left: auto;
 	margin-right: auto;
 	width: 1000px;
 	position: relative;
 	top: 30px;
-}
-
-.toprow{
-	margin-left: auto;
-	margin-right: auto;
-	width: 1000px;
-	position: relative;
-	top: 30px;
-}
-.bottomrow{
-	clear: both;
-	position: fixed;
-	width: 600px;
-  bottom: 200px;
-	left: 50%;
-	margin-left: -300px;
-}
-
-.footer{
-	clear: both;
-	position: fixed;
-	width: 600px;
-	  bottom: 20px;
-	left: 50%;
-	margin-left: -300px;
-}
-
-.topborder,
-.bottomborder,
-.levelmenu_bg{
-	clear: both;
-	position: fixed;
-	left: 0;
-	top: 50%;
-	margin-top: -200px;
-	z-index: 6
-}
-.bottomborder{
-  	margin-top:  200px;
 }
 
 /* --------- Menus --------- */
@@ -278,23 +255,7 @@ input{
 	background-color: #ff00cc;
 }
 
-#canvas{
-	width: 1100px;
-	height: 1100px;
-	position: fixed;
-	top: 45%;
-	left: 50%;
-	margin-top: -550px;
-	margin-left: -550px;
-	z-index:  0;
-}
-
-#manual_rotate {
-	position: relative;
-	top: -400px;
-}
-
-/* Bars */
+/* --------- Bars --------- */
 
 #bar{
 	background-color: rgb(157,154,162);
@@ -316,6 +277,7 @@ input{
 	height: auto;
 	width: 100%;
 	background-color: rgb(248, 151, 29);
+	text-align: center;
 }
 
 /* --------- Player List --------- */
@@ -360,6 +322,87 @@ input{
 	right: 160px;
 	height: 180px;
 	width: 180px;
+}
+
+/* --------- Leaderboard --------- */
+
+#leaderboard{
+	width: 40%;
+	height: 500px;
+	position: absolute;
+	top: 20%;
+	left: 30%;
+	z-index: 10;
+	display: none;
+}
+
+#xButton{
+	float: right;
+	margin: -23px;
+	z-index: 15;
+}
+
+#leaderboard h1{
+	background-color: #F8971D;
+	font-family: Gotham-Book;
+	font-size: 2em;
+	padding: 8px 15px 0;
+	margin: 0 auto -4px;
+	width: 40%;
+	border-radius: 15px 15px 0 0;
+	border-width: 5px;
+	border-color: #F8971D;
+}
+
+#leaderboardOuterContainer{
+	border-radius: 15px;
+	border-width: 20px;
+	border-color: #F8971D;
+	background-color: #F8971D;
+	padding: 25px;
+	height: 400px;
+}
+
+#leaderboardOuterContainer ul{
+	color: #000;
+	list-style-type: none;
+	width: 100%;
+	margin: 0 auto;
+	display: table;
+	background: #DCDDDF;
+	padding: 20px 0;
+	border-radius: 15px 15px 0 0;
+}
+
+#leaderboardOuterContainer ul li {
+	display: table-cell;
+}
+
+#leaderboardInnerContainer{
+	background-color: white;
+	border-radius: 0 0 15px 15px;
+	height: 85%;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+table{
+	text-align: center;
+	background-color: white;
+	color: black;
+	border-spacing: 0;
+	width: 100%;
+}
+
+thead{
+	background-color: rgb(220, 221, 223);
+	border-radius: 5px 5px 0 0;
+	border-width: 1px;
+	border-color: rgb(248, 151, 29);
+}
+
+td{
+	padding: 20px 0;
 }
 
 /* --------- Notice areas --------- */
