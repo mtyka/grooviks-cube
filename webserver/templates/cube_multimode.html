@@ -162,12 +162,30 @@
 			</ul>
 		</div>
 
-		<div id="bottomBar" class="orangeButton">
-			<input type="button" id="button_about" 		 class="bottomBarButton" onclick="global.unimplemented();" ontouchstart="unimplemented();" ondragstart="return false" value="About">
-			<input type="button" id="button_leaderboard" class="bottomBarButton" onclick="global.unimplemented();" ontouchstart="unimplemented();" ondragstart="return false" value="Leaderboard">
-
-			<input type="button" id="button_perspective" class="bottomBarButton" onclick="if (menu.menustate == 0)set_initial_position();" ontouchstart="if (menu.menustate == 0)set_initial_position();" ondragstart="return false" value="View from my perspective">
-    		<input type="button" id="button_quit" 		 class="bottomBarButton" onclick="menu.clicked_quit();" ontouchstart="menu.clicked_quit();" ondragstart="return false" value="Quit">
+		<div id="leaderboard">
+			<h1>Leaderboard</h1>
+			<img id="xButton" width="60" src="static/x-button.png" alt="close" onclick="global.toggleLeaderboard();" ontouchstart="global.toggleLeaderboard();">
+			<div id="leaderboardOuterContainer">
+				<ul>
+					<li>Rank</li>
+					<li>Time to Solve</li>
+					<li># of Moves</li>
+				</ul>
+				<div id="leaderboardInnerContainer">
+					<table id="board">
+						<tr>
+							<td>1</td>
+							<td>1:30</td>
+							<td>30</td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>2:06</td>
+							<td>87</td>
+						</tr>
+					</table>
+				</div>
+			</div>
 		</div>
 
         <div class="debug" id="manual_rotate">
@@ -182,6 +200,13 @@
         <div id="alphaTransition" avalue="0" value="0"></div>
     </div>
 
+	<div id="bottomBar" class="orangeButton">
+		<input type="button" id="button_about" 		 class="bottomBarButton" onclick="global.unimplemented();" ontouchstart="unimplemented();" ondragstart="return false" value="About">
+		<input type="button" id="button_leaderboard" class="bottomBarButton" ondragstart="return false" value="Leaderboard">
+
+		<input type="button" id="button_perspective" class="bottomBarButton" onclick="if (menu.menustate == 0)set_initial_position();" ontouchstart="if (menu.menustate == 0)set_initial_position();" ondragstart="return false" value="View from my perspective">
+		<input type="button" id="button_quit" 		 class="bottomBarButton" onclick="menu.clicked_quit();" ontouchstart="menu.clicked_quit();" ondragstart="return false" value="Quit">
+	</div>
 
     <div id="admin_background">
       <div class="main_panel ui-state-default ui-corner-all" id="securitycode" >
