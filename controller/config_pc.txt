@@ -142,5 +142,5 @@ calibration_colors =
 settings = {"sp-session-duration": "200", "mp-timeout-limit": "2", "mp-session-duration": "300", "mp-turn-duration": "25", "menu-timeout": "15"}
 
 [Leaderboard]
-board = {"board": [{"moves": 84, "time": 248}]}
+board = {"board": [{"moves": 84, "time": 248}, {"moves": 82, "time": 273}]}
 

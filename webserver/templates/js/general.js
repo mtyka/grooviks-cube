@@ -18,6 +18,8 @@ var global = (function($){
 
 	my.difficulty = 0;
 
+	my.recentEvent = false;
+
 	var wasSpinning = false;
 	var leaderboardOpen = false;
 	var aboutOpen = false;
@@ -100,6 +102,11 @@ var global = (function($){
 
 	my.normalizeTime = function (t){
 		return Math.floor(t/60).toString() + ":" + (t%60 < 10 ? ("0" + t%60).toString() : (t%60).toString());
+	}
+
+	function eventTimeout(){
+		my.recentEvent = true;
+		setTimeout(function(){my.recentEvent = false;}, 900);
 	}
 
 	function toggleRotationButtons(buttonsOn){
@@ -210,8 +217,11 @@ var global = (function($){
 		});
 
 		$("#svgholder, #idlemenu").bind( "click touchstart", function() {
+			if (my.recentEvent)
+				return;
 			if( menu.menustate == 1 && !menu.quitClicked){
 				menu.clicked_wake();
+				eventTimeout();
 			}
 		});
 
@@ -221,7 +231,10 @@ var global = (function($){
 
 		// Bottom Bar Bindings
 		$('#button_leaderboard').bind('mousedown', function(){
+			if (my.recentEvent)
+				return;
 			my.toggleLeaderboard();
+			eventTimeout();
 		});
 
 		//--------CubeControl on Ready-----------
@@ -250,9 +263,25 @@ var global = (function($){
 		});
 
 		//--------menus on Ready-----------
-		$("#easy").bind( "click touchstart",   function() { menu.select_difficulty(2); menu.clear_screen();} );
-		$("#medium").bind( "click touchstart", function() { menu.select_difficulty(4); menu.clear_screen();} );
-		$("#hard").bind( "click touchstart",   function() { menu.select_difficulty(20); menu.clear_screen();} );
+		$("#easy").bind( "click touchstart",   function() {
+			if (my.recentEvent)
+				return;
+			menu.select_difficulty(2); menu.clear_screen();
+			eventTimeout()
+		});
+		$("#medium").bind( "click touchstart", function() {
+			if (my.recentEvent)
+				return;
+			menu.select_difficulty(4); menu.clear_screen();
+			eventTimeout()
+		});
+
+		$("#hard").bind( "click touchstart",   function() {
+			if (my.recentEvent)
+				return;
+			menu.select_difficulty(20); menu.clear_screen();
+			eventTimeout()
+		});
 
 		$("#buttonleft").bind( "click touchstart", function(){
 			console.log("button left click");
