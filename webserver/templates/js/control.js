@@ -100,7 +100,7 @@ CubeControl = (function($){
 		}
 		//console.log("show arrows called");
 
-		Renderer.alphaTranstion = 0.0;
+		Renderer.alphaTransition = 0.0;
 		$("#alphaTransition").attr('avalue', 0);
 
 		//animate arrows into existence
