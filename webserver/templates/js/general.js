@@ -100,6 +100,15 @@ var global = (function($){
 		leaderboardOpen = !leaderboardOpen;
 	}
 
+	my.toggleAbout = function(){
+		if (aboutOpen)
+			$('#about').css('display', 'none');
+		else
+			$('#about').css('display', 'block');
+
+		aboutOpen = !aboutOpen;
+	}
+
 	my.normalizeTime = function (t){
 		return Math.floor(t/60).toString() + ":" + (t%60 < 10 ? ("0" + t%60).toString() : (t%60).toString());
 	}
@@ -234,6 +243,13 @@ var global = (function($){
 			if (my.recentEvent)
 				return;
 			my.toggleLeaderboard();
+			eventTimeout();
+		});
+
+		$('#button_about').bind('mousedown', function(){
+			if (my.recentEvent)
+				return;
+			my.toggleAbout();
 			eventTimeout();
 		});
 
