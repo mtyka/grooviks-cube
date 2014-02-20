@@ -184,6 +184,22 @@
 			</div>
 		</div>
 
+		<div id="about">
+			<h1>About</h1>
+			<img id="xButton" width="60" src="static/x-button.png" alt="close" onclick="global.toggleAbout();" ontouchstart="global.toggleAbout();">
+			<div id="aboutOuterContainer">
+				<div id="aboutInnerContainer">
+					<p>The 26-foot high Grooviks Cube was created for the 2009 Burning Man Festival in Nevada by Mike Tyka and GroovLabs, a Seattle-based art collective. Rather than mechanically twisting, Grooviks Cube uses shifting and changing LED lights to mimic the motion of Rubik’s Cube.
+					<br><br>
+					Are you up to the Grooviks challenge?
+					<br><br>
+					Credits:<br>
+					Groovik’s Cube by Mike Tyka and GroovLabs<br>
+					Additional programming and web interface by IDEUM<br></p>
+				</div>
+			</div>
+		</div>
+
         <div class="debug" id="manual_rotate">
             Altitude: <input id="slide_alt" max="1000" min="-1000" onchange="CubeControl.update_view();" type="range" value="220"><br>
             Azimuth: <input id="slide_azi" max="1000" min="-1000" onchange="CubeControl.update_view();" type="range" value="0"><br>
@@ -197,7 +213,7 @@
     </div>
 
 	<div id="bottomBar" class="orangeButton">
-		<input type="button" id="button_about" 		 class="bottomBarButton" onclick="global.unimplemented();" ontouchstart="unimplemented();" ondragstart="return false" value="About">
+		<input type="button" id="button_about" 		 class="bottomBarButton" ondragstart="return false" value="About">
 		<input type="button" id="button_leaderboard" class="bottomBarButton" ondragstart="return false" value="Leaderboard">
 
 		<input type="button" id="button_perspective" class="bottomBarButton" onclick="if (menu.menustate == 0)set_initial_position();" ontouchstart="if (menu.menustate == 0)set_initial_position();" ondragstart="return false" value="View from my perspective">

@@ -328,9 +328,9 @@ input{
 	width: 180px;
 }
 
-/* --------- Leaderboard --------- */
+/* --------- About and Leaderboard --------- */
 
-#leaderboard{
+#leaderboard, #about{
 	width: 40%;
 	height: 500px;
 	position: absolute;
@@ -346,7 +346,7 @@ input{
 	z-index: 15;
 }
 
-#leaderboard h1{
+#leaderboard h1, #about h1{
 	background-color: #F8971D;
 	font-family: Gotham-Book;
 	font-size: 2em;
@@ -358,7 +358,7 @@ input{
 	border-color: #F8971D;
 }
 
-#leaderboardOuterContainer{
+#leaderboardOuterContainer, #aboutOuterContainer{
 	border-radius: 15px;
 	border-width: 20px;
 	border-color: #F8971D;
@@ -388,6 +388,23 @@ input{
 	height: 85%;
 	overflow-y: auto;
 	overflow-x: hidden;
+}
+
+#aboutInnerContainer{
+	background-color: white;
+	border-radius: 15px;
+	height: 92%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	color: black;
+	padding: 15px 35px;
+	text-align: left;
+	text-transform: none;
+}
+
+#aboutInnerContainer p{
+	line-height: 1.5em;
+	text-indent: 25px;
 }
 
 table{
