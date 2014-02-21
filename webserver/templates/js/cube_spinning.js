@@ -2,6 +2,7 @@
 // Cube spin controller
 
 var is_spinning = false;
+var absoluteSpinFinished = false;
 
 function set_initial_position(){
 	// using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
@@ -35,9 +36,13 @@ function animate_absolute_spin(radians) {
 		complete: function(){
 			locked_buttons = false;
 
-			if (menu.menustate == 0 && global.currentTurn == position){
-				CubeControl.ignore_clicks = false;
-				CubeControl.reset_arrow_timer();
+			if (!absoluteSpinFinished){
+				if (menu.menustate == 0 && global.currentTurn == position){
+					CubeControl.ignore_clicks = false;
+					CubeControl.reset_arrow_timer();
+				}
+				absoluteSpinFinished = true;
+				setTimeout(function(){absoluteSpinFinished = false},5000);
 			}
 
 			global.delta_x = parseFloat($("#slide_azi").val() > 0 ?
