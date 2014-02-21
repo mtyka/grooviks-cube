@@ -57,6 +57,7 @@ var HookboxConnection = (function(){
 				if( channelName == 'iframe' ) {
 					subscription = _subscription;
 					subscription.onPublish = function(frame) {
+						//console.log("datagram recv");
 						CubeControl.update_cube_state_from_datagram( frame.payload );
 					};
 				}
