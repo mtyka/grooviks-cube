@@ -94,8 +94,11 @@ var global = (function($){
 	my.toggleLeaderboard = function(){
 		if (leaderboardOpen)
 			$('#leaderboard').css('display', 'none');
-		else
+		else{
 			$('#leaderboard').css('display', 'block');
+			if (aboutOpen)
+				my.toggleAbout();
+		}
 
 		leaderboardOpen = !leaderboardOpen;
 	}
@@ -103,9 +106,11 @@ var global = (function($){
 	my.toggleAbout = function(){
 		if (aboutOpen)
 			$('#about').css('display', 'none');
-		else
+		else{
 			$('#about').css('display', 'block');
-
+			if (leaderboardOpen)
+				my.toggleLeaderboard();
+		}
 		aboutOpen = !aboutOpen;
 	}
 

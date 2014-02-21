@@ -356,10 +356,17 @@ input{
 	font-size: 2em;
 	padding: 8px 15px 0;
 	margin: 0 auto -4px;
-	width: 40%;
 	border-radius: 15px 15px 0 0;
 	border-width: 5px;
 	border-color: #F8971D;
+}
+
+#about h1{
+	width: 40%;
+}
+
+#leaderboard h1{
+	width: 52%;
 }
 
 #leaderboardOuterContainer, #aboutOuterContainer{
