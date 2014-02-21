@@ -200,6 +200,10 @@ input{
 	border-color: black;
 }
 
+.button.left, .button.right{
+	z-index: 0;
+}
+
 .button.left{
 	left: 5%;
 	float:left;
