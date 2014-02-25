@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-# 
+#
 # Interface for game modes that control cube simulations
 # Only one game mode can be active at a time
 #
@@ -14,22 +14,15 @@ class ModePartialSolveState(ModeNormalState):
 			6,6,6,6, 3,6,6,6,6,	#B 27-35
 			6,6,6,6, 4,6,6,6,6,	#U 36-44
 			6,6,6,6, 5,6,6,6,6] #D 45-53
-			
+
 	medium = [ 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			  6,6,6,6, 1,6,6,6,6,
-			  6,6,6,6, 2,6,6,6,6,	
+			  6,6,6,6, 2,6,6,6,6,
 			  6,6,6,6, 3,6,6,6,6,
 			  6,6,6,6, 4,6,6,6,6,
 			  6,6,6,6, 5,6,6,6,6]
-			  
-	hard   = [6,0,6, 0,0,0, 6,0,6,
-			  6,6,6, 6,1,6, 6,6,6,
-			  6,6,6, 2,2,6, 6,6,6,
-			  6,6,6, 6,3,3, 6,6,6,
-			  6,6,6, 6,4,4, 6,6,6,
-			  6,6,6, 5,5,6, 6,6,6]
-			  
-	harder = [0, 0, 0, 0, 0, 0, 0, 0, 0,	#R
+
+	hard = [0, 0, 0, 0, 0, 0, 0, 0, 0,	#R
 			  6, 6, 6, 6, 1, 6, 6, 6, 6,	#L
 			  2, 6, 6, 2, 2, 6, 2, 6, 6,	#F
 			  6, 6, 3, 6, 3, 3, 6, 6, 3,	#B
@@ -38,26 +31,24 @@ class ModePartialSolveState(ModeNormalState):
 
 class ModePartialSolve( ModeNormal ):
 
-	__difficulties = {"easy": 2, 
+	__difficulties = {"easy": 2,
 		"medium": 3,
 		  "hard": 4,
-		"harder": 5
 		}
 
 	__initialStates = {"easy": ModePartialSolveState.easy,
 		"medium": ModePartialSolveState.medium,
 		  "hard": ModePartialSolveState.hard,
-		"harder":ModePartialSolveState.harder
 		}
 
 	def StartMode( self, grooviksCube, difficulty="medium"):
 		self.__currentDifficulty = difficulty
 		self.__normalModeState = ModePartialSolveState.NORMAL
 		return groovikConfig.standardFaceColors, self.__initialStates[difficulty];
-	
+
 	def HandleInput( self, grooviksCube, display, cubeInputType, params ):
 		if ( cubeInputType == CubeInput.ROTATION ):
-			grooviksCube.QueueRotation( params )	
+			grooviksCube.QueueRotation( params )
 
 	def Randomize(self, grooviksCube, depth, time = .5):
 		self.__normalModeState = ModeNormalState.RANDOMIZING_AFTER_VICTORY_DANCE
@@ -71,21 +62,21 @@ class ModePartialSolve( ModeNormal ):
 		if ( stateFinished is False ):
 			return
 
-		# If we're rotating, and it's solved in normal mode, victory!	  
+		# If we're rotating, and it's solved in normal mode, victory!
 		if ( self.__normalModeState == ModeNormalState.NORMAL ):
 			if ( grooviksCube.GetCurrentState() == CubeState.ROTATING ):
 				if ( self.__Solved( currentColors ) ):
 					self.__normalModeState = ModeNormalState.VICTORY_DANCE
 					grooviksCube.QueueEffect( "victory%d"%( random.randint(0,2)) )
-					gs_dict = { 'soundid':'victory1', 'stopall':False } 
+					gs_dict = { 'soundid':'victory1', 'stopall':False }
 					print "Pushed: ", [ json.dumps(gs_dict), 'playsound']
 					push_message( json.dumps(gs_dict), 'playsound' )
-			
-		# We're done with the victory dance + randomization after we have no more queued states	
+
+		# We're done with the victory dance + randomization after we have no more queued states
 		elif ( self.__normalModeState == ModeNormalState.VICTORY_DANCE ):
 			if ( not grooviksCube.HasQueuedStates() ):
 				# Randomize the cube now we've finished with the victory dance
-				self.__normalModeState = ModeNormalState.RANDOMIZING_AFTER_VICTORY_DANCE 
+				self.__normalModeState = ModeNormalState.RANDOMIZING_AFTER_VICTORY_DANCE
 				resetScript = GScript()
 				resetScript.CreateRandom( 8, .3)
 				resetScript.ForceQueue( grooviksCube )
@@ -94,15 +85,15 @@ class ModePartialSolve( ModeNormal ):
 				  push_message( json.dumps({ 'position':position, 'command':ClientCommand.QUIT, }), 'clientcommand' )
 		elif ( self.__normalModeState == ModeNormalState.RANDOMIZING_AFTER_VICTORY_DANCE ):
 			if ( not grooviksCube.HasQueuedStates() ):
-				self.__normalModeState = ModeNormalState.NORMAL	
-	
-	def CanQueueState( self, grooviksCube, state ):	
+				self.__normalModeState = ModeNormalState.NORMAL
+
+	def CanQueueState( self, grooviksCube, state ):
 		if ( self.__normalModeState != ModeNormalState.NORMAL ):
 			return False
 		if ( grooviksCube.HasQueuedStates() ):
 			return False
 		return True
-		
+
 	def __Solved(self, colors):
 		if (self.__currentDifficulty == "easy"):
 			return self.easyIsSolved(colors)
@@ -114,72 +105,72 @@ class ModePartialSolve( ModeNormal ):
 			return self.harderIsSolved(colors)
 		else:
 			return False
-	
-	
+
+
 	def easyIsSolved(self, colors):
 		solvedSide = self.__convertStickersToColors([[6,0,6,0,0,0,6,0,6]])[0]
 		for i in range(6):
 			subset = colors[i*9:i*9+9]
 			if (subset == solvedSide):
 				return True
-				
+
 		return False
-	
-	
+
+
 	def mediumIsSolved(self, colors):
 		solvedSide = self.__convertStickersToColors([[0]*9])[0]
 		for i in range(6):
 			subset = colors[i*9:i*9+9]
 			if (subset == solvedSide):
 				return True
-		
+
 		return False
-	
+
 	def hardIsSolved(self, colors):
 		pattern = self.__convertStickersToColors([[6,0,6,0,0,0,6,0,6]])[0]
 		location = self.findSide(pattern)
 		if (location < 0):
 			return False
-			
+
 		for i in range(6):
 			subset = colors[i*9:i*9+9]
 			if (not self.sideHasOneColor(subset)):
 				return False
-		
+
 		return True
-	
-	
+
+
 	def harderIsSolved(self, colors):
 		pattern = self.__convertStickersToColors([[0]*9])[0]
 		location = self.findSide(pattern)
 		if (location < 0):
 			return False
-		
+
 		for i in range(6):
 			subset = colors[i*9:i*9+9]
 			if (not self.sideHasOneColor(subset)):
 				return False
-		
+
 		return True
-	
+
 	def __convertStickersToColors(self, side):
 		ret = []
 		for stickers in side:
 			perm = []
 			for s in stickers:
 				perm.append(groovikConfig.standardFaceColors[s])
-		
+
 			ret.append(perm)
 		return ret
-	
+
 	def findSide (self, pattern, colors):
 		for i in range(6):
 			subset = colors[i*9:i*9+9]
-			if (subset == pattern): 
+			if (subset == pattern):
 				return i
 
 		return -1
-	
+
 	def sideHasOneColor(self, s):
 		primer = -10
 		for i in s:
@@ -187,5 +178,5 @@ class ModePartialSolve( ModeNormal ):
 				primer = i
 			elif (i != primer and i != -1):
 				return False
-		
+
 		return True
