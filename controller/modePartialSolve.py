@@ -31,11 +31,6 @@ class ModePartialSolveState(ModeNormalState):
 
 class ModePartialSolve( ModeNormal ):
 
-	__difficulties = {"easy": 2,
-		"medium": 3,
-		  "hard": 4,
-		}
-
 	__initialStates = {"easy": ModePartialSolveState.easy,
 		"medium": ModePartialSolveState.medium,
 		  "hard": ModePartialSolveState.hard,
@@ -44,7 +39,7 @@ class ModePartialSolve( ModeNormal ):
 	def StartMode( self, grooviksCube, difficulty="medium"):
 		self.__currentDifficulty = difficulty
 		self.__normalModeState = ModePartialSolveState.NORMAL
-		return groovikConfig.standardFaceColors, self.__initialStates[difficulty];
+		return groovikConfig.standardFaceColors, self.__initialStates[difficulty]
 
 	def HandleInput( self, grooviksCube, display, cubeInputType, params ):
 		if ( cubeInputType == CubeInput.ROTATION ):
@@ -56,6 +51,17 @@ class ModePartialSolve( ModeNormal ):
 		resetScript = GScript()
 		resetScript.CreateRandom(depth, time)
 		resetScript.ForceQueue( grooviksCube )
+
+	def SetDifficulty(self, diff):
+		if diff == 2:
+			self.__currentDifficulty = "easy"
+		elif diff == 4:
+			self.__currentDifficulty = "medium"
+		elif diff > 15:
+			self.__currentDifficulty = "hard"
+
+		print 'current difficulty for Partial set: ', self.__currentDifficulty
+		return self.__initialStates[self.__currentDifficulty]
 
 	def SelectNewState( self, grooviksCube, currentTime, currentColors, stateFinished ):
 		# We don't do anything when the state isn't finished
@@ -128,7 +134,7 @@ class ModePartialSolve( ModeNormal ):
 
 	def hardIsSolved(self, colors):
 		pattern = self.__convertStickersToColors([[6,0,6,0,0,0,6,0,6]])[0]
-		location = self.findSide(pattern)
+		location = self.findSide(pattern, colors)
 		if (location < 0):
 			return False
 
@@ -139,20 +145,7 @@ class ModePartialSolve( ModeNormal ):
 
 		return True
 
-
-	def harderIsSolved(self, colors):
-		pattern = self.__convertStickersToColors([[0]*9])[0]
-		location = self.findSide(pattern)
-		if (location < 0):
-			return False
-
-		for i in range(6):
-			subset = colors[i*9:i*9+9]
-			if (not self.sideHasOneColor(subset)):
-				return False
-
-		return True
-
+	# takes a array of arrays
 	def __convertStickersToColors(self, side):
 		ret = []
 		for stickers in side:

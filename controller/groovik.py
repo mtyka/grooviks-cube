@@ -438,6 +438,9 @@ class GrooviksCube:
 				self.__colors.append( [0.0, 0.0, 0.0] )
 		self.__ClearRotationQueue( )
 
+	def __setDifficulty(self, diff):
+		self.__initialColorIndices = self.__currentMode.SetDifficulty(diff)
+
 	def Randomize( self, client, depth ):
 		"""Do a scramble of a given depth"""
 		if not self.IsPositionActive(client.GetPosition()):
@@ -446,6 +449,11 @@ class GrooviksCube:
 		if self.GetGameState() in [GameState.UNBOUND, GameState.VICTORY]:
 			# ignore if the cube isn't bound to an active game
 			return
+
+		if self.__currentCubeMode in [0.1,0.3]: #CubeMode literals that have difficulties
+			print 'SETTING DIFFICULTY ~~~~~~'
+			self.__setDifficulty(depth)
+
 		self.currentDifficulty = depth
 		self.ResetColors()
 		if self.__currentCubeMode != CubeMode.SYMMETRIC:
