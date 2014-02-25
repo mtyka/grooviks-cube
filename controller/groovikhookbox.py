@@ -221,6 +221,7 @@ class Cube():
 					self.logger.logLine( "CubeMode: %s " % (payload) )
 					if( self.grooviksCube.GetCurrentMode() != mode):
 						self.grooviksCube.QueueModeChange(mode)
+
 				elif channel == 'colorcalib':
 					command = rtjp_frame[2]['payload']
 					print command
@@ -252,6 +253,9 @@ class Cube():
 
 					elif str(payload['get']) == 'leaderboard':
 						groovikConfig.getLeaderboard();
+
+					elif str(payload['get']) == 'cubemode':
+						push_message( json.dumps({'sub': 'cubemode', 'set': self.grooviksCube.GetCurrentMode()}), 'info')
 
 			except KeyError:
 				#TODO: actually parse the error and log it
