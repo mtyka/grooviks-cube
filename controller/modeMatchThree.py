@@ -26,11 +26,19 @@ class ModePartialSolveState(ModeNormalState):
 class ModeMatchThree( ModeNormal ):
 
 	__initialStates = {
-		  "easy": ModePartialSolveState.easy,
-		"medium": ModePartialSolveState.medium,
+		  'easy': ModePartialSolveState.easy,
+		'medium': ModePartialSolveState.medium,
 	}
 
-	def StartMode( self, grooviksCube, difficulty="easy"):
+	difficulties = {
+		'easy': 8,
+		'medium': 8
+	};
+
+	__solveCount = 0
+	__solveMax   = 5
+
+	def StartMode( self, grooviksCube, difficulty='easy'):
 		self.__currentDifficulty = difficulty
 		self.__normalModeState = ModePartialSolveState.NORMAL
 		return groovikConfig.standardFaceColors, self.__initialStates[self.__currentDifficulty]
@@ -45,13 +53,14 @@ class ModeMatchThree( ModeNormal ):
 		resetScript = GScript()
 		resetScript.CreateRandom(depth, time)
 		resetScript.ForceQueue( grooviksCube )
+		self.__solveCount = 0
 
 	def SetDifficulty(self, diff):
 		if diff == 2:
-			self.__currentDifficulty = "easy"
+			self.__currentDifficulty = 'easy'
 			return self.__initialColorIndices[self.__currentDifficulty]
 		elif diff == 4:
-			self.__currentDifficulty = "medium"
+			self.__currentDifficulty = 'medium'
 		return self.__initialStates[self.__currentDifficulty]
 
 	def SelectNewState( self, grooviksCube, currentTime, currentColors, stateFinished ):
@@ -63,11 +72,17 @@ class ModeMatchThree( ModeNormal ):
 		if ( self.__normalModeState == ModeNormalState.NORMAL ):
 			if ( grooviksCube.GetCurrentState() == CubeState.ROTATING ):
 				if ( self.__Solved( currentColors ) ):
-					self.__normalModeState = ModeNormalState.VICTORY_DANCE
-					grooviksCube.QueueEffect( "victory%d"%( random.randint(0,2)) )
-					gs_dict = { 'soundid':'victory1', 'stopall':False }
-					print "Pushed: ", [ json.dumps(gs_dict), 'playsound']
-					push_message( json.dumps(gs_dict), 'playsound' )
+					self.__solveCount += 1;
+					push_message( json.dumps({'sub':'m3Solves', 'solves':self.__solveCount, 'max':self.__solveMax}), 'info' )
+					if (self.__solveCount == self.__solveMax):
+						self.__normalModeState = ModeNormalState.VICTORY_DANCE
+						grooviksCube.QueueEffect( 'victory%d'%( random.randint(0,2)) )
+						gs_dict = { 'soundid':'victory1', 'stopall':False }
+						print 'Pushed: ', [ json.dumps(gs_dict), 'playsound']
+						push_message( json.dumps(gs_dict), 'playsound' )
+						self.__solveCount = 0
+					else:
+						self.Randomize(grooviksCube, 5, .25)
 
 		# We're done with the victory dance + randomization after we have no more queued states
 		elif ( self.__normalModeState == ModeNormalState.VICTORY_DANCE ):
@@ -92,10 +107,10 @@ class ModeMatchThree( ModeNormal ):
 		return True
 
 	def __Solved(self, colors):
-		#print "match 3 colors:  " + "".join(str(x) for x in colors)
-		if self.__currentDifficulty is "easy":
+		#print 'match 3 colors:  ' + ''.join(str(x) for x in colors)
+		if self.__currentDifficulty == 'easy':
 			return self.__easyIsSolved(colors)
-		elif self.__currentDifficulty is "medium":
+		elif self.__currentDifficulty == 'medium':
 			return self.__mediumIsSolved(colors)
 
 	def __easyIsSolved(self, colors):
@@ -153,5 +168,4 @@ class ModeMatchThree( ModeNormal ):
 		for i in range(6):
 			if colors[i*9:i*9+9] == pattern:
 				return i
-
 		return -1
