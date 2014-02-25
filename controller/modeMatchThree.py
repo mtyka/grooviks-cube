@@ -25,10 +25,6 @@ class ModePartialSolveState(ModeNormalState):
 
 class ModeMatchThree( ModeNormal ):
 
-	__difficulties = {"easy": 5,
-		"medium": 5,
-	}
-
 	__initialStates = {
 		  "easy": ModePartialSolveState.easy,
 		"medium": ModePartialSolveState.medium,
@@ -49,6 +45,15 @@ class ModeMatchThree( ModeNormal ):
 		resetScript = GScript()
 		resetScript.CreateRandom(depth, time)
 		resetScript.ForceQueue( grooviksCube )
+
+	def SetDifficulty(self, diff):
+		if diff == 2:
+			self.__currentDifficulty = "easy"
+			return self.__initialColorIndices[self.__currentDifficulty]
+		elif diff == 4:
+			self.__currentDifficulty = "medium"
+
+		return self.__initialStates[self.__currentDifficulty]
 
 	def SelectNewState( self, grooviksCube, currentTime, currentColors, stateFinished ):
 		# We don't do anything when the state isn't finished
