@@ -68,7 +68,8 @@ class GScript:
 			# NOTE: The '2' is the enum for rotation
 			self.moves.append([2, rot, clockwise, time]);
 			if (symmetric and (rot != 1 and rot != 4 and rot != 7)):
-				self.moves.append([2, oppositeMoves[rot], abs(~clockwise), time])
+				self.moves.append([2, oppositeMoves[rot], clockwise, time])
+			#the clockwise variable is counter intuitive/wrong from a speedcuber perspective
 
 	def ForceQueue(self, cube):
 		for move in self.moves:

@@ -43,7 +43,6 @@ class ModeSymmetricSolve( ModeNormal ):
 
 	def Randomize(self, grooviksCube, depth, time = .5):
 		self.__normalModeState = ModeNormalState.RANDOMIZING_AFTER_VICTORY_DANCE
-		depth = self.difficulties[self.__currentDifficulty];
 		resetScript = GScript()
 		resetScript.CreateRandom(depth, time, True)
 		resetScript.ForceQueue( grooviksCube )
