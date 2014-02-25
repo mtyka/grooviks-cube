@@ -9,13 +9,6 @@ from modenormal import *
 
 class ModeSymmetricSolve( ModeNormal ):
 
-	__difficulties = {"easy": 2,
-		"medium": 3,
-		  "hard": 4,
-		"master": 5,
-		  "full": 20
-	}
-
 	def StartMode( self, grooviksCube, difficulty="medium"):
 		self.__currentDifficulty = difficulty
 		self.__normalModeState = ModeNormalState.NORMAL
@@ -43,6 +36,8 @@ class ModeSymmetricSolve( ModeNormal ):
 
 	def Randomize(self, grooviksCube, depth, time = .5):
 		self.__normalModeState = ModeNormalState.RANDOMIZING_AFTER_VICTORY_DANCE
+		if depth > 15:
+			depth = 8
 		resetScript = GScript()
 		resetScript.CreateRandom(depth, time, True)
 		resetScript.ForceQueue( grooviksCube )

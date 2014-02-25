@@ -451,15 +451,15 @@ class GrooviksCube:
 			return
 
 		if self.__currentCubeMode in [0.1,0.3]: #CubeMode literals that have difficulties
-			print 'SETTING DIFFICULTY ~~~~~~'
+			print 'Setting difficulty to', depth, ' for mode ', self.__currentCubeMode
 			self.__setDifficulty(depth)
 
 		self.currentDifficulty = depth
 		self.ResetColors()
-		if self.__currentCubeMode != CubeMode.SYMMETRIC:
-			self.__normalMode.Randomize(self, depth)
+		if self.__currentCubeMode in [0, 0.1, 0.2, 0.3]:
+			self.__currentMode.Randomize(self, depth)
 		else:
-			self.__symmetricMode.Randomize(self, depth)
+			self.__normalMode.Randomize(self, depth)
 
 	def RandomUnboundIdleMove( self ):
 		"""Do a random move"""
