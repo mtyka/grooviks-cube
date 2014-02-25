@@ -52,7 +52,6 @@ class ModeMatchThree( ModeNormal ):
 			return self.__initialColorIndices[self.__currentDifficulty]
 		elif diff == 4:
 			self.__currentDifficulty = "medium"
-
 		return self.__initialStates[self.__currentDifficulty]
 
 	def SelectNewState( self, grooviksCube, currentTime, currentColors, stateFinished ):
@@ -96,7 +95,7 @@ class ModeMatchThree( ModeNormal ):
 		#print "match 3 colors:  " + "".join(str(x) for x in colors)
 		if self.__currentDifficulty is "easy":
 			return self.__easyIsSolved(colors)
-		elif self.currentDifficulty is "medium":
+		elif self.__currentDifficulty is "medium":
 			return self.__mediumIsSolved(colors)
 
 	def __easyIsSolved(self, colors):
