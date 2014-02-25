@@ -59,8 +59,6 @@ class ModePartialSolve( ModeNormal ):
 			self.__currentDifficulty = "medium"
 		elif diff > 15:
 			self.__currentDifficulty = "hard"
-
-		print 'current difficulty for Partial set: ', self.__currentDifficulty
 		return self.__initialStates[self.__currentDifficulty]
 
 	def SelectNewState( self, grooviksCube, currentTime, currentColors, stateFinished ):
@@ -133,7 +131,7 @@ class ModePartialSolve( ModeNormal ):
 		return False
 
 	def hardIsSolved(self, colors):
-		pattern = self.__convertStickersToColors([[6,0,6,0,0,0,6,0,6]])[0]
+		pattern = self.__convertStickersToColors([[0]*9])[0]
 		location = self.findSide(pattern, colors)
 		if (location < 0):
 			return False
@@ -145,14 +143,13 @@ class ModePartialSolve( ModeNormal ):
 
 		return True
 
-	# takes a array of arrays
+		# takes a array of arrays
 	def __convertStickersToColors(self, side):
 		ret = []
 		for stickers in side:
 			perm = []
 			for s in stickers:
 				perm.append(groovikConfig.standardFaceColors[s])
-
 			ret.append(perm)
 		return ret
 
@@ -161,15 +158,15 @@ class ModePartialSolve( ModeNormal ):
 			subset = colors[i*9:i*9+9]
 			if (subset == pattern):
 				return i
-
 		return -1
 
 	def sideHasOneColor(self, s):
 		primer = -10
+		falseColor = groovikConfig.standardFaceColors[6]
 		for i in s:
-			if (i != -1 and primer < 0):
+			if (i != falseColor and primer < 0):
 				primer = i
-			elif (i != primer and i != -1):
+			elif (i != primer and i != falseColor):
 				return False
 
 		return True
