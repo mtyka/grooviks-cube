@@ -448,12 +448,18 @@ class GrooviksCube:
 			return
 		self.currentDifficulty = depth
 		self.ResetColors()
-		self.__normalMode.Randomize(self, depth)
+		if self.__currentCubeMode != CubeMode.SYMMETRIC:
+			self.__normalMode.Randomize(self, depth)
+		else:
+			self.__symmetricMode.Randomize(self, depth)
 
 	def RandomUnboundIdleMove( self ):
 		"""Do a random move"""
 		if self.GetGameState() in [GameState.UNBOUND]:
-		 self.__normalMode.Randomize(self, 1, 1.0)
+			if self.__currentCubeMode != CubeMode.SYMMETRIC:
+				self.__normalMode.Randomize(self, 1, 1.0)
+			else:
+				self.__symmetricMode.Randomize(self, 1, 1.0)
 
 	#-----------------------------------------------------------------------------
 	# Vote management, handles adding a new player to the game through voting
