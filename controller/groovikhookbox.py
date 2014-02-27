@@ -185,7 +185,6 @@ class Cube():
 		client_thread.start()
 
 	def process_commands(self, rtjp_frame):
-
 		action, params = rtjp_frame[1:3]
 
 		if action == "PUBLISH":
@@ -256,6 +255,17 @@ class Cube():
 
 					elif str(payload['get']) == 'cubemode':
 						push_message( json.dumps({'sub': 'cubemode', 'set': self.grooviksCube.GetCurrentMode()}), 'info')
+
+					elif str(payload['get']) == '4thKiosk':
+						print 'this calls'
+						val = self.grooviksCube.GetClient(4).GetState()
+						print '4th state:' + str(val)
+						command = ''
+						if val == ClientState.IDLE:
+							command = 'enable'
+						else:
+						 	command = 'disable'
+						push_message( json.dumps({'sub': '4thKiosk', 'command': command}), 'info')
 
 			except KeyError:
 				#TODO: actually parse the error and log it
@@ -347,6 +357,7 @@ class Cube():
 
 	def run(self):
 		lastFrameLerpedColors = []
+		#frameNumber = 0
 		while True:
 			self.displayc.loop()
 
@@ -378,6 +389,10 @@ class Cube():
 
 			self.checkTimeouts()
 			self.executeIdlingMoves()
+
+			# frame = frame+1 % 15
+# 			if frame % 15 == 0:
+# 				self.grooviksCube.checkKiosk4()
 
 	def simulate(self):
 		with cube_lock:

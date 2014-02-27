@@ -182,7 +182,10 @@ class GrooviksCube:
 			else:
 				self.__gameStartTime = None;
 
-			push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
+			if (position == 4):
+				push_message(json.dumps({'sub':'4thKiosk', 'command': 'enable'}), "info")
+			else:
+				push_message(json.dumps({'turn':str(self.currentTurn), 'active': str(active)}), "turns")
 
 			#This might be a little bit of a hack, we're simultaneously adding and removing a player
 			if queued > 0 and len(active) >= 2:
@@ -191,6 +194,10 @@ class GrooviksCube:
 				self.__gameStartTime = time.time()
 				push_message(json.dumps({'vote-result': 1, 'position': queued }), "vote")
 				self.SetGameState(GameState.MULTIPLE)
+
+		elif position == 4:
+			push_message(json.dumps({'sub':'4thKiosk', 'command': 'disable'}), "info")
+
 
 		print "active length: " + str(len(active))
 		return ret
@@ -288,6 +295,9 @@ class GrooviksCube:
 		if not activePlayers:
 			 self.SetGameState( GameState.UNBOUND )
 			 self.StartSinglePlayerIfUnbound()
+
+	def checkKiosk4(self):
+		push_message(json.dumps({'still-there-k4-respond': true}), "info")
 
 	#-----------------------------------------------------------------------------
 	# This method will queue a game mode change. mode is member of the CubeMode enum.
@@ -650,7 +660,7 @@ class GrooviksCube:
 
 		# Initialize the three GroovikClients
 		self.__clientdict = {}
-		for i in range(1,4):
+		for i in [1,2,3,4]:
 			self.__clientdict[i] = GrooviksClient( self, i, self.__logger )
 
 

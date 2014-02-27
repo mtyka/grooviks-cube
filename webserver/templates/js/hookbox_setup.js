@@ -195,6 +195,7 @@ var HookboxConnection = (function(){
 						}
 					};
 				}
+				//this channel is just for receiving basic information
 				else if( channelName == 'info' ){
 					info_subscription = _subscription;
 					info_subscription.onPublish = function(frame) {
@@ -236,6 +237,15 @@ var HookboxConnection = (function(){
 							}
 							else{
 								$('#board').html('<td>No times recorded yet today.</td>');
+							}
+						}
+						else if (frame.payload['sub'] == '4thKiosk'){
+							if (frame.payload['command'] == 'disable'){
+								menu.goto_locked_screen();
+							}
+							else if (frame.payload['command'] == 'enable'){
+								kioskLock = false;
+								menu.goto_idle_screen();
 							}
 						}
 					};

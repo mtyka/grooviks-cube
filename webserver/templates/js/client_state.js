@@ -7,12 +7,14 @@ var active_position = 0;
 var locked_buttons=false;
 var temp_lock = false;
 
+var kioskLock = false;
+
 function on_game_state_change(newState, activePosition, clientstate) {
 	//     game_state = newState
 	$('#game_state').val( newState )
 	$('#active_position').val( activePosition )
 
-	if (temp_lock)
+	if (temp_lock || kioskLock)
 		return;
 
 	active_position = activePosition;

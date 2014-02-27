@@ -143,6 +143,9 @@ var global = (function($){
 			name = "0";
 		}
 
+		if (name == '4i')
+			return;
+
 		file += "cube_" + name + ".png";
 		//console.log(file);
 		$("#turn-token").attr('src', file);
@@ -165,6 +168,7 @@ var global = (function($){
 		   menu.goto_idle_screen();
 		   HookboxConnection.hookbox_conn.publish('settings', {'command': 'get'});
 		   HookboxConnection.hookbox_conn.publish('info', {'get': 'leaderboard'});
+		   HookboxConnection.hookbox_conn.publish('info', {'get': '4thKiosk'});
 		});
 
 		my.currentTurn = position;
@@ -231,7 +235,7 @@ var global = (function($){
 		});
 
 		$("#svgholder, #idlemenu").bind( "click touchstart", function() {
-			if (my.recentEvent)
+			if (my.recentEvent || $('#lockmenu').css('display') != 'none')
 				return;
 			if( menu.menustate == 1 && !menu.quitClicked){
 				menu.clicked_wake();

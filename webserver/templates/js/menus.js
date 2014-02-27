@@ -24,11 +24,12 @@ menu = (function(){
 	// 9 = vote menu
 	// 10= alert screen, a menu style alert that enters and dismisses quickly.
 	// 11= victory menu
+	// 12= lock screen
 
 	var menuIds = {
 		1: "#idlemenu", 2: "#modemenu", 	3: "#levelmenu", 	4: "#timeoutmenu",
 		5: "#joinmenu", 6: "#queuedmenu", 	7: "#waitingmenu", 	8: "#connectingmenu",
-		9: "#votemenu", 10: "#alertmenu", 	11: "#victorymenu"};
+		9: "#votemenu", 10: "#alertmenu", 	11: "#victorymenu", 12:"#lockmenu"};
 
 
 	function reset_gamestate(position, difficulty) {
@@ -51,6 +52,9 @@ menu = (function(){
 	}
 
 	function flyin_menu( id ){
+		if (kioskLock)
+			return;
+
 		$(id).css("left", "-25%");
 		$(id).css("display", "inline");
 		$(id).animate( {
@@ -61,11 +65,14 @@ menu = (function(){
 			}
 		});
 
-		if ([0,1,6,7,8].indexOf(my.menustate) == -1)
+		if ([0,1,6,7,8,12].indexOf(my.menustate) == -1)
 			timeout.start_menu_timer();
 	}
 
 	function flyout_menu( id ){
+		if (kioskLock)
+			return;
+
 		$(id).animate( {
 			left: "125%"
 		},{ duration: 1000,
@@ -311,6 +318,19 @@ menu = (function(){
 		}, 10000);
 	}
 
+	my.goto_locked_screen = function(){
+		console.log("lock the screen!");
+
+		HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
+		CubeControl.ignore_clicks = true;
+		if( my.menustate == 12 && menuIsOpen(12)) return;
+			remove_menu();
+
+		my.menustate = 12;
+
+		flyin_menu("#lockmenu");
+		kioskLock = true;
+	}
 
 	function remove_menu(){
 		flyout_menu(menuIds[my.menustate]);
