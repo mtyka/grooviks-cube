@@ -297,7 +297,11 @@ class GrooviksCube:
 			 self.StartSinglePlayerIfUnbound()
 
 	def checkKiosk4(self):
-		push_message(json.dumps({'still-there-k4-respond': true}), "info")
+		push_message(json.dumps({'sub': 'still-there-k4'}), "info")
+		self.kiosk4_response = False
+
+	def quitKiosk4(self):
+		self.HandleClientCommand(4, 'QUIT', None)
 
 	#-----------------------------------------------------------------------------
 	# This method will queue a game mode change. mode is member of the CubeMode enum.
@@ -663,6 +667,7 @@ class GrooviksCube:
 		for i in [1,2,3,4]:
 			self.__clientdict[i] = GrooviksClient( self, i, self.__logger )
 
+		self.kiosk4_response = False;
 
 		# Start all colors black; we always fade into our mode switches.
 		self.__colors = []
