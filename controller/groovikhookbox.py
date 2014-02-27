@@ -171,6 +171,7 @@ class Cube():
 		# used for initiating server-side timeouts
 		self.positionForUser = {}
 		self.clientLastActivity = {}
+		self.k4_check_count = 0
 
 		#used for idling cube moves
 		self.lastIdleMove = 0.0
@@ -267,6 +268,11 @@ class Cube():
 						 	command = 'disable'
 						push_message( json.dumps({'sub': '4thKiosk', 'command': command}), 'info')
 
+					elif str(payload['get']) == 'k4-heartbeat':
+						self.k4_check_count = 0
+						self.grooviksCube.kiosk4_response = True
+						#print 'checking k4', self.k4_check_count, self.grooviksCube.kiosk4_response
+
 			except KeyError:
 				#TODO: actually parse the error and log it
 				pass
@@ -357,7 +363,9 @@ class Cube():
 
 	def run(self):
 		lastFrameLerpedColors = []
-		#frameNumber = 0
+		frameNumber = 0
+		tick = 30
+		timeoutCount = 2
 		while True:
 			self.displayc.loop()
 
@@ -390,9 +398,18 @@ class Cube():
 			self.checkTimeouts()
 			self.executeIdlingMoves()
 
-			# frame = frame+1 % 15
-# 			if frame % 15 == 0:
-# 				self.grooviksCube.checkKiosk4()
+			frameNumber = frameNumber+1 % tick
+
+			if self.grooviksCube.GetClient(4).GetState() != 'IDLE' and frameNumber % tick == 0:
+				#print 'checking k4', self.k4_check_count, self.grooviksCube.kiosk4_response
+				if self.k4_check_count < timeoutCount:
+					self.grooviksCube.checkKiosk4()
+					self.k4_check_count += 1
+
+				elif not self.grooviksCube.kiosk4_response and self.k4_check_count == timeoutCount:
+					self.grooviksCube.quitKiosk4()
+					k4_check_count = 0
+
 
 	def simulate(self):
 		with cube_lock:
