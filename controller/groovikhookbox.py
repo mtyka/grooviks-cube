@@ -297,13 +297,13 @@ class Cube():
 		now = time.time()
 		for position, last_activity in self.clientLastActivity.items():
 			inactivity_timeout = 0
-			if self.grooviksCube.GetGameState() == ClientState.MULT:
+			if self.grooviksCube.GetGameState() == GameState.MULTIPLE:
 				inactivity_timeout = int(groovikConfig.kioskSettings['mp-session-duration'])
 			else:
 				inactivity_timeout = int(groovikConfig.kioskSettings['sp-session-duration'])
 
 			if now - last_activity > inactivity_timeout:
-				print "Server side inactivity timeout!"
+				print "Server side inactivity timeout! inactive for: " + str(inactivity_timeout)
 				self.logger.logLine("Client at position %s inactive for %d seconds; timing out" % (position, now - last_activity))
 				push_message( json.dumps({ 'position':position, 'command':ClientCommand.QUIT, }), 'clientcommand' )
 				del self.clientLastActivity[position]
