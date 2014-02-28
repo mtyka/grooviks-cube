@@ -23,6 +23,7 @@ var global = (function($){
 	var wasSpinning = false;
 	var leaderboardOpen = false;
 	var aboutOpen = false;
+	var production = false;
 
 	my.turnCheck = function(){
 		if (position != my.currentTurn){
@@ -220,15 +221,17 @@ var global = (function($){
 			}
 		});
 
-		(function () {
-		  var blockContextMenu, myElement;
+		if (production){
+			(function () {
+			  var blockContextMenu, myElement;
 
-		  blockContextMenu = function (evt) {
-				evt.preventDefault();
-		  };
+			  blockContextMenu = function (evt) {
+					evt.preventDefault();
+			  };
 
-		  window.addEventListener('contextmenu', blockContextMenu);
-		})();
+			  window.addEventListener('contextmenu', blockContextMenu);
+			})();
+		}
 
 		$(document).bind("mouseup touchend", function(){
 			$("#container").unbind();
