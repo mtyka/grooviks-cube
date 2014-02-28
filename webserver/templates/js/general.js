@@ -220,6 +220,16 @@ var global = (function($){
 			}
 		});
 
+		(function () {
+		  var blockContextMenu, myElement;
+
+		  blockContextMenu = function (evt) {
+				evt.preventDefault();
+		  };
+
+		  window.addEventListener('contextmenu', blockContextMenu);
+		})();
+
 		$(document).bind("mouseup touchend", function(){
 			$("#container").unbind();
 			if (my.delta_x < 0)
