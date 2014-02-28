@@ -18,12 +18,9 @@ class GroovikConfig:
 		for i in range(54):
 			self.lightBoardMap.append( i )
 			self.colorCorrection.append( [ 1.0, 1.0, 1.0 ] )
-		self.standardFaceColors = [ [201.0/255.0,  39.0/255.0,  39.0/255.0][::-1],
-									[235.0/255.0, 123.0/255.0, 191.0/255.0][::-1],
-									[88.0/255.0,  191.0/255.0, 138.0/255.0][::-1],
-									[65.0/255.0,  169.0/255.0, 240.0/255.0][::-1],
-									[230.0/255.0, 221.0/255.0,  76.0/255.0][::-1],
-									[1.0, 1.0, 1.0], #parsed to BGR format? hence the reverse
+		self.standardFaceColors = [ [0.0, 1.0, 0.0], [1.0, 0.0, 0.0],
+									[1.0, 0.0, 1.0], [0.0, 0.0, 1.0],
+									[0.0, 1.0, 1.0], [1.0, 1.0, 1.0],
 									[0.5, 0.5, 0.5]]
 		self.calibrationColors = [ [1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [1.0, 1.0, 1.0] ]
 		self.effectsLibrary = GScriptLibrary();
