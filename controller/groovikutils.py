@@ -14,6 +14,8 @@ import sys
 import math
 
 # Set devel mode or not
+# This is maybe the most important line in the entire program.
+# set to 0 for production, else 1.
 dev_mode = 1
 
 class Enum(set):
