@@ -401,13 +401,14 @@ class Cube():
 			frameNumber = frameNumber+1 % tick
 
 			if self.grooviksCube.GetClient(4).GetState() != 'IDLE' and frameNumber % tick == 0:
-				#print 'checking k4', self.k4_check_count, self.grooviksCube.kiosk4_response
+				print 'checking k4', self.k4_check_count, self.grooviksCube.kiosk4_response
 				if self.k4_check_count < timeoutCount:
 					self.grooviksCube.checkKiosk4()
 					self.k4_check_count += 1
 
 				elif not self.grooviksCube.kiosk4_response and self.k4_check_count == timeoutCount:
 					self.grooviksCube.quitKiosk4()
+					self.grooviksCube.QueueModeChange(0)
 					k4_check_count = 0
 
 
