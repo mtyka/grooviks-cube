@@ -409,7 +409,7 @@ class Cube():
 				elif not self.grooviksCube.kiosk4_response and self.k4_check_count == timeoutCount:
 					self.grooviksCube.quitKiosk4()
 					self.grooviksCube.QueueModeChange(0)
-					k4_check_count = 0
+					self.k4_check_count = 0
 
 
 	def simulate(self):
