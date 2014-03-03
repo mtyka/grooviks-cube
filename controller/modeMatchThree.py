@@ -47,13 +47,14 @@ class ModeMatchThree( ModeNormal ):
 		if ( cubeInputType == CubeInput.ROTATION ):
 			grooviksCube.QueueRotation( params )
 
-	def Randomize(self, grooviksCube, depth, time = .5):
+	def Randomize(self, grooviksCube, depth, time = .5, reset = True):
 		self.__normalModeState = ModeNormalState.RANDOMIZING_AFTER_VICTORY_DANCE
 		depth = self.difficulties[self.__currentDifficulty]
 		resetScript = GScript()
 		resetScript.CreateRandom(depth, time)
 		resetScript.ForceQueue( grooviksCube )
-		self.__solveCount = 0
+		if (reset):
+			self.__solveCount = 0
 
 	def SetDifficulty(self, diff):
 		if diff == 2:
@@ -82,7 +83,7 @@ class ModeMatchThree( ModeNormal ):
 						push_message( json.dumps(gs_dict), 'playsound' )
 						self.__solveCount = 0
 					else:
-						self.Randomize(grooviksCube, 5, .25)
+						self.Randomize(grooviksCube, 5, .25, False)
 
 		# We're done with the victory dance + randomization after we have no more queued states
 		elif ( self.__normalModeState == ModeNormalState.VICTORY_DANCE ):
