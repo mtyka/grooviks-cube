@@ -1,0 +1,36 @@
+Django + hookbox + python controller.
+Solution which achieves very low latency using comet-style http push.
+
+Three parts:
+Controller: Standalone python process which understands cube logic, motion, etc
+Hookbox: Comet pub/sub message queue which pushes messages to clients with very low latency
+Django: Web app server which serves the HTML, javascript and supports hookbox.
+
+How To Run
+----------
+
+ 0. Install a bunch of stuff...
+   - Use python 2.6 or python 2.7. Older or newer versions dont seem to work.
+   - First install "easy_install" by visiting http://pypi.python.org/pypi/setuptools
+   - Then use easy_install to install a bunch of stuff.  On mac you'll need to run "sudo easy_install".  On PC I think it's just "easy_install".
+     You can also use pip (in which case the commands change to 'sudo pip install xyz==1.2.3')
+    sudo easy_install hookbox==0.3.3
+    sudo easy_install pyjsiocompile==0.2.3
+    sudo easy_install pyserial==2.6
+    sudo easy_install django==1.4.5 
+
+    
+ 1. In terminal 1: Run "./manage.py runserver 0.0.0.0:8080"
+ 2. In terminal 2: Run "hookbox -d -r bakonv8 -p 2974 --cbhost=127.0.0.1 --cbport=8080"
+        -If you get "OSError: [Errno 2] No such file or directory" ignore it -- everything's fine.
+ 		-If the restkit module is giving you problems (module reventlet not found) try 
+		manually downloading restkit 2.2.3 instead of the newer 2.3xxx
+ 	
+ 3. In terminal 3: Go to ../controller and run "./groovikhookbox.py"
+ 4. In Chrome: open http://localhost:8080
+
+
+Where is the cube code?
+-----------------------
+The HTML and javascript are all in the templates/ directory
+

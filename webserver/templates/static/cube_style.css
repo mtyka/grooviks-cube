@@ -1,0 +1,493 @@
+.debug {
+	display:none;
+}
+
+@font-face {
+	font-family: 'Rubik';
+	src: url('fonts/Rubik.eot');
+	src: url('fonts/Rubik.woff') format('woff'),
+			url('fonts/Rubik.ttf') format('truetype'),
+			url('fonts/Rubik.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gotham-Medium';
+	src: url('fonts/Gotham-Medium.eot');
+	src: url('fonts/Gotham-Medium.woff') format('woff'),
+			url('fonts/Gotham-Medium.ttf') format('truetype'),
+			url('fonts/Gotham-Medium.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gotham-Book';
+	src: url('fonts/Gotham-Book.eot');
+	src: url('fonts/Gotham-Book.woff') format('woff'),
+			url('fonts/Gotham-Book.ttf') format('truetype'),
+			url('fonts/Gotham-Book.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+body {
+	font-family: Gotham-Book;
+	text-transform: uppercase;
+	background: transparent url("grooviks_background.png") top left;
+	color: rgb(255,255,255);
+	overflow: hidden;
+	margin: 0 auto;
+}
+
+h1 {
+	font-family: Rubik;
+	font-size: 3em;
+	background-color:red;
+	margin-top: 0px;
+	padding: 9px 0 0;
+}
+
+h1.blackTitle{
+	color: black;
+	background-color: transparent;
+}
+
+h2 {
+
+}
+
+input{
+	font-family: Gotham-Book;
+	text-transform: uppercase;
+}
+
+.levelmenu h2{
+	color: black;
+	text-transform: none;
+}
+
+#container {
+	text-align: center;
+	margin: 0px auto;
+}
+
+#canvas{
+	width: 1100px;
+	height: 1100px;
+	position: fixed;
+	top: 45%;
+	left: 50%;
+	margin-top: -550px;
+	margin-left: -550px;
+	z-index:  0;
+}
+
+#svgholder{
+	height: 1000px;
+}
+
+#manual_rotate {
+	position: relative;
+	top: -400px;
+}
+
+.leftmenu{
+	margin-left: auto;
+	margin-right: auto;
+	width: 1000px;
+	position: relative;
+	top: 30px;
+}
+
+/* --------- Menus --------- */
+
+.levelmenu_bg{
+	background-color:#000000;
+	opacity:0.6;
+	filter:alpha(opacity=60); /* For IE8 and earlier */
+	width: 100%;
+  	height: 400px;
+	left:-100%;
+	z-index: 5
+}
+
+.levelmenu{
+	display: none;
+	clear: both;
+	position: fixed;
+	width: 100%;
+  	height: 250px;
+	left: -25%;
+	top: 50%;
+	margin-top: -85px;
+	z-index: 8;
+	background: rgba(255,255,255,1);
+}
+
+#idlemenu.levelmenu{
+	color: black;
+	display: none;
+	clear: both;
+	position: fixed;
+	width: 100%;
+  	height: 200px;
+	left: -25%;
+	top: 50%;
+	margin-top: -60px;
+	z-index: 8;
+	background: rgba(255,255,255,.86);
+}
+
+.movesdisplay{
+	display: none;
+	clear: both;
+	position: fixed;
+	width: 900px;
+	height: 200px;
+	left:  50%;
+	top: 30px;
+	margin-left: -450px;
+	z-index: 3
+}
+
+/* --------- Buttons --------- */
+
+#button_about{
+	border-left-style: none;
+}
+
+#button_leaderboard{
+
+}
+
+#button_quit {
+	border-right-style: none;
+}
+
+#button_perspective{
+
+}
+
+.button_back {
+	padding: 15px;
+	width: 125px;
+	font-size: 1em;
+	border-radius: 15px;
+	border-width: 0px;
+	z-index: 20;
+	background-color: rgb(248, 151, 29);
+}
+
+.button {
+	position: fixed;
+	bottom: 35%;
+	z-index: 13;
+}
+
+.bottomBarButton{
+	display: inline;
+	height: 100%;
+	margin: 0 -4px;
+	padding: 5px 60px 2px;
+	font-size: 1.75em;
+	color: white;
+
+	background-color: transparent;
+	border-style: solid;
+	border-width: 0 3px;
+	border-color: black;
+}
+
+.button.left, .button.right{
+	z-index: 0;
+}
+
+.button.left{
+	left: 5%;
+	float:left;
+}
+.button.right{
+	right: 5%;
+	float:right;
+}
+
+.decisionButton{
+	padding: 15px;
+	width: 250px;
+	font-size: 1em;
+	border-radius: 15px;
+	border-width: 0px;
+	font-size: 1.2em;
+	z-index: 20;
+	margin: 0 40px;
+}
+
+.divDecisionButton{
+	padding: 15px;
+	width: 250px;
+	border-radius: 15px;
+	border-width: 0px;
+	font-size: 1.2em;
+	z-index: 20;
+	display: inline-table;
+	margin: 0 8px;
+}
+
+.divDecisionButton h3{
+	font-size: 1.5em;
+	margin: 0;
+}
+
+.clear{ clear: both; }
+
+.redButton{
+	background-color: red;
+}
+
+.orangeButton{
+	background-color: rgb(248, 151, 29);
+}
+
+.blueButton{
+	background-color: rgb(0, 121, 193);
+	color: white;
+}
+
+.greenButton{
+	background-color: green;
+}
+
+.pinkButton{
+	background-color: #ff00cc;
+}
+
+/* --------- Bars --------- */
+
+#bar{
+	background-color: rgb(157,154,162);
+	position: fixed;
+	width: 100%;
+  	height: 400px;
+	height: 250px;
+	top: 50%;
+	margin-top: -160px;
+	border-width: 75px 0;
+	border-color: rgb(99,100,102);
+	border-style: solid;
+}
+
+#bottomBar{
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	height: auto;
+	width: 100%;
+	background-color: rgb(248, 151, 29);
+	text-align: center;
+}
+
+/* --------- Player List --------- */
+
+#player-list{
+	position: fixed;
+
+	font-size: 1.2em;
+	top: 10px;
+	right: 25px;
+	width: 150px;
+	height: auto;
+}
+#player-list ul{
+	list-style-type: none;
+	text-align: left;
+}
+
+#player-list ul li{
+	padding: 12px 0;
+}
+
+#p1, #p2, #p3{
+	color: gray;
+}
+
+#p1.online{
+	color: rgb(0,176,133);
+}
+
+#p2.online{
+	color: rgb(248, 152, 29);
+}
+
+#p3.online{
+	color: rgb(255,0,0);
+}
+
+#turn-token{
+	position: fixed;
+	top: 10px;
+	right: 160px;
+	height: 180px;
+	width: 180px;
+}
+
+/* --------- About and Leaderboard --------- */
+
+#leaderboard, #about{
+	width: 40%;
+	height: 500px;
+	position: absolute;
+	top: 20%;
+	left: 30%;
+	z-index: 10;
+	display: none;
+}
+
+#xButton{
+	float: right;
+	margin: -23px;
+	z-index: 15;
+}
+
+#leaderboard h1, #about h1{
+	background-color: #F8971D;
+	font-family: Gotham-Book;
+	font-size: 2em;
+	padding: 8px 15px 0;
+	margin: 0 auto -4px;
+	border-radius: 15px 15px 0 0;
+	border-width: 5px;
+	border-color: #F8971D;
+}
+
+#about h1{
+	width: 40%;
+}
+
+#leaderboard h1{
+	width: 52%;
+}
+
+#leaderboardOuterContainer, #aboutOuterContainer{
+	border-radius: 15px;
+	border-width: 20px;
+	border-color: #F8971D;
+	background-color: #F8971D;
+	padding: 25px;
+	height: 400px;
+}
+
+#leaderboardOuterContainer ul{
+	color: #000;
+	list-style-type: none;
+	width: 100%;
+	margin: 0 auto;
+	display: table;
+	background: #DCDDDF;
+	padding: 20px 0;
+	border-radius: 15px 15px 0 0;
+}
+
+#leaderboardOuterContainer ul li {
+	display: table-cell;
+}
+
+#leaderboardInnerContainer{
+	background-color: white;
+	border-radius: 0 0 15px 15px;
+	height: 85%;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+#aboutInnerContainer{
+	background-color: white;
+	border-radius: 15px;
+	height: 92%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	color: black;
+	padding: 15px 35px;
+	text-align: left;
+	text-transform: none;
+}
+
+#aboutInnerContainer p{
+	line-height: 1.5em;
+	text-indent: 25px;
+}
+
+table{
+	text-align: center;
+	background-color: white;
+	color: black;
+	border-spacing: 0;
+	width: 100%;
+}
+
+thead{
+	background-color: rgb(220, 221, 223);
+	border-radius: 5px 5px 0 0;
+	border-width: 1px;
+	border-color: rgb(248, 151, 29);
+}
+
+td{
+	padding: 20px 0;
+}
+
+/* --------- Notice areas --------- */
+#turn_notice{
+	position:fixed;
+	clear: both;
+	top: 45px;
+	left: 50px;
+	font-size: 1.4em;
+	color: rgb(255,210,0);
+}
+
+#turn_notice.active{
+	font-size: 1.8em;
+}
+
+#difficulty_notice{
+	display: none;
+	font-size: 1.5em;
+	clear: both;
+	position: fixed;
+	bottom: 100px;
+	left: 50px;
+	text-align: left;
+}
+
+#difficulty{
+	font-family: Gotham-Medium;
+}
+
+#turn_timeout{
+	display: none;
+	font-size: 1.5em;
+	clear: both;
+	position: fixed;
+	bottom: 100px;
+	right: 50px;
+	text-align: left;
+	width: 22em;
+}
+
+#game_timeout {
+	display: none;
+	font-size: 1.5em;
+	clear: both;
+	position: fixed;
+	right:  100px;
+	bottom: 130px;
+	text-align: left;
+	width: 19em;
+}
+
+/* --------- Debug and placeholders --------- */
+#alphaTransition{
+	display: none;
+}

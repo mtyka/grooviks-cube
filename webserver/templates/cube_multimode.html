@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>One cube to rule them all</title>
+    <link href="/static/cube_style.css" rel="stylesheet" type="text/css">
+    <link href="/static/panel.css" rel="stylesheet" type="text/css">
+    <link href="/static/jquery.ui191.css" media="all"  rel="stylesheet" type="text/css">
+
+    <script src="/static/jquery.min.js"></script>
+    <script src="/static/jquery-ui.min.js"></script>
+    <script src="/static/jquery.svg.js"></script>
+    <script src="/static/jquery.svganim.js" type="text/javascript"></script>
+    <script src="/static/jquery.svgdom.js" type="text/javascript"></script>
+    <script src="/static/jquery.svgfilter.js" type="text/javascript"></script>
+    <script src="/static/jquery.svggraph.js" type="text/javascript"></script>
+    <script src="/static/jquery.svgplot.js" type="text/javascript"></script>
+
+    <script src="js/loadhookbox.js" type="text/javascript"></script>
+    <script src="js/hookbox_setup.js" type="text/javascript"></script>
+    <script src="js/checkie.js" type="text/javascript"></script>
+    <script src="js/client_state.js" type="text/javascript"></script>
+    <script src="js/control.js" type="text/javascript"></script>
+    <script src="js/movefromsolved.js" type="text/javascript"></script>
+    <script src="js/soundmanager2-nodebug-jsmin.js" type="text/javascript"></script>
+    <script src="js/soundcontrol.js" type="text/javascript"></script>
+    <script src="js/vector.js" type="text/javascript"></script>
+    <script src="js/render.js" type="text/javascript"></script>
+    <script src="js/cube_spinning.js" type="text/javascript"></script>
+    <script src="js/timeouts.js" type="text/javascript"></script>
+    <script src="js/menus.js" type="text/javascript"></script>
+    <script src="js/numpad.js" type="text/javascript"></script>
+    <script src="js/general.js" type="text/javascript"></script>
+
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1" />
+</head>
+
+<body>
+    <div id="container">
+    	<div id="bar"></div>
+
+        <div id="svgholder">
+            <canvas height="1100" width="1100" id="canvas"></canvas>
+        </div>
+
+        <div class="levelmenu" id="idlemenu">
+            <br>
+            <br>
+            <br>
+            <h1 class="blackTitle">Touch screen to play</h1>
+        </div>
+
+        <div class="levelmenu" id="levelmenu">
+            <h1>Select difficulty:</h1>
+            <div id="easy" class="blueButton divDecisionButton" ondragstart="return false">
+            	<h3>Easy</h3>
+        		2 Moves
+            </div>
+            <div id="medium" class="blueButton divDecisionButton" ondragstart="return false">
+            	<h3>Medium</h3>
+            	4 Moves
+            </div>
+            <div id="hard" class="blueButton divDecisionButton" ondragstart="return false">
+            	<h3>Hard</h3>
+            	Full Scramble
+            </div>
+             <br>
+            <input type="button" class="button_back" style="margin-top:10px;" onclick="menu.clicked_quit();" ontouchstart="menu.clicked_quit();" ondragstart="return false" value="Back">
+        </div>
+
+        <div class="levelmenu" id="joinmenu">
+        	<h1>Multiplayer</h1>
+        	<h2>Join game already in progress?</h2>
+			<input type="button" class="blueButton decisionButton" onclick="menu.clicked_send_join_request();" ontouchstart="menu.clicked_send_join_request();" ondragstart="return false" value="Yes">
+    		<input type="button" class="blueButton decisionButton" onclick="menu.clicked_quit();" ontouchstart="menu.clicked_quit();" ondragstart="return false" value="No">
+        </div>
+
+		<div class="levelmenu" id="votemenu">
+			<h1>Multiplayer</h1>
+        	<h2>Add player <span id="new-player"></span> to game?</h2>
+			<input type="button" class="blueButton decisionButton" onclick="menu.voteYes();" ontouchstart="menu.voteYes();" ondragstart="return false" value="Yes">
+    		<input type="button" class="blueButton decisionButton" onclick="menu.voteNo();" ontouchstart="menu.voteNo();" ondragstart="return false" value="No">
+        </div>
+
+		<div class="levelmenu" id="alertmenu">
+			<h1></h1>
+			<h2></h2>
+		</div>
+
+        <div class="levelmenu" id="queuedmenu">
+        	<h1>Multiplayer</h1>
+            <h2>Please wait.<br>
+            	Your turn will start in
+            	<span id="timeUntilTurn"></span>
+            </h2>
+            <input type="button" class="button_back" onclick="menu.clicked_quit();" ontouchstart="menu.clicked_quit();" ondragstart="return false" value="Back">
+        </div>
+
+        <div class="levelmenu" id="waitingmenu">
+            <h1>Multiplayer</h1>
+            <h2>Waiting for other players let you join.</h2>
+            <input type="button" class="button_back" onclick="menu.clicked_quit();" ontouchstart="menu.clicked_quit();" ondragstart="return false" value="Back">
+        </div>
+
+        <div class="levelmenu" id="victorymenu">
+            <h1>Congratulations</h1>
+            <h2>You solved the cube in <span id="victoryTime"></span>. Difficulty: <span id="victoryDiff"></span></h2>
+            <input type="button" class="button_back" onclick="menu.clicked_quit();" ontouchstart="menu.clicked_quit();" ondragstart="return false" value="Continue">
+        </div>
+
+        <div class="levelmenu" id="lockmenu">
+            <h1>Unavailable</h1>
+            <h2>Sorry, the Groovik's Cube is reserved for a special occasion. <br> Please check back later.</h2>
+        </div>
+
+        <div class="levelmenu" id="connectingmenu">
+            <br>
+
+            <h1>Connecting to Groovik's Cube.<br>
+            Please wait..</h1><br>
+            <br>
+        </div>
+
+        <div class="bottomrow">
+            <br>
+            <br>
+            <br>
+            <img alt="Left" class="button left" id="buttonleft" ondragstart="return false" src="/static/button_left.png">
+            <img alt="Right" class="button right" id="buttonright" ondragstart="return false" src="/static/button_right.png">
+
+            <div class="clear"></div><br>
+        </div>
+
+		<div id="turn_notice">
+			turn div
+		</div>
+
+		<div id="difficulty_notice">
+			Difficulty: <span id="difficulty"></span>
+		</div>
+
+		<div id="game_timeout">
+			Session time remaining:
+		</div>
+
+		<div id="turn_timeout">
+			Time remaining for your turn <span id="turn_time"></span>
+		</div>
+
+		<img id="turn-token" src="/static/turn-token/cube_0.png" alt="">
+
+		<div id="player-list">
+			<ul>
+				<li id="p1">Player 1</li>
+				<li id="p2">Player 2</li>
+				<li id="p3">Player 3</li>
+			</ul>
+		</div>
+
+		<div id="leaderboard">
+			<h1>Leaderboard</h1>
+			<img id="xButton" width="60" src="/static/x-button.png" alt="close" onclick="global.toggleLeaderboard();" ontouchstart="global.toggleLeaderboard();">
+			<div id="leaderboardOuterContainer">
+				<ul>
+					<li>Rank</li>
+					<li>Time to Solve</li>
+					<li># of Moves</li>
+				</ul>
+				<div id="leaderboardInnerContainer">
+					<table id="board">
+						<tr>
+							<td>1</td>
+							<td>1:30</td>
+							<td>30</td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>2:06</td>
+							<td>87</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<div id="about">
+			<h1>About</h1>
+			<img id="xButton" width="60" src="/static/x-button.png" alt="close" onclick="global.toggleAbout();" ontouchstart="global.toggleAbout();">
+			<div id="aboutOuterContainer">
+				<div id="aboutInnerContainer">
+					<p>The 26-foot high Grooviks Cube was created for the 2009 Burning Man Festival in Nevada by Mike Tyka and GroovLabs, a Seattle-based art collective. Rather than mechanically twisting, Grooviks Cube uses shifting and changing LED lights to mimic the motion of Rubik’s Cube.
+					<br><br>
+					Are you up to the Grooviks challenge?
+					<br><br>
+					Credits:<br>
+					Groovik’s Cube by Mike Tyka and GroovLabs<br>
+					Additional programming and web interface by IDEUM<br></p>
+				</div>
+			</div>
+		</div>
+
+        <div class="debug" id="manual_rotate">
+            Altitude: <input id="slide_alt" max="1000" min="-1000" onchange="CubeControl.update_view();" type="range" value="220"><br>
+            Azimuth: <input id="slide_azi" max="1000" min="-1000" onchange="CubeControl.update_view();" type="range" value="0"><br>
+        </div>
+
+        <div class="debug" id="frameratediv">
+            Framerate: <span id="framerate">...</span> fps
+        </div>
+
+        <div id="alphaTransition" avalue="0" value="0"></div>
+    </div>
+
+	<div id="bottomBar" class="orangeButton">
+		<input type="button" id="button_about" 		 class="bottomBarButton" ondragstart="return false" value="About">
+		<input type="button" id="button_leaderboard" class="bottomBarButton" ondragstart="return false" value="Leaderboard">
+
+		<input type="button" id="button_perspective" class="bottomBarButton" onclick="if (menu.menustate == 0)set_initial_position();" ontouchstart="if (menu.menustate == 0)set_initial_position();" ondragstart="return false" value="View from my perspective">
+		<input type="button" id="button_quit" 		 class="bottomBarButton" onclick="menu.clicked_quit();" ontouchstart="menu.clicked_quit();" ondragstart="return false" value="Quit">
+	</div>
+
+    <div id="admin_background">
+      <div class="main_panel ui-state-default ui-corner-all" id="securitycode" >
+        <br />
+        <center><input class="text_box" type="text" id="number" name="num" /></center>
+        <br /><br />
+        <div class="number_button ui-state-active ui-state-default ui-corner-all" onclick="Numpad.number_write(1);">       <div style="position:relative; top:50%; height:20px; margin-top:-23px">1</div></div>
+        <div class="number_button ui-state-active ui-state-default ui-corner-all" onclick="Numpad.number_write(2);">       <div style="position:relative; top:50%; height:20px; margin-top:-23px">2</div></div>
+        <div class="number_button ui-state-active ui-state-default ui-corner-all" onclick="Numpad.number_write(3);">       <div style="position:relative; top:50%; height:20px; margin-top:-23px">3</div></div>
+        <div class="number_button ui-state-active ui-state-default ui-corner-all" onclick="Numpad.number_write(4);">       <div style="position:relative; top:50%; height:20px; margin-top:-23px">4</div></div>
+        <div class="number_button ui-state-active ui-state-default ui-corner-all" onclick="Numpad.number_write(5);">       <div style="position:relative; top:50%; height:20px; margin-top:-23px">5</div></div>
+        <div class="number_button ui-state-active ui-state-default ui-corner-all" onclick="Numpad.number_write(6);">       <div style="position:relative; top:50%; height:20px; margin-top:-23px">6</div></div>
+        <div class="number_button ui-state-active ui-state-default ui-corner-all" onclick="Numpad.number_write(7);">       <div style="position:relative; top:50%; height:20px; margin-top:-23px">7</div></div>
+        <div class="number_button ui-state-active ui-state-default ui-corner-all" onclick="Numpad.number_write(8);">       <div style="position:relative; top:50%; height:20px; margin-top:-23px">8</div></div>
+        <div class="number_button ui-state-active ui-state-default ui-corner-all" onclick="Numpad.number_write(9);">       <div style="position:relative; top:50%; height:20px; margin-top:-23px">9</div></div>
+        <div class="action_button ui-state-active ui-state-default ui-corner-all" onclick="Numpad.number_enter('admin');"> <div style="position:relative; top:50%; height:20px; margin-top:-23px">Admin</div> </div>
+        <div class="action_button ui-state-active ui-state-default ui-corner-all" onclick="Numpad.number_enter('reload');"><div style="position:relative; top:50%; height:10px; margin-top:-23px">Reload</div></div>
+      </div>
+    </div>
+</body>
+</html>
