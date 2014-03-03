@@ -57,13 +57,21 @@ class ModeSymmetricSolve( ModeNormal ):
 					print "Pushed: ", [ json.dumps(gs_dict), 'playsound']
 					push_message( json.dumps(gs_dict), 'playsound' )
 
+					clients = grooviksCube.GetAllClients()
+					client_state = []
+					for client in clients:
+						client_state.append( client.GetState() )
+
+					for position in [1,2,3,4]:
+						push_message( json.dumps({"gamestate": "VICTORY", 'position':position, "clientstate": client_state}), 'gameState' )
+
 		# We're done with the victory dance + randomization after we have no more queued states
 		elif ( self.__normalModeState == ModeNormalState.VICTORY_DANCE ):
 			if ( not grooviksCube.HasQueuedStates() ):
 				# Randomize the cube now we've finished with the victory dance
 				self.__normalModeState = ModeNormalState.RANDOMIZING_AFTER_VICTORY_DANCE
 				resetScript = GScript()
-				resetScript.CreateRandom( 8, .3)
+				resetScript.CreateRandom( 8, .3, True)
 				resetScript.ForceQueue( grooviksCube )
 				## also make all clients quit!
 				for position in [1,2,3]:

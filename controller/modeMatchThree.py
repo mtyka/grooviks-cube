@@ -82,6 +82,13 @@ class ModeMatchThree( ModeNormal ):
 						print 'Pushed: ', [ json.dumps(gs_dict), 'playsound']
 						push_message( json.dumps(gs_dict), 'playsound' )
 						self.__solveCount = 0
+						clients = grooviksCube.GetAllClients()
+						client_state = []
+						for client in clients:
+							client_state.append( client.GetState() )
+
+						for position in [1,2,3,4]:
+							push_message( json.dumps({"gamestate": "VICTORY", 'position':position, "clientstate": client_state}), 'gameState' )
 					else:
 						self.Randomize(grooviksCube, 5, .25, False)
 
