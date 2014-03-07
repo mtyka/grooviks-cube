@@ -81,24 +81,24 @@ class ModeMatchThree( ModeNormal ):
 					if (self.__solveCount == self.__solveMax):
 						self.__normalModeState = ModeNormalState.VICTORY_DANCE
 						grooviksCube.QueueEffect( 'victory%d'%( random.randint(0,2)) )
-					# Play three sounds together for a intense victory sound
-					# The palette are all the sounds that are not associated with key presses
-					victory_palette = [4, 7, 10, 13, 16, 19, 21, 22, 23, 25, 30, 31, 32, 37, 38, 40, 41, 43, 46, 49, 52, 54, 55]
-					gs_dict = { 'soundid':'', 'stopall':False }
-					gs_dict["soundid"] = str(random.choice(victory_palette))
-					push_message( json.dumps(gs_dict), 'playsound' )
-					gs_dict["soundid"] = str(random.choice(victory_palette))
-					push_message( json.dumps(gs_dict), 'playsound' )
-					gs_dict["soundid"] = str(random.choice(victory_palette))
-					push_message( json.dumps(gs_dict), 'playsound' )
-					self.__solveCount = 0
-					clients = grooviksCube.GetAllClients()
-					client_state = []
-					for client in clients:
-						client_state.append( client.GetState() )
+						# Play three sounds together for a intense victory sound
+						# The palette are all the sounds that are not associated with key presses
+						victory_palette = [4, 7, 10, 13, 16, 19, 21, 22, 23, 25, 30, 31, 32, 37, 38, 40, 41, 43, 46, 49, 52, 54, 55]
+						gs_dict = { 'soundid':'', 'stopall':False }
+						gs_dict["soundid"] = str(random.choice(victory_palette))
+						push_message( json.dumps(gs_dict), 'playsound' )
+						gs_dict["soundid"] = str(random.choice(victory_palette))
+						push_message( json.dumps(gs_dict), 'playsound' )
+						gs_dict["soundid"] = str(random.choice(victory_palette))
+						push_message( json.dumps(gs_dict), 'playsound' )
+						self.__solveCount = 0
+						clients = grooviksCube.GetAllClients()
+						client_state = []
+						for client in clients:
+							client_state.append( client.GetState() )
 
-					for position in [1,2,3,4]:
-						push_message( json.dumps({"gamestate": "VICTORY", 'position':position, "clientstate": client_state}), 'gameState' )
+						for position in [1,2,3,4]:
+							push_message( json.dumps({"gamestate": "VICTORY", 'position':position, "clientstate": client_state}), 'gameState' )
 					else:
 						self.Randomize(grooviksCube, 5, .25, False)
 

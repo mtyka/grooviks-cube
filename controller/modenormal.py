@@ -65,7 +65,7 @@ class ModeNormal( ModeBase ):
 					gs_dict["soundid"] = str(random.choice(victory_palette))
 					push_message( json.dumps(gs_dict), 'playsound' )
 
-					if grooviksCube.getDifficulty() > 15:
+					if grooviksCube.getDifficulty() > 15 and grooviksCube.GetClient(4).GetState() == 'IDLE':
 						groovikConfig.addLeaderboardEntry(
 							int(groovikConfig.kioskSettings['mp-session-duration'])-grooviksCube.getTimeLeft(),
 							grooviksCube.moves)
