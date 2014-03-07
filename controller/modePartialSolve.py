@@ -52,7 +52,7 @@ class ModePartialSolve( ModeNormal ):
 		resetScript.CreateRandom(depth, time)
 		resetScript.ForceQueue( grooviksCube )
 		# Sound 1 is the startup and scramble sound
-    gs_dict = { 'soundid':'1', 'stopall':False }
+		gs_dict = { 'soundid':'1', 'stopall':False }
 		push_message( json.dumps(gs_dict), 'playsound' )
 
 	def SetDifficulty(self, diff):
