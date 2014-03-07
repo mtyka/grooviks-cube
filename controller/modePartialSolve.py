@@ -51,6 +51,9 @@ class ModePartialSolve( ModeNormal ):
 		resetScript = GScript()
 		resetScript.CreateRandom(depth, time)
 		resetScript.ForceQueue( grooviksCube )
+		# Sound 1 is the startup and scramble sound
+    gs_dict = { 'soundid':'1', 'stopall':False }
+		push_message( json.dumps(gs_dict), 'playsound' )
 
 	def SetDifficulty(self, diff):
 		if diff == 2:
@@ -72,8 +75,15 @@ class ModePartialSolve( ModeNormal ):
 				if ( self.__Solved( currentColors ) ):
 					self.__normalModeState = ModeNormalState.VICTORY_DANCE
 					grooviksCube.QueueEffect( "victory%d"%( random.randint(0,2)) )
-					gs_dict = { 'soundid':'victory1', 'stopall':False }
-					print "Pushed: ", [ json.dumps(gs_dict), 'playsound']
+					# Play three sounds together for a intense victory sound
+					# The palette are all the sounds that are not associated with key presses
+					victory_palette = [4, 7, 10, 13, 16, 19, 21, 22, 23, 25, 30, 31, 32, 37, 38, 40, 41, 43, 46, 49, 52, 54, 55]
+					gs_dict = { 'soundid':'', 'stopall':False }
+					gs_dict["soundid"] = str(random.choice(victory_palette))
+					push_message( json.dumps(gs_dict), 'playsound' )
+					gs_dict["soundid"] = str(random.choice(victory_palette))
+					push_message( json.dumps(gs_dict), 'playsound' )
+					gs_dict["soundid"] = str(random.choice(victory_palette))
 					push_message( json.dumps(gs_dict), 'playsound' )
 
 					clients = grooviksCube.GetAllClients()
