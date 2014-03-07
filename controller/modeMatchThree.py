@@ -54,7 +54,7 @@ class ModeMatchThree( ModeNormal ):
 		resetScript.CreateRandom(depth, time)
 		resetScript.ForceQueue( grooviksCube )
 		# Sound 1 is the startup and scramble sound
-    gs_dict = { 'soundid':'1', 'stopall':False }
+		gs_dict = { 'soundid':'1', 'stopall':False }
 		push_message( json.dumps(gs_dict), 'playsound' )
 		if (reset):
 			self.__solveCount = 0
@@ -91,14 +91,14 @@ class ModeMatchThree( ModeNormal ):
 					push_message( json.dumps(gs_dict), 'playsound' )
 					gs_dict["soundid"] = str(random.choice(victory_palette))
 					push_message( json.dumps(gs_dict), 'playsound' )
-						self.__solveCount = 0
-						clients = grooviksCube.GetAllClients()
-						client_state = []
-						for client in clients:
-							client_state.append( client.GetState() )
+					self.__solveCount = 0
+					clients = grooviksCube.GetAllClients()
+					client_state = []
+					for client in clients:
+						client_state.append( client.GetState() )
 
-						for position in [1,2,3,4]:
-							push_message( json.dumps({"gamestate": "VICTORY", 'position':position, "clientstate": client_state}), 'gameState' )
+					for position in [1,2,3,4]:
+						push_message( json.dumps({"gamestate": "VICTORY", 'position':position, "clientstate": client_state}), 'gameState' )
 					else:
 						self.Randomize(grooviksCube, 5, .25, False)
 
