@@ -1,14 +1,52 @@
-Home of the groovikscube software v2.
-This is the web-based version of the software for installation at the
-Pacific Science Center.
+#The Groovik's Cube
+Django + hookbox + python controller.
+Solution which achieves very low latency using comet-style http push.
 
-The directories are as follows:
+###Three parts:
+- Controller: Standalone python process which understands cube logic, motion, etc
+- Hookbox: Comet pub/sub message queue which pushes messages to clients with very low latency
+- Django: Web app server which serves the HTML, javascript and supports hookbox.
 
-webserver/ - A django project to handle multiple web clients connecting to a single cube.
-    Web UI for the cube.  Soon to be deployed at pacsci.  Hosted at http://cube.leodirac.com/
+---
+###Directories:
 
-controller/ - Controller logic code.  Formerly referred to as "server" code, a term which is now horribly ambiguous.
-    This is a port of the code which ran in the belly of the playa cube.
-    groovikhookbox.py is the current best version. This must be running along with the webserver and hookbox.
+webserver/ - A django project to handle multiple web clients connecting to a single cube. Web UI for the cube.
+controller/ - Controller logic code.  Formerly referred to as "server" code, a term which is now horribly ambiguous. `groovikhookbox.py` is the current best version. This must be running along with the webserver and hookbox.
 
-    
+---
+##How To Run
+
+ 0. Install a bunch of stuff...
+- Use python 2.6 or python 2.7. Older or newer versions do not work.
+- First install "easy_install" by visiting http://pypi.python.org/pypi/setuptools
+- Then use easy_install to install a bunch of stuff.  On mac you'll need to run "sudo easy_install".  On PC I think it's just `easy_install`.
+ You can also use pip (in which case the commands change to `sudo pip install xyz==1.2.3`)
+`sudo easy_install hookbox==0.3.3
+sudo easy_install pyjsiocompile==0.2.3
+sudo easy_install pyserial==2.6
+sudo easy_install django==1.4.5`
+
+In addition to these steps below runall.sh will run all three processes at once and write their logs to files. If you're just starting with the cube software it is advised you run them seperately so you can see more how they work together.
+
+1. In terminal 1 in the webserver directoryr run `./manage.py runserver 0.0.0.0:8080`
+2. In terminal 2 in any directory: Run `hookbox -d -r bakonv8 -p 2974 --cbhost=127.0.0.1 --cbport=8080`
+  -If you get "OSError: [Errno 2] No such file or directory" ignore it -- everything's fine.
+    -If the restkit module is giving you problems (module reventlet not found) try manually downloading restkit 2.2.3 instead of the newer 2.3xxx
+        
+ 3. In terminal 3 in controller run `./groovikhookbox.py`
+ 4. In a browser (prefereably Chrome or Firefix): open `http://localhost:8080`
+
+---
+##Quick Questions/Issues, Quick Answers
+
+Q: Where is the cube code?
+A: The HTML and javascript are all in the templates/ directory
+
+Q: Manage and hookbox won't start, something about permissions?
+A: First make sure that there are no other instances of manage and hookbox running. Kill them if they are. If you're using port 80 to run django you may need to run it as root.
+
+Q: The lights aren't staying on on the cube, there's a brief flash of blue and then nothing.
+A: Make sure that the development variable is set. The specific variable is `dev_mode` on line 19 in controler/groovikutils.py.
+
+Q: The kiosks aren't reflecting recent changes.
+A: Clear the cache and refresh.
