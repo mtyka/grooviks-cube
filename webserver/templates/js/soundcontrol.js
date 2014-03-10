@@ -5,8 +5,8 @@
 var masterVolume = 100;
 
 soundManager.url = 'static';
-//soundManager.preferFlash = false;
-soundManager.useHTML5Audio = false;
+soundManager.preferFlash = false;
+//soundManager.useHTML5Audio = false;
 soundManager.flashVersion = 9;
 soundManager.useFastPolling = true;
 soundManager.useHighPerformance = true;
@@ -86,10 +86,10 @@ soundManager.onload = function(){
 function playFaceClickSound(frame){
 	var playerNumber = Math.floor(frame.payload[1]/ 3) + 1;
 	var columnNumber = (frame.payload[1] % 3) + 1;
-  console.log(frame.payload)
-  var sound_id = '' + frame.payload[0] + ''
-  console.log(sound_id)
-  var faceSound = soundManager.getSoundById(sound_id)
+  console.log(frame.payload);
+  var sound_id = '' + frame.payload[0] + '';
+  console.log(sound_id);
+  var faceSound = soundManager.getSoundById(sound_id);
 	
   faceSound.setVolume(masterVolume);
 	faceSound.play();
@@ -104,9 +104,9 @@ function playRotationSound(rotationStep){
 }
 
 function playSound( soundid, stopall ){
-  var the_sound = soundManager.getSoundById(soundid)
+  var the_sound = soundManager.getSoundById(soundid);
   if(stopall) soundManager.stopAll();
-  the_sound.play()
+  the_sound.play();
 }
 
 function setMasterVolumeLevel(volumeLevel){
@@ -122,15 +122,15 @@ ping_handler = function(){
 
 function handle_vol(payload){
     if(payload[0] == "ping") {
-        console.log("Volume ping")
+        console.log("Volume ping");
         // ping handler is defined only by admin interface. Player mode does not respond or act on pongs
         if( ping_handler ) ping_handler();
     } else if( payload[0] == "pong" ){
-        console.log("Volume pong")
+        console.log("Volume pong");
         // pong handler is defined only by admin interface. Player mode does not respond or act on pongs
         if( pong_handler ) pong_handler( payload[1], payload[2]);
     } else if (payload[0] == "update") {
-        console.log("Volume update")
+        console.log("Volume update");
         setMasterVolumeLevel(payload[parseInt(position)+1]);
     }
 }
