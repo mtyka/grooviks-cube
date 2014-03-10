@@ -1,9 +1,9 @@
-var clients_seen = []
+var clients_seen = [];
 
 function draw_slider(client_num, client_value) {
-    var header = 'Player console ' + client_num
+    var header = 'Player console ' + client_num;
     if ( client_num == 0 )
-      header = 'Physical Cube (server)'
+      header = 'Physical Cube (server)';
     var m = '<div class="slidertext" id="slidertext' + client_num + '">' + header + '<div class="slider" id="client' + client_num +'"></div></div><br>';
     var pos = $.inArray(client_num, clients_seen);
     if( clients_seen.length == 1 ) {
@@ -50,13 +50,13 @@ function update_sliders(position, value) {
 }
 
 function ping_client_to_return_volume_level(){
-  HookboxConnection.hookbox_conn.publish("volumeControl", ["ping"] )
+  HookboxConnection.hookbox_conn.publish("volumeControl", ["ping"] );
 }
 
 function init_volume_control() {
   // set pong handler to our function that handles such pongs (only part of admin interface)
   
-  pong_handler = update_sliders
+  pong_handler = update_sliders;
   ping_handler = null;
 
   setInterval(ping_client_to_return_volume_level, 5000);
