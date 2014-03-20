@@ -37,8 +37,8 @@
     <script src="js/admin/cube_spinning.js" type="text/javascript"></script>
     <script src="js/admin/timeouts.js" type="text/javascript"></script>
     <script src="js/admin/menus.js" type="text/javascript"></script>
-    <script src="js/admin.js" type="text/javascript"></script>
     <script src="js/admin/volumecontrol.js" type="text/javascript"></script>
+    <script src="js/admin.js" type="text/javascript"></script>
 
 
     <script type="text/javascript">
@@ -193,9 +193,16 @@
   <div id="tabs-7"  style=" width: 65%; ">
     <div class="volume">
       <h1>Volume Control</h1>
+      Enter a range between 0 and 100. <br> 
+      Values &gt;100 will default to 100, &lt; 0, invalid and empty fields default to 0. <br><br>
       Currently online and connected:<br><br>
-      <div id="slider-group">Waiting for cube clients to respond..</div>
+      <form id="volumeForm">Waiting for cube clients to respond..
+
+      </form>
+      <br>
       This channel is very unreliable, only a few commands get through before it goes dead. Refreshing the admin page fixes this.
+      <br><br>
+      Keep in mind that this volume is independent of the system volume on each of the machines that are connected to the cube.
     </div>
   </div>
 
