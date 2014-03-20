@@ -1,4 +1,4 @@
-var clients_seen = []
+var clients_seen = [];
 
 function draw_slider(client_num, client_value) {
     var header = 'Player console ' + client_num
@@ -56,7 +56,7 @@ function ping_client_to_return_volume_level(){
 function init_volume_control() {
   // set pong handler to our function that handles such pongs (only part of admin interface)
   
-  pong_handler = update_sliders
+  pong_handler = update_sliders;
   ping_handler = null;
 
   setInterval(ping_client_to_return_volume_level, 5000);
