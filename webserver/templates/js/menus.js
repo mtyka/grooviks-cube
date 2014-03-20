@@ -360,14 +360,14 @@ menu = (function(){
 
 		if( game_state == "MULTIPLE" ){
 			timeout.start_game_timer();
-			show_rotation_buttons();
 			global.turnCheck();
 		}
 		else if( game_state == "SINGLE" ){
 			timeout.start_game_timer();
-			show_rotation_buttons();
 			global.currentTurn = position;
 		}
+
+		show_rotation_buttons();
 
 		$("#button_quit, #button_perspective").css("opacity", 1.0);
 		disableButton("#button_quit, #button_perspective", false);

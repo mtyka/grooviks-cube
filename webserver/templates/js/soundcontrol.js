@@ -5,8 +5,8 @@
 var masterVolume = 100;
 
 soundManager.url = 'static';
-soundManager.preferFlash = false;
-//soundManager.useHTML5Audio = false;
+//soundManager.preferFlash = false;
+soundManager.useHTML5Audio = false;
 soundManager.flashVersion = 9;
 soundManager.useFastPolling = true;
 soundManager.useHighPerformance = true;

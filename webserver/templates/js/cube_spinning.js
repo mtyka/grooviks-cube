@@ -42,7 +42,7 @@ function animate_absolute_spin(radians) {
 					CubeControl.reset_arrow_timer();
 				}
 				absoluteSpinFinished = true;
-				setTimeout(function(){absoluteSpinFinished = false},5000);
+				setTimeout(function(){absoluteSpinFinished = false},2000);
 			}
 
 			global.delta_x = parseFloat($("#slide_azi").val() > 0 ?
