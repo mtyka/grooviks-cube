@@ -1,5 +1,8 @@
 var clients_seen = [];
 
+var volLock = false;
+var volLockTimeout = null;
+
 function draw_box(client_num, client_value) {
     var parentDiv = 'slidertext';
     var header = 'Player console ' + client_num;
@@ -19,6 +22,18 @@ function draw_box(client_num, client_value) {
     else {
         $(m).insertAfter('#textBox-'+clients_seen[pos-1]);
     }
+
+    $('#client'+client_num.toString()).change(function(){
+        console.log('volume changed to ', this.value);
+        volLock = true;
+        if (volLockTimeout == null){        
+            volLockTimeout = setTimeout(function(){
+                    volLock = false;
+                    volLockTimeout = null;
+                    console.log('----- Volume Lock OFF -----');
+                }, 5000);
+        }
+    });
 
     if ($('#submitButton').length == 0)
         $('#volumeForm').append(submitButton);
@@ -53,8 +68,9 @@ function update_sliders(position, value) {
         clients_seen.sort();
         draw_box(position, value);
     } else {
-        if ( $("#client"+position+':focus').length == 0 )
+        if ( $("#client"+position+':focus').length == 0 && !volLock){
             $("#client"+position).val(value);
+        }
     }
 }
 
