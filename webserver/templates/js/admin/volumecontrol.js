@@ -32,7 +32,7 @@ function publish_volume (form) {
             if (parseInt(vol) > 100){
                 vol = '100'; 
             }
-            else if (parseInt(vol) < 0 || vol == '' || (/_a-zA-Z|\s/g).text(vol)){
+            else if (parseInt(vol) < 0 || vol == '' || (/_a-zA-Z|\s/g).test(vol)){
                 vol = '0';
             }
 
@@ -53,7 +53,8 @@ function update_sliders(position, value) {
         clients_seen.sort();
         draw_box(position, value);
     } else {
-        $("#client"+position).val(value);
+        if ( $("#client"+position+':focus').length == 0 )
+            $("#client"+position).val(value);
     }
 }
 
