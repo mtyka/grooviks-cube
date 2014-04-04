@@ -93,7 +93,7 @@ function playFaceClickSound(frame){
 	var playerNumber = Math.floor(frame.payload[1]/ 3) + 1;
 	var columnNumber = (frame.payload[1] % 3) + 1;
   var faceSound = soundManager.getSoundById('column'+ playerNumber  + '_' + columnNumber);
-	faceSound.setVolume(masterVolume);
+	faceSound.setVolume(parseInt(masterVolume));
 	soundManager.stopAll();
 	faceSound.play();
 }
@@ -102,16 +102,17 @@ function playRotationSound(rotationStep){
   clog(rotationStep);
   if(rotationStep ){
     var gearSound = soundManager.getSoundById('gear' + rotationStep );
-    gearSound.setVolume(masterVolume);
-    //soundManager.stopAll();
+    gearSound.setVolume(parseInt(masterVolume));
     gearSound.play();
   }
 }
 
 function playSound( soundid, stopall ){
   var the_sound = soundManager.getSoundById(soundid)
-  if(stopall) soundManager.stopAll();
-  the_sound.play()
+   if(stopall) 
+      soundManager.stopAll();
+
+  the_sound.setVolume(parseInt(masterVolume));
 }
 
 function setMasterVolumeLevel(volumeLevel){

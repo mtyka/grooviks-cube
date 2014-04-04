@@ -88,24 +88,27 @@ function playFaceClickSound(frame){
 	var columnNumber = (frame.payload[1] % 3) + 1;
   console.log(frame.payload);
   var sound_id = '' + frame.payload[0] + '';
-  console.log(sound_id);
+  console.log("soundid: " + sound_id + " at volume: " + masterVolume);
   var faceSound = soundManager.getSoundById(sound_id);
 	
-  faceSound.setVolume(masterVolume);
+  faceSound.setVolume(parseInt(masterVolume));
 	faceSound.play();
 }
 
 function playRotationSound(rotationStep){
   if(rotationStep ){
     var gearSound = soundManager.getSoundById('gear' + rotationStep );
-    gearSound.setVolume(masterVolume);
+    gearSound.setVolume(parseInt(masterVolume));
     gearSound.play();
   }
 }
 
 function playSound( soundid, stopall ){
   var the_sound = soundManager.getSoundById(soundid);
-  if(stopall) soundManager.stopAll();
+  if(stopall) 
+      soundManager.stopAll();
+
+  the_sound.setVolume(parseInt(masterVolume));
   the_sound.play();
 }
 
