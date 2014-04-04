@@ -6,9 +6,9 @@ var absoluteSpinFinished = false;
 
 function set_initial_position(){
 	// using -Math.PI*2/3 for the rotation angle gives a funny angle when rendered - I suspect there is a bug in render.js
-    var start_azimuth = Math.floor([ -Math.PI*2/3.01, 0, Math.PI*2/3.01 ][parseInt(position)-1] * 100);
+	var start_azimuth = Math.floor([ -Math.PI*2/3.01, 0, Math.PI*2/3.01 ][parseInt(position)-1] * 100);
 
-    console.log("Resetting proper position: " + position + "  (" + start_azimuth + ")" );
+	console.log("Resetting proper position: " + position + "  (" + start_azimuth + ")" );
 	stop_spin();
 	animate_absolute_spin( start_azimuth );
 }
@@ -19,7 +19,7 @@ function animate_absolute_spin(radians) {
 	azimuth = azimuth % (100*Math.PI*2);  // Re-center
 	$("#slide_azi").attr("animate_val", azimuth); // prep temporary animation variable
 
-    console.log("Animate_absolute_spin: " + azimuth + "    " + radians);
+	console.log("Animate_absolute_spin: " + azimuth + "    " + radians);
 
 	if( azimuth == radians ){
 		// we're already at solved position
@@ -114,7 +114,7 @@ function animate_spin(delta_radians) {
 				$("#slide_azi").val() % -630);
 			CubeControl.update_view();
 		}
-    });
+	});
 }
 
 function start_spin( start_spin ){
