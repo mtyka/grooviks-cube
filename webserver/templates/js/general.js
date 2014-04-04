@@ -281,7 +281,7 @@ var global = (function($){
 		CubeControl.update_view();
 
 		// add click events that control the cube.
-		$("body").bind( "click touchstart", function( eventObj ) {
+		$("body").bind( "mousedown touchstart", function( eventObj ) {
 			if( !CubeControl.ignore_clicks ){
 				if (menu.menustate > 0){
 					CubeControl.ignore_clicks = true;
