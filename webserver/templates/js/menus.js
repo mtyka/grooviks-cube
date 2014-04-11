@@ -13,7 +13,8 @@ menu = (function(){
 	var interrupt_ok = true;
 	var waitingTimer = null;
 
-	// 1 = no menu
+	// 0 = no menu
+	// 1 = idle
 	// 2 = mode menu
 	// 3 = level menu
 	// 4 = timeout menu

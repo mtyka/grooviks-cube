@@ -529,7 +529,7 @@ class GrooviksCube:
 
 		print "mult: " + str(active)
 
-		if len(active) > 0:
+		if len(active) > 0 and active[0] != 4:
 			self.currentTurn = (self.currentTurn % 3) + 1
 			while self.currentTurn not in active:
 				self.currentTurn = (self.currentTurn % 3) + 1
