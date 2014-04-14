@@ -1,6 +1,11 @@
 // menu.js
 // menu state manager and functions
 
+function stackTrace() {
+	 var err = new Error();
+	 return err.stack;
+}
+
 menu = (function(){
 
 	var self = this;
@@ -12,6 +17,9 @@ menu = (function(){
 
 	var interrupt_ok = true;
 	var waitingTimer = null;
+
+	var modeTimer = null;
+	var timeUntilStable = 3500;
 
 	// 0 = no menu
 	// 1 = idle
@@ -32,13 +40,17 @@ menu = (function(){
 		5: "#joinmenu", 6: "#queuedmenu", 	7: "#waitingmenu", 	8: "#connectingmenu",
 		9: "#votemenu", 10: "#alertmenu", 	11: "#victorymenu", 12:"#lockmenu"};
 
+	var isAnimating = {};
+	for (var i = 1; i <= Object.keys(menuIds).length; i++) {
+		isAnimating[menuIds[i]] = false;
+	}
 
 	function reset_gamestate(position, difficulty) {
 		console.log("Resetting gamestate: " + difficulty);
 		HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'SELECT_DIFFICULTY', 'difficulty' : difficulty});
 	}
 
-	var selected_game_mode = "START_3P"
+	var selected_game_mode = "START_3P";
 
 
 	function flyin_menu_bg(){
@@ -53,16 +65,15 @@ menu = (function(){
 	}
 
 	function flyin_menu( id ){
-		if (kioskLock)
-			return;
+		isAnimating[id] = true;
 
 		$(id).css("left", "-25%");
 		$(id).css("display", "inline");
-		$(id).animate( {
-		  left: "0%",
-		},{ duration: 1000,
-			complete: function(){
-				CubeControl.ignore_clicks = true;
+		$(id).animate( 
+			{ left: "0%" },{ 
+			duration: 1000,
+			complete: function() {
+				isAnimating[id] = false;
 			}
 		});
 
@@ -71,17 +82,18 @@ menu = (function(){
 	}
 
 	function flyout_menu( id ){
-		if (kioskLock)
-			return;
-
+		console.log("flying out " + id);
+		isAnimating[id] = true;
 		$(id).animate( {
-			left: "125%"
+		  left: "125%"
 		},{ duration: 1000,
 			complete: function(){
-				$(id).css("left", "-25%");
-				$(id).css("display", "none");
-			}
-		});
+					if(!isAnimating[id]) {
+						$(id).css("display", "none");
+					}
+					isAnimating[id] = false;
+				}
+		});		
 		timeout.stop_menu_timer();
 	}
 
@@ -96,7 +108,7 @@ menu = (function(){
 			$(which).removeAttr("disabled");
 	}
 
-		my.select_difficulty  = function (difficulty){
+	my.select_difficulty  = function (difficulty){
 
 		global.difficulty = difficulty;
 
@@ -125,120 +137,159 @@ menu = (function(){
 	}
 
 	my.goto_idle_screen = function(){
+		console.log("goto_idle_screen");
 		CubeControl.ignore_clicks = true;
-		if( my.menustate == 1 && menuIsOpen(1)) return;
-			remove_menu();
-			if( my.menustate == 0 ) flyin_menu_bg();
-		my.menustate = 1
-			flyin_menu("#idlemenu");
 
-			$("#button_quit, #button_perspective").css( "opacity", 0.5);
-			disableButton("#button_quit, #button_perspective", true);
+		if( my.menustate == 1)
+			return;
 
-			$("#turn_notice").animate( { opacity:0.0 },{ duration: 1000 });
+		remove_menu();
 
-			interrupt_ok = true;
+		if( my.menustate == 0 )
+			flyin_menu_bg();
 
-			console.log("setting client state to home-restart");
+		my.menustate = 1;
+		flyin_menu("#idlemenu");
 
-			start_spin( true );
+		$("#button_quit, #button_perspective").css( "opacity", 0.5);
+		disableButton("#button_quit, #button_perspective", true);
+
+		$("#turn_notice").animate( { opacity:0.0 },{ duration: 1000 });
+
+		interrupt_ok = true;
+
+		console.log("setting client state to home-restart");
+
+		start_spin( true );
 	}
 
 	my.goto_mode_screen = function(){
 		CubeControl.ignore_clicks = true;
-		if( my.menustate == 2 && menuIsOpen(2)) return;
-			remove_menu();
-			if( my.menustate == 0 ) flyin_menu_bg();
-		my.menustate = 2
-			flyin_menu("#modemenu");
+		if( my.menustate == 2)
+			return;
 
-			interrupt_ok = true;
+		remove_menu();
+		
+		if( my.menustate == 0 )
+			flyin_menu_bg();
+		
+		my.menustate = 2;
+		flyin_menu("#modemenu");
 
-			start_spin( true );
+		interrupt_ok = true;
+
+		start_spin( true );
 	}
 
 	my.goto_level_screen = function(){
 		console.log("goto_level_screen()");
-			CubeControl.ignore_clicks = true;
-		if( my.menustate == 3 && menuIsOpen(3)) return;
-			remove_menu();
-			if( my.menustate == 0 ) flyin_menu_bg();
-		my.menustate = 3
-			flyin_menu("#levelmenu");
+		CubeControl.ignore_clicks = true;
+		if( my.menustate == 3)
+			return;
+		
+		remove_menu();
+		
+		if( my.menustate == 0 )
+			flyin_menu_bg();
+		
+		my.menustate = 3;
+		flyin_menu("#levelmenu");
 
-			start_spin( true );
+		start_spin( true );
 	}
 
 	my.goto_timeout_screen = function(){
 		CubeControl.ignore_clicks = true;
-		if( my.menustate == 4 && menuIsOpen(4)) return;
+		if( my.menustate == 4)
+			return;
 			remove_menu();
 			if( my.menustate == 0 ) flyin_menu_bg();
-		my.menustate = 4
+		my.menustate = 4;
 			flyin_menu("#timeoutmenu");
 			start_spin( true );
 	}
 
 	my.goto_join_screen = function(){
 		CubeControl.ignore_clicks = true;
-		if( my.menustate == 5 && menuIsOpen(5)) return;
-			if( interrupt_ok ){
-				remove_menu();
-				if( my.menustate == 0 ) flyin_menu_bg();
-				my.menustate = 5
-				flyin_menu("#joinmenu");
-			}
+		if( my.menustate == 5 )
+			return;
+		
+		if( interrupt_ok ){
+			remove_menu();
 
-			global.difficultyNotice(true);
+			if( my.menustate == 0 )
+				flyin_menu_bg();
 
-			start_spin( true );
+			my.menustate = 5;
+			flyin_menu("#joinmenu");
+		}
+
+		global.difficultyNotice(true);
+
+		start_spin( true );
 	}
 
 	my.goto_queued_screen = function(){
 		console.log("goto_queued_screen()");
-			CubeControl.ignore_clicks = true;
-		if( my.menustate == 6 && menuIsOpen(6)) return;
-			remove_menu();
-			if( my.menustate == 0 ) flyin_menu_bg();
-		my.menustate = 6
-			flyin_menu("#queuedmenu");
+		CubeControl.ignore_clicks = true;
+		if( my.menustate == 6)
+			return;
+		
+		remove_menu();
+			
+		if( my.menustate == 0 )
+			flyin_menu_bg();
 
-			start_spin( true );
-			timeout.get_game_time();
-			setTimeout( function(){ //give it some time to respond
-				$("#timeUntilTurn").html(global.normalizeTime(timeout.get_game_timeleft()));
-				waitingTimer = setInterval("self.waitTick()", 1000);
-			}, 1500);
+		my.menustate = 6;
+		flyin_menu("#queuedmenu");
+
+		start_spin( true );
+		timeout.get_game_time();
+		setTimeout( function(){ //give it some time to respond
+			$("#timeUntilTurn").html(global.normalizeTime(timeout.get_game_timeleft()));
+			waitingTimer = setInterval("self.waitTick()", 1000);
+		}, 1500);
 	}
 
 	my.goto_waiting_screen = function(){
 		console.log("goto_waiting_screen()");
 		CubeControl.ignore_clicks = true;
-		if( my.menustate == 7 && menuIsOpen(7)) return;
-			remove_menu();
-			if( my.menustate == 0 ) flyin_menu_bg();
-		my.menustate = 7
-			flyin_menu("#waitingmenu");
+		if( my.menustate == 7) 
+			return;
 
-			start_spin( true );
+		remove_menu();
+			
+		if( my.menustate == 0 )
+			flyin_menu_bg();
+
+		my.menustate = 7;
+		flyin_menu("#waitingmenu");
+
+		start_spin( true );
 	}
 
 	my.goto_connecting_screen = function(){
 		CubeControl.ignore_clicks = true;
-		if( my.menustate == 8 && menuIsOpen(8)) return;
-			remove_menu();
-			if( my.menustate == 0 ) flyin_menu_bg();
-		my.menustate = 8
-			flyin_menu("#connectingmenu");
+		if( my.menustate == 8)
+			return;
+		remove_menu();
+			
+		if( my.menustate == 0 )
+			flyin_menu_bg();
 
-			start_spin( true );
+		my.menustate = 8;
+		flyin_menu("#connectingmenu");
+
+		start_spin( true );
 	}
 
 	my.goto_vote_screen = function(){
 		console.log("goto_vote_screen()");
 		CubeControl.ignore_clicks = true;
-		if( my.menustate == 9 && menuIsOpen(9)) return;
-			remove_menu();
+		if( my.menustate == 9)
+			return;
+
+		remove_menu();
 
 		my.menustate = 9;
 
@@ -260,8 +311,10 @@ menu = (function(){
 	my.goto_alert_screen = function(text, subtext, timeup, quit){
 		console.log("goto_alert_screen()", text, subtext, timeup, quit);
 		CubeControl.ignore_clicks = true;
-		if( my.menustate == 10 && menuIsOpen(10)) return;
-			remove_menu();
+		if( my.menustate == 10)
+			return;
+		
+		remove_menu();
 
 		flyin_menu_bg(); //there (should) never a menu up before this one
 		my.menustate = 10;
@@ -289,8 +342,11 @@ menu = (function(){
 	my.goto_victory_screen = function(){
 		console.log("goto_victory_screen(), yay!");
 		CubeControl.ignore_clicks = true;
-		if( my.menustate == 11 && menuIsOpen(11)) return;
-			remove_menu();
+
+		if( my.menustate == 11)
+			return;
+		
+		remove_menu();
 
 		my.menustate = 11;
 
@@ -324,8 +380,10 @@ menu = (function(){
 
 		HookboxConnection.hookbox_conn.publish('clientcommand', {'position' : position, 'command' : 'QUIT' } );
 		CubeControl.ignore_clicks = true;
-		if( my.menustate == 12 && menuIsOpen(12)) return;
-			remove_menu();
+		if( my.menustate == 12)
+			return;
+		
+		remove_menu();
 
 		my.menustate = 12;
 
