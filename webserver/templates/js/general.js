@@ -248,7 +248,7 @@ var global = (function($){
 		});
 
 		$("#svgholder, #idlemenu").bind( "click touchstart", function() {
-			if (my.recentEvent || $('#lockmenu').css('display') != 'none')
+			if (my.recentEvent || kioskLock)
 				return;
 			if( menu.menustate == 1 && !menu.quitClicked){
 				menu.clicked_wake();
