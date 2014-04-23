@@ -8,23 +8,22 @@ var game_timeout = -2;
 
 function on_game_state_change(newState, activePosition, clientstate) {
 //     game_state = newState
-     $('#game_state').val( newState )
-     $('#active_position').val( activePosition )
-    
+     $('#game_state').val( newState );
+     $('#active_position').val( activePosition );
 		 active_position = activePosition;
 		 var old_client_state = client_state;
 		 new_client_state = clientstate[position-1];
 		 new_game_state = newState;
 
      clog("ActivePlayer: " + active_position + "MyPosition: " + position );
-		 clog("Server: NewState:" + new_client_state + "OldState: " + client_state ); 
-		 clog("Server: NewGameState:" + new_game_state + "OldGameState: " + game_state ); 
-		
+		 clog("Server: NewState:" + new_client_state + "OldState: " + client_state );
+		 clog("Server: NewGameState:" + new_game_state + "OldGameState: " + game_state );
+
 		 reset_timeout();
-		
+
 		 var old_game_state = game_state;
 		 game_state = new_game_state;
-		 
+
 			 client_state = new_client_state;
 			 if ( client_state == "IDLE" ){
 				 clear_game_timeout();
@@ -54,7 +53,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
 					 clear_game_timeout();
            clear_screen();
 				 }
-			 
+			
 			 } else
 			 if ( client_state == "MULT" ){
 			
@@ -64,10 +63,10 @@ function on_game_state_change(newState, activePosition, clientstate) {
 				 } else
 				 if( game_state == "MULTIPLE" ){
 					 // active player gets to select difficulty mode.
-					 if ( new_client_state == "MULT" && old_client_state == "HOME" ){ 
+					 if ( new_client_state == "MULT" && old_client_state == "HOME" ){
 						 goto_level_screen( )   // create level screen
-					 } 
-					 else 
+					 }
+					 else
 					 // active player comes from a waiting screen
 					 if ( new_client_state == "MULT" && old_client_state == "MULT" && old_game_state == "SINGLE_INVITE"  ){
 						 goto_level_screen( )   // create level screen
@@ -81,7 +80,7 @@ function on_game_state_change(newState, activePosition, clientstate) {
 				 if( game_state == "VICTORY" ){
            clear_screen();
 				 }
-			 
+			
 			 } else
 			 if ( client_state == "VICT" ){
 				 clear_screen();

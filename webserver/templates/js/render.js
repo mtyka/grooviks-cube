@@ -488,9 +488,9 @@ Renderer = (function($){
 			var arrowDirection = -1;
 			if (my.shouldDrawArrow(ndx)) {
 				var sign = arrowRotation[ndx][0] < 0;
-				arrowDirection = rotToOrient[Math.abs(arrowRotation[ndx][0]) - 1][Math.floor(ndx / 9)]
+				arrowDirection = rotToOrient[Math.abs(arrowRotation[ndx][0]) - 1][Math.floor(ndx / 9)];
 				if (sign) {
-					arrowDirection = (2 + arrowDirection) % 4
+					arrowDirection = (2 + arrowDirection) % 4;
 				}
 				//console.log(arrowRotation[ndx], Math.floor(ndx/9), sign, arrowDirection)
 				if (arrowDirection >= 0)
