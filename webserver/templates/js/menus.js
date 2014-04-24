@@ -383,6 +383,15 @@ menu = (function(){
 		if( my.menustate == 12)
 			return;
 		
+		$("#button_quit, #button_perspective").css( "opacity", 0.5);
+		disableButton("#button_quit, #button_perspective", true);
+
+		timeout.stop_game_timer();
+		timeout.stop_turn_timer();
+		timeout.stop_menu_timer();
+
+		$("#turn_notice").animate( { opacity:0.0 },{ duration: 1000 });
+
 		remove_menu();
 
 		my.menustate = 12;
