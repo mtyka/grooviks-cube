@@ -144,7 +144,7 @@ var global = (function($){
 			name = "0";
 		}
 
-		if (name == '4i')
+		if (name.match(/4i/i))
 			return;
 
 		file += "cube_" + name + ".png";
