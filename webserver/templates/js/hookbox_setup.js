@@ -154,6 +154,7 @@ var HookboxConnection = (function(){
 							setVal("sp-session-duration", frame.payload);
 							setVal("mp-session-duration", frame.payload);
 							setVal("menu-timeout", frame.payload);
+							setVal("inactivity-timeout", frame.payload);
 						}
 						else {
 							timeout.mp_turn_duration = parseInt(frame.payload["mp-turn-duration"]);
@@ -161,6 +162,7 @@ var HookboxConnection = (function(){
 							timeout.sp_session_duration = parseInt(frame.payload["sp-session-duration"]);
 							timeout.mp_session_duration = parseInt(frame.payload["mp-session-duration"]);
 							timeout.menu_timeout = parseInt(frame.payload["menu-timeout"]);
+							timeout.inactivity_timeout_length = parseInt(frame.payload["inactivity-timeout"]);
 						}
 					};
 				}

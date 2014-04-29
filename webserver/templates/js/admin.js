@@ -96,6 +96,8 @@ function sendSettings(form){
 	payload["sp-session-duration"] = form["sp-session-duration"].value;
 	payload["mp-session-duration"] = form["mp-session-duration"].value;
 	payload["menu-timeout"] = form["menu-timeout"].value;
+	payload["inactivity-timeout"] = form["inactivity-timeout"].value;
+
 	console.log(payload);
 	HookboxConnection.hookbox_conn.publish('settings', {'command': 'set', 'vals':payload});
 }

@@ -10,14 +10,17 @@ var timeout = (function($){
 	my.sp_session_duration = 321;
 	my.mp_session_duration = 321;
 	my.menu_timeout = 10;
+	my.inactivity_timeout_length = 30;
 
 	var turn_timeleft = -1;
 	var timeout_count =  0;
 	var game_timeleft = -1;
+	var inactivityTimeLeft = -1;
 
 	var gameTimer = null;
 	var turnTimer = null;
 	var menuTimer = null;
+	var inactiveTimer = null;
 
 	my.getTimeleft = function(){
 		return [turn_timeleft, timeout_count, game_timeleft];
@@ -96,6 +99,14 @@ var timeout = (function($){
 		}
 	}
 
+	my.start_inactivity_timer = function(){
+		if (inactiveTimer == null){
+			console.log('inactiveity timer starterd');
+			inactivityTimeLeft = my.inactivity_timeout_length;
+			inactiveTimer = setInterval(self.update_inactivity_timeout, 1000);;
+		}
+	}
+
 //------ STOP TIMERS -------
 	my.stop_game_timer = function(){
 		game_timeleft = -1;
@@ -130,6 +141,15 @@ var timeout = (function($){
 
 	my.reset_turn_timeout = function(){
 		turn_timeleft = my.mp_turn_duration;
+	}
+
+	my.reset_inactivity_timeout = function(){
+		if (inactiveTimer == null){
+			start_inactivity_timer();
+		}
+		else {
+			inactivityTimeLeft = my.inactivity_timeout_length;
+		}
 	}
 
 //------ UPDATE TIMERS -------
@@ -180,6 +200,29 @@ var timeout = (function($){
 		turn_timeleft -= 1;
 
 		$("#turn_timeout").html("Time remaining for your turn " + global.normalizeTime(turn_timeleft));
+	}
+
+	self.update_inactivity_timeout = function(){
+		if (global.activePlayers.length == 1){
+			if (menu.menustate != 0){
+				//do not decrement if any menu is showing, like a request to join menu or such.
+				return;
+			}
+			else if (inactivityTimeLeft <= 0){
+				menu.clicked_quit();
+				clearInterval(inactiveTimer);
+				inactiveTimer = null;
+			}
+			else if (inactivityTimeLeft > 0){
+				inactivityTimeLeft -= 1;
+			}
+			console.log("inactive: " + inactivityTimeLeft);
+		}
+		// else{
+		// 	inactiveTimerStarted = false;
+		// 	clearInterval(inactiveTimer);
+		// 	inactiveTimer = null;
+		// }
 	}
 
 	my.update_game_timeout = self.update_game_timeout;

@@ -127,6 +127,7 @@ var HookboxConnection = (function(){
 						setVal("sp-session-duration", frame.payload);
 						setVal("mp-session-duration", frame.payload);
 						setVal("menu-timeout", frame.payload);
+            setVal("inactivity-timeout", frame.payload);
 					};
 				}
         }

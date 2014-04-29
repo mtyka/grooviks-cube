@@ -45,6 +45,7 @@ var global = (function($){
 					if (!CubeControl.drawArrows)
 						CubeControl.reset_arrow_timer();
 				}, 1000);
+				timeout.start_inactivity_timer();
 			}
 			$("#turn_notice").html("your turn").addClass('active');
 			toggleRotationButtons(true);
@@ -130,6 +131,9 @@ var global = (function($){
 		$("#buttonright").animate({opacity: val}, {duration: 200});
 	}
 
+	// Image is determined by the active players array, joined together by '_'. An 'i' denotes the player's turn.
+	// e.g. 'cube_1_2i.png' 'cube_1_2_3i.png'
+	// If there is a 4th player (the web player), then the image does not change
 	function tokenChanger(){
 		var file = "/static/turn-token/";
 		var name = my.activePlayers.join("_");
@@ -144,7 +148,7 @@ var global = (function($){
 			name = "0";
 		}
 
-		if (name.match(/4i/i))
+		if (name.match(/4i|4/i))
 			return;
 
 		file += "cube_" + name + ".png";
@@ -295,6 +299,10 @@ var global = (function($){
 				console.log("local click at relative ("+x+","+y+")");
 
 				CubeControl.cube_got_clicked_on(x,y);
+
+				if (my.activePlayers.length == 1){
+					timeout.reset_inactivity_timeout();
+				}
 
 				return true;
 			}
