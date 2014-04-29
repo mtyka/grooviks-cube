@@ -17,7 +17,8 @@
         font-family: verdana, sans-serif;
         background: black;
         color: #ffffdd;
-        overflow: hidden;
+        overflow-y: auto;
+        overflow-x: hidden;
 		}
 
     h1 {

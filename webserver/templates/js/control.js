@@ -98,6 +98,11 @@ CubeControl = (function($){
 		if(!my.admin_mode){
 			my.drawArrows = true;
 		}
+
+		if(menu.menustate == 1){
+			my.drawArrows = false;
+			return;
+		}
 		//console.log("show arrows called");
 
 		Renderer.alphaTransition = 0.0;

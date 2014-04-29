@@ -98,7 +98,7 @@ menu = (function(){
 	}
 
 	function menuIsOpen(m){
-		return $(menuIds[m]).css('display') == "inline";
+		return $(menuIds[m]).css('left') == '0px';
 	}
 
 	function disableButton(which, disabled){
@@ -139,6 +139,7 @@ menu = (function(){
 	my.goto_idle_screen = function(){
 		console.log("goto_idle_screen");
 		CubeControl.ignore_clicks = true;
+		CubeControl.drawArrows = false;
 
 		if( my.menustate == 1)
 			return;
@@ -247,7 +248,7 @@ menu = (function(){
 		timeout.get_game_time();
 		setTimeout( function(){ //give it some time to respond
 			$("#timeUntilTurn").html(global.normalizeTime(timeout.get_game_timeleft()));
-			waitingTimer = setInterval("self.waitTick()", 1000);
+			waitingTimer = setInterval(self.waitTick, 1000);
 		}, 1500);
 	}
 
@@ -429,10 +430,14 @@ menu = (function(){
 		if( game_state == "MULTIPLE" ){
 			timeout.start_game_timer();
 			global.turnCheck();
+			if (global.activePlayers.length == 1){
+				timeout.start_inactivity_timer();
+			}
 		}
 		else if( game_state == "SINGLE" ){
 			timeout.start_game_timer();
 			global.currentTurn = position;
+			timeout.start_inactivity_timer();
 		}
 
 		show_rotation_buttons();
@@ -450,6 +455,7 @@ menu = (function(){
 
 	self.waitTick = function(){
 		var timeStr = $("#timeUntilTurn").html();
+		//console.log(timeStr);
 		if (timeStr == "")
 			return;
 

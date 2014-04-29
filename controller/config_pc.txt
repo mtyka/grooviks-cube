@@ -139,7 +139,7 @@ calibration_colors =
 	]
 
 [KioskSettings]
-settings = {"sp-session-duration": "300", "mp-timeout-limit": "2", "mp-session-duration": "300", "mp-turn-duration": "25", "menu-timeout": "15"}
+settings = {"mp-session-duration": "300", "mp-turn-duration": "25", "sp-session-duration": "300", "mp-timeout-limit": "2", "inactivity-timeout": "45", "menu-timeout": "15"}
 
 [Leaderboard]
 board = {"board": []}
